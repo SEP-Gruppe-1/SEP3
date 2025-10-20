@@ -19,7 +19,7 @@ public class CustomerDAOImpl implements CustomerDAO
   {
     return DriverManager.getConnection(
         "jdbc:postgresql://localhost:5432/postgres?currentSchema=cinema",
-        "postgres", "postgres");
+        "postgres", "123");
   }
 
   public static CustomerDAOImpl getInstance() throws SQLException
