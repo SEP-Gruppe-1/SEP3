@@ -1,0 +1,192 @@
+﻿@page "/Order"
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@using BlazorApp1.Model
+
+<h3>Order - Vælg sæder</h3>
+
+<div class="hall-container">
+    <div class="screen">SKÆRM</div>
+    
+    <div class="hall">
+        @foreach (var seat in hall.Seats)
+        {
+            <button class="btn seat @GetSeatClass(seat)" 
+                    @onclick="() => ToggleSeat(seat)"
+                    disabled="@seat.IsBooked">
+                @seat.Row@seat.Number
+            </button>
+            
+            @if (seat.Number == 5)
+            {
+                <br />
+            }
+        }
+    </div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color available"></div>
+            <span>Ledig</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color selected"></div>
+            <span>Valgt</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color booked"></div>
+            <span>Booket</span>
+        </div>
+    </div>
+</div>
+
+@if (hall.HasSelectedSeats)
+{
+    <div class="selection-info">
+        <p>Du har valgt @hall.SelectedSeatsCount sæde(r): <b>@hall.GetSelectedSeatsDisplay()</b></p>
+        <p>Total pris: <b>@hall.TotalPrice kr</b></p>
+        
+        <div class="booking-actions">
+            <button @onclick="ClearSelection" class="btn btn-warning">Ryd valg</button>
+            <button @onclick="ConfirmBooking" class="btn btn-success">
+                Bestil sæder (@hall.SelectedSeatsCount)
+            </button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="selection-info">
+        <p>Ingen sæder valgt endnu</p>
+    </div>
+}
+
+@if (showConfirmation)
+{
+    <div class="confirmation-dialog">
+        <div class="confirmation-content">
+            <h4>Bekræft bestilling</h4>
+            <p>Er du sikker på at du vil bestille følgende sæder?</p>
+            <ul>
+                @foreach (var seat in hall.GetSelectedSeats())
+                {
+                    <li>Sæde @seat.Row@seat.Number - @seat.Price kr</li>
+                }
+            </ul>
+            <p><strong>Total: @hall.TotalPrice kr</strong></p>
+            
+       
+            
+            <div class="confirmation-actions">
+                <button @onclick="SubmitBooking" class="btn btn-success">Ja, bestil</button>
+                <button @onclick="CancelBooking" class="btn btn-secondary">Annuller</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(bookingResult))
+{
+    <div class="alert @(bookingResult.Contains("succes") ? "alert-success" : "alert-danger")">
+        @bookingResult
+    </div>
+}
+
+<div class="bookings-summary">
+    <h4>Booking oversigt</h4>
+    <p>Bookede sæder: <b>@hall.GetBookedSeatsDisplay()</b></p>
+    <p>Totalt bookede sæder: @hall.TotalBookedSeats</p>
+    <p>Ledige sæder: @(hall.Seats.Count - hall.TotalBookedSeats)</p>
+</div>
+
+<div class="debug">
+    <p>Valgte sæder: @hall.GetSelectedSeatsDisplay()</p>
+    <p>Antal valgte: @hall.SelectedSeatsCount</p>
+    <p>Total pris: @hall.TotalPrice kr</p>
+    @if (!string.IsNullOrEmpty(lastBookingData))
+    {
+        <p>Seneste booking: @lastBookingData</p>
+    }
+</div>
+
+@code {
+    private Hall hall = new Hall();
+    private bool showConfirmation = false;
+    private string bookingResult = "";
+    private string lastBookingData = "";
+  
+
+    protected override void OnInitialized()
+    {
+        hall.Initialize(4, 5);
+    }
+
+    private string GetSeatClass(Seat seat)
+    {
+        if (seat.IsBooked)
+            return "booked";
+        if (seat.IsSelected)
+            return "selected";
+        return "available";
+    }
+
+    private void ToggleSeat(Seat seat)
+    {
+        hall.ToggleSeatSelection(seat);
+    }
+
+    private void ClearSelection()
+    {
+        hall.ClearSelection();
+        bookingResult = "";
+    }
+
+    private void ConfirmBooking()
+    {
+     
+        showConfirmation = true;
+        bookingResult = "";
+    }
+
+    private void CancelBooking()
+    {
+        showConfirmation = false;
+    }
+
+    private async Task SubmitBooking()
+    {
+        try
+        {
+            showConfirmation = false;
+            
+            // Simuler API kald til serveren
+            await Task.Delay(500);
+            
+            // Opret booking objekt
+            var booking = new Booking
+            {
+                Seats = hall.GetSelectedSeats(),
+                TotalPrice = hall.TotalPrice,
+                BookingTime = DateTime.Now,
+                BookingId = Guid.NewGuid().ToString().Substring(0, 8).ToUpper(),
+              
+            };
+            
+            // Book sæderne i hallen
+            hall.BookSelectedSeats();
+            
+            // Vis bekræftelse til brugeren
+            bookingResult = $"Bestilling succes! Booking ID: {booking.BookingId}";
+            lastBookingData = $"Sæder: {hall.GetSelectedSeatsDisplay()} - {DateTime.Now:HH:mm:ss}";
+            
+        
+            
+            // Optional: Vis browser alert
+            await JSRuntime.InvokeVoidAsync("alert", $"Booking bekræftet! ID: {booking.BookingId}");
+        }
+        catch (Exception ex)
+        {
+            bookingResult = $"Fejl under bestilling: {ex.Message}";
+        }
+    }
+}
