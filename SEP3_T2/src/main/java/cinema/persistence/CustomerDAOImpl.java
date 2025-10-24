@@ -1,6 +1,6 @@
-package persistence;
+package cinema.persistence;
 
-import model.Customer;
+import cinema.model.Customer;
 
 import java.sql.*;
 import java.util.ArrayList;
