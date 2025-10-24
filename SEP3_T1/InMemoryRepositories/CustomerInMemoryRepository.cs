@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Entities;
+﻿using Entities;
 using RepositoryContracts;
 
 namespace InMemoryRepositories;
@@ -26,7 +22,7 @@ public class CustomerInMemoryRepository : ICustomerRepository
 
     public Task UpdateAsync(Customer customer)
     {
-        var existingCustomer = customers.SingleOrDefault(c => c.Phone == customer.Phone);
+        var existingCustomer = customers.SingleOrDefault(c => c.Phone == c.Phone);
         if (existingCustomer == null)
             throw new InvalidOperationException($"Customer with phone nr: {customer.Phone} not found.");
         customers.Remove(existingCustomer); 
