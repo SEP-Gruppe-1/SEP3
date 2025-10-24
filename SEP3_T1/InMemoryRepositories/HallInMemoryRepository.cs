@@ -1,22 +1,24 @@
-﻿
+﻿using System.Collections.Generic;
+using System.Linq;
 using Entities;
 using RepositoryContract;
 
 
 namespace InMemoryRepositories;
+
 public class HallInMemoryRepository : IHallRepository
 {
-    private  Hall Hall { get; } = new();
+    private Hall Hall { get; } = new();
 
-      public void Initialize(int rows, int seatsPerRow)
+    public void Initialize(int rows, int seatsPerRow)
     {
         Hall.Seats.Clear();
         Hall.BookedSeats.Clear();
-        
+
         for (int rowIndex = 0; rowIndex < rows; rowIndex++)
         {
             char rowLetter = (char)('A' + rowIndex);
-            
+
             for (int seatNumber = 1; seatNumber <= seatsPerRow; seatNumber++)
             {
                 Hall.Seats.Add(new Seat
@@ -27,8 +29,6 @@ public class HallInMemoryRepository : IHallRepository
                 });
             }
         }
-        
-
     }
 
     public void ToggleSeatSelection(Seat seat)
@@ -66,17 +66,17 @@ public class HallInMemoryRepository : IHallRepository
     public List<Seat> GetSelectedSeats()
     {
         return Hall.Seats.Where(s => s.IsSelected)
-                   .OrderBy(s => s.Row)
-                   .ThenBy(s => s.Number)
-                   .ToList();
+            .OrderBy(s => s.Row)
+            .ThenBy(s => s.Number)
+            .ToList();
     }
 
     public List<Seat> GetAvailableSeats()
     {
         return Hall.Seats.Where(s => !s.IsBooked)
-                   .OrderBy(s => s.Row)
-                   .ThenBy(s => s.Number)
-                   .ToList();
+            .OrderBy(s => s.Row)
+            .ThenBy(s => s.Number)
+            .ToList();
     }
 
     public string GetSelectedSeatsDisplay()
@@ -91,8 +91,8 @@ public class HallInMemoryRepository : IHallRepository
     public string GetBookedSeatsDisplay()
     {
         return string.Join(", ", Hall.BookedSeats.OrderBy(s => s.Row)
-                                           .ThenBy(s => s.Number)
-                                           .Select(s => $"{s.Row}{s.Number}"));
+            .ThenBy(s => s.Number)
+            .Select(s => $"{s.Row}{s.Number}"));
     }
 
     public Seat GetSeat(char row, int number)
