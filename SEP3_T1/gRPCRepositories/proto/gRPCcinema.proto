@@ -1,0 +1,35 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+message DTOCustomer
+{
+  string name = 1;
+  string password = 2;
+  string email = 3;
+  int32 phone = 4;
+}
+
+message GetCustomersRequest
+{
+}
+
+message GetCustomersResponse
+{
+  repeated DTOCustomer customers = 1;
+}
+
+message GetCustomerByPhoneRequest
+{
+  int32 phone = 1;
+}
+
+message GetCustomerByPhoneResponse
+{
+  DTOCustomer customer = 1;
+}
+
+service CinemaService
+{
+  rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
+  rpc GetCustomerByPhone (GetCustomerByPhoneRequest) returns (GetCustomerByPhoneResponse);
+}
