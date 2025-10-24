@@ -9,7 +9,12 @@ namespace InMemoryRepositories;
 
 public class CustomerInMemoryRepository : ICustomerRepository
 {
-    private readonly List<Customer> customers = new();
+    private List<Customer> customers = new()
+    {
+        new Customer { Name = "John Doe", Phone = 12345678 },
+        new Customer { Name = "Jane Smith", Phone = 87654322 },
+        new Customer { Name = "Bob Johnson", Phone = 55512345 }
+    };
     public Task<Customer> AddAsync(Customer customer)
     {
         customer.Phone = customers.Any()
