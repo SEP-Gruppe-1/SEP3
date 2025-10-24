@@ -46,7 +46,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\victo\\.nuget\\packages\\": {}
+    "C:\\Users\\Dansk\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -54,11 +54,11 @@
       "projectUniqueName": "C:\\SEP3\\SEP3_T1\\InMemoryRepositories\\InMemoryRepositories.csproj",
       "projectName": "InMemoryRepositories",
       "projectPath": "C:\\SEP3\\SEP3_T1\\InMemoryRepositories\\InMemoryRepositories.csproj",
-      "packagesPath": "C:\\Users\\victo\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\Dansk\\.nuget\\packages\\",
       "outputPath": "C:\\SEP3\\SEP3_T1\\InMemoryRepositories\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\victo\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Dansk\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -110,7 +110,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\victo\\.dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Users\\Dansk\\.dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

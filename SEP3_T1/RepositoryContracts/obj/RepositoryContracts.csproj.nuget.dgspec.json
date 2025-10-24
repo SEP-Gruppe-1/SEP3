@@ -10,11 +10,11 @@
         "projectUniqueName": "C:\\SEP3\\SEP3_T1\\Entities\\Entities.csproj",
         "projectName": "Entities",
         "projectPath": "C:\\SEP3\\SEP3_T1\\Entities\\Entities.csproj",
-        "packagesPath": "C:\\Users\\victo\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\Dansk\\.nuget\\packages\\",
         "outputPath": "C:\\SEP3\\SEP3_T1\\Entities\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\victo\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Dansk\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -59,7 +59,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\victo\\.dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\Dansk\\.dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
@@ -69,11 +69,11 @@
         "projectUniqueName": "C:\\SEP3\\SEP3_T1\\RepositoryContracts\\RepositoryContracts.csproj",
         "projectName": "RepositoryContracts",
         "projectPath": "C:\\SEP3\\SEP3_T1\\RepositoryContracts\\RepositoryContracts.csproj",
-        "packagesPath": "C:\\Users\\victo\\.nuget\\packages\\",
+        "packagesPath": "C:\\Users\\Dansk\\.nuget\\packages\\",
         "outputPath": "C:\\SEP3\\SEP3_T1\\RepositoryContracts\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\victo\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Dansk\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -122,7 +122,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\victo\\.dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\Dansk\\.dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
