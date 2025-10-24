@@ -16,7 +16,7 @@ public class CinemaServer
 
 private void run() throws Exception
   {
-    CustomerDAO animalDAO = CustomerDAOImpl.getInstance();
+    customerDAO = CustomerDAOImpl.getInstance();
 
     Server server = ServerBuilder.forPort(9090)
         .addService(new CinemaServiceImpl(customerDAO)).build();
