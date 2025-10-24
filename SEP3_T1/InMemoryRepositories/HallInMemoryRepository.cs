@@ -1,16 +1,12 @@
-﻿namespace BlazorApp1.Model;
+﻿
 
-public class Hall
+public class HallInMemoryRepository : IHallRepository
 {
-  public List<Seat> Seats { get; private set; } = new List<Seat>();
-    public List<Seat> BookedSeats { get; private set; } = new List<Seat>();
-    
-    public bool HasSelectedSeats => Seats.Any(s => s.IsSelected);
-    public int SelectedSeatsCount => Seats.Count(s => s.IsSelected);
-    public decimal TotalPrice => Seats.Where(s => s.IsSelected).Sum(s => s.Price);
-    public int TotalBookedSeats => BookedSeats.Count;
+    private List<Seat> Seats = new();
+    private List<Seat> BookedSeats = new();
+  
 
-    public void Initialize(int rows, int seatsPerRow)
+      public void Initialize(int rows, int seatsPerRow)
     {
         Seats.Clear();
         BookedSeats.Clear();
@@ -98,6 +94,5 @@ public class Hall
     {
         return Seats.FirstOrDefault(s => s.Row == row && s.Number == number);
     }
-
- 
+    
 }

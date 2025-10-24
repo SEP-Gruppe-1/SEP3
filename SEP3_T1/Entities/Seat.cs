@@ -1,4 +1,4 @@
-﻿namespace BlazorApp1.Model;
+﻿
 
 public class Seat
 {
