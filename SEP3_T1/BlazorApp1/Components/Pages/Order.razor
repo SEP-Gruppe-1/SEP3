@@ -1,4 +1,7 @@
 ﻿@page "/Order"
+@using Entities
+@using InMemoryRepositories
+@using RepositoryContract
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
 
@@ -43,7 +46,7 @@
 @if (hall.HasSelectedSeats)
 {
     <div class="selection-info">
-        <p>Du har valgt @hall.SelectedSeatsCount sæde(r): <b>@hall.GetSelectedSeatsDisplay()</b></p>
+        <p>Du har valgt @hall.SelectedSeatsCount sæde(r): <b>@repo.GetSelectedSeatsDisplay()</b></p>
         <p>Total pris: <b>@hall.TotalPrice kr</b></p>
         
         <div class="booking-actions">
@@ -68,7 +71,7 @@ else
             <h4>Bekræft bestilling</h4>
             <p>Er du sikker på at du vil bestille følgende sæder?</p>
             <ul>
-                @foreach (var seat in hall.GetSelectedSeats())
+                @foreach (var seat in repo.GetSelectedSeats())
                 {
                     <li>Sæde @seat.Row@seat.Number - @seat.Price kr</li>
                 }
@@ -94,13 +97,13 @@ else
 
 <div class="bookings-summary">
     <h4>Booking oversigt</h4>
-    <p>Bookede sæder: <b>@hall.GetBookedSeatsDisplay()</b></p>
+    <p>Bookede sæder: <b>@repo.GetBookedSeatsDisplay()</b></p>
     <p>Totalt bookede sæder: @hall.TotalBookedSeats</p>
     <p>Ledige sæder: @(hall.Seats.Count - hall.TotalBookedSeats)</p>
 </div>
 
 <div class="debug">
-    <p>Valgte sæder: @hall.GetSelectedSeatsDisplay()</p>
+    <p>Valgte sæder: @repo.GetSelectedSeatsDisplay()</p>
     <p>Antal valgte: @hall.SelectedSeatsCount</p>
     <p>Total pris: @hall.TotalPrice kr</p>
     @if (!string.IsNullOrEmpty(lastBookingData))
@@ -110,7 +113,8 @@ else
 </div>
 
 @code {
-    private HallInMemoryRepository hall = new HallInMemoryRepository();
+    private HallInMemoryRepository repo = new();
+    private Hall hall => repo.getHall();
     private bool showConfirmation = false;
     private string bookingResult = "";
     private string lastBookingData = "";
@@ -118,7 +122,7 @@ else
 
     protected override void OnInitialized()
     {
-        hall.Initialize(4, 5);
+        repo.Initialize(4, 5);
     }
 
     private string GetSeatClass(Seat seat)
@@ -132,12 +136,12 @@ else
 
     private void ToggleSeat(Seat seat)
     {
-        hall.ToggleSeatSelection(seat);
+        repo.ToggleSeatSelection(seat);
     }
 
     private void ClearSelection()
     {
-        hall.ClearSelection();
+        repo.ClearSelection();
         bookingResult = "";
     }
 
@@ -165,7 +169,7 @@ else
             // Opret booking objekt
             var booking = new Booking
             {
-                Seats = hall.GetSelectedSeats(),
+                Seats = repo.GetSelectedSeats(),
                 TotalPrice = hall.TotalPrice,
                 BookingTime = DateTime.Now,
                 BookingId = Guid.NewGuid().ToString().Substring(0, 8).ToUpper(),
@@ -173,11 +177,11 @@ else
             };
             
             // Book sæderne i hallen
-            hall.BookSelectedSeats();
+            repo.BookSelectedSeats();
             
             // Vis bekræftelse til brugeren
             bookingResult = $"Bestilling succes! Booking ID: {booking.BookingId}";
-            lastBookingData = $"Sæder: {hall.GetSelectedSeatsDisplay()} - {DateTime.Now:HH:mm:ss}";
+            lastBookingData = $"Sæder: {repo.GetSelectedSeatsDisplay()} - {DateTime.Now:HH:mm:ss}";
             
         
             

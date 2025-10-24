@@ -1,6 +1,7 @@
 ﻿
 
-namespace entities;
+namespace Entities;
+
 
 public class Hall
 {

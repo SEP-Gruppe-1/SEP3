@@ -1,4 +1,6 @@
-﻿
+﻿namespace Entities;
+
+
 
     public class Customer
     {

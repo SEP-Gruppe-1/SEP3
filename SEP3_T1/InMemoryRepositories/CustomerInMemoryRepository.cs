@@ -1,6 +1,7 @@
-﻿
+﻿using Entities;
+using RepositoryContract;
 
-namespace BlazorApp1.InMemoryRepositories;
+namespace InMemoryRepositories;
 
 public class CustomerInMemoryRepository : ICustomerRepository
 {

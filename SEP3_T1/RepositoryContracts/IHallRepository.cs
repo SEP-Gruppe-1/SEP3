@@ -1,4 +1,9 @@
-﻿
+﻿using Entities;
+
+namespace RepositoryContract;
+
+    
+
 
 public interface IHallRepository
 {
@@ -19,4 +24,6 @@ public interface IHallRepository
     public string GetBookedSeatsDisplay();
 
     public Seat GetSeat(char row, int number);
+
+    Hall getHall();
 }

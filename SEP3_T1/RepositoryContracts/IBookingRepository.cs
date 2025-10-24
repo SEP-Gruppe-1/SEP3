@@ -1,6 +1,8 @@
-﻿
+﻿using Entities;
 
-public class IBookingRepository
+namespace RepositoryContract;
+
+public interface IBookingRepository
 {
-    
+    string toString();
 }
