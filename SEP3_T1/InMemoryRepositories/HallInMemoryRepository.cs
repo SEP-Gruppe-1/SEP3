@@ -1,5 +1,8 @@
-﻿
+﻿using System.Collections.Generic;
+using System.Linq;
+using RepositoryContracts;
 
+namespace InMemoryRepositories;
 public class HallInMemoryRepository : IHallRepository
 {
     public List<Seat> Seats = new();

@@ -1,5 +1,9 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
+namespace Entities;
+    
 public class Booking
 {
     public string BookingId { get; set; } = "";

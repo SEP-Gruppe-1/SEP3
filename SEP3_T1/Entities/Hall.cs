@@ -1,6 +1,9 @@
 ﻿
 
-namespace entities;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Entities;
 
 public class Hall
 {
