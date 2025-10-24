@@ -1,14 +1,17 @@
+using gRPCRepositories;
+
 namespace gRPCRepositories;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
-        var app = builder.Build();
+        var client = new CinemaServiceClient("http://localhost:9090");
 
-        app.MapGet("/", () => "Hello World!");
-
-        app.Run();
+        var customers = await client.GetCustomersAsync();
+        foreach (var customer in customers)
+        {
+            Console.WriteLine($"Customer: {customer.Name}");
+        }
     }
 }
