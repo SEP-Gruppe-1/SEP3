@@ -5,10 +5,7 @@ namespace InMemoryRepositories;
 
 public class CustomerInMemoryRepository : ICustomerRepository
 {
-    private List<Customer> customers { get; } = new();
-    private Customer Customer { get; } = new Customer();
-    
-
+    private readonly List<Customer> customers = new();
     public Task<Customer> AddAsync(Customer customer)
     {
         customer.Phone = customers.Any()
@@ -44,12 +41,7 @@ public class CustomerInMemoryRepository : ICustomerRepository
             throw new InvalidOperationException($"Customer with phone nr: {Phone} not found.");
         return Task.FromResult(customer);
     }
-
-    public Customer getCustomer()
-    {
-        return Customer;
-    }
-
+    
     public IQueryable<Customer> GetAll()
     {
         return customers.AsQueryable();

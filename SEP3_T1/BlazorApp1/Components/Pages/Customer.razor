@@ -1,26 +1,51 @@
 ﻿@page "/Customer"
 @using Entities
-@using global::InMemoryRepositories
-@using InMemoryRepositories
 @using RepositoryContracts
+@inject ICustomerRepository CustomerRepository
 @rendermode InteractiveServer
 
 <PageTitle>Customer List</PageTitle>
 
 <h3>Customer List</h3>
 
-<ul>
-    @foreach (var customer in customers)
-    {
-        <li>Customer.Name</li>
-    }
-</ul>
-
+@if (customers == null)
+{
+    <p>Loading...</p>
+}
+else if (!customers.Any())
+{
+    <p>No customers found.</p>
+}
+else
+{
+    <ul>
+        @foreach (var customer in customers)
+        {
+            //<li>@Entities.Customer.getName - Phone: @Entities.Customer.Phone</li>
+            <li>@customer.Name</li>
+        }
+    </ul>
+}
 
 @code {
-    
-    private List<CustomerInMemoryRepository> RepoCustomer = new();
-    private Customer customer => RepoCustomer.getCustomer);
-   
+    private List<Entities.Customer>? customers;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCustomersAsync();
+        
+        customers.Add( new Entities.Customer { Name = "Test Customer", Phone = 12345678 } );
+        
+    }
+
+    private async Task LoadCustomersAsync()
+    {
+        // Since GetAll() returns IQueryable, we need to execute it
+        customers = CustomerRepository.GetAll().ToList();
+
+        // If you want to make it truly async, you could do:
+        // customers = await Task.Run(() => CustomerRepository.GetAll().ToList());
+
+        StateHasChanged();
+    }
 }
