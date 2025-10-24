@@ -2,9 +2,12 @@
 
 public class HallInMemoryRepository : IHallRepository
 {
-    private List<Seat> Seats = new();
-    private List<Seat> BookedSeats = new();
-  
+    public List<Seat> Seats = new();
+    public List<Seat> BookedSeats = new();
+    public bool HasSelectedSeats => Seats.Any(s => s.IsSelected);
+    public int SelectedSeatsCount => Seats.Count(s => s.IsSelected);
+    public decimal TotalPrice => Seats.Where(s => s.IsSelected).Sum(s => s.Price);
+    public int TotalBookedSeats => BookedSeats.Count;
 
       public void Initialize(int rows, int seatsPerRow)
     {
