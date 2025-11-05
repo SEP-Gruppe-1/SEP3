@@ -1,4 +1,6 @@
-﻿
+﻿using System.Collections.Generic;
+
+namespace RepositoryContracts;
 
 public interface IHallRepository
 {
