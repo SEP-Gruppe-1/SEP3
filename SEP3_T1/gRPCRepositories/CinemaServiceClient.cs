@@ -1,4 +1,6 @@
-﻿namespace gRPCRepositories;
+﻿using Entities;
+
+namespace gRPCRepositories;
 
 using Grpccinema;
 using Grpc.Net.Client;
@@ -13,10 +15,21 @@ public class CinemaServiceClient
         _client = new CinemaService.CinemaServiceClient(channel);
     }
 
-    public async Task<List<DTOCustomer>> GetCustomersAsync()
+    public async Task<List<Customer>> GetCustomersAsync()
     {
         var response = await _client.GetCustomersAsync(new GetCustomersRequest());
-        return response.Customers.ToList();
+        List<Customer> customers = new List<Customer>();
+        foreach (var dtoCustomer in response.Customers)
+        {
+            customers.Add(new Customer
+            {
+                Phone = dtoCustomer.Phone,
+                Name = dtoCustomer.Name,
+                // Email = dtoCustomer.Email
+            });
+        }
+
+        return await Task.FromResult(customers);
     }
 
     public async Task<DTOCustomer> GetCustomerByPhoneAsync(int phone)
