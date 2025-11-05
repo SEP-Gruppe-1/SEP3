@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using Entities;
 
-namespace RepositoryContracts;
+namespace RepositoryContract;
+
+    
+
 
 public interface IHallRepository
 {
@@ -21,4 +25,6 @@ public interface IHallRepository
     public string GetBookedSeatsDisplay();
 
     public Seat GetSeat(char row, int number);
+
+    Hall getHall();
 }

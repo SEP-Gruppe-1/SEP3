@@ -1,4 +1,7 @@
-﻿
+﻿namespace Entities;
+
+    
+
 
 public class Seat
 {
