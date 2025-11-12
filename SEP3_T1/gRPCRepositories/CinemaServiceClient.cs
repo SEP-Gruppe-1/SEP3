@@ -22,8 +22,8 @@ public class CinemaServiceClient
             customers.Add(new Customer
             {
                 Phone = dtoCustomer.Phone,
-                Name = dtoCustomer.Name
-                // Email = dtoCustomer.Email
+                Name = dtoCustomer.Name,
+                Email = dtoCustomer.Email
             });
 
         return await Task.FromResult(customers);

@@ -1,8 +1,9 @@
 ﻿using Entities;
+using RepositoryContracts;
 
 namespace gRPCRepositories;
 
-public class CustomerInDatabaseRepository
+public class CustomerInDatabaseRepository : ICustomerRepository
 {
     private readonly CinemaServiceClient client;
 
@@ -36,6 +37,11 @@ public class CustomerInDatabaseRepository
         customers.Remove(existingCustomer);
         customers.Add(customer);
         return Task.CompletedTask;
+    }
+
+    public Task DeleteAsync(int phone, string name, string email)
+    {
+        throw new NotImplementedException();
     }
 
     public Task DeleteAsync(int phone)

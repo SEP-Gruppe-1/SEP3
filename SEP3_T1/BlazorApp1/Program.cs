@@ -1,5 +1,6 @@
 using BlazorApp1.Components;
 using InMemoryRepositories;
+using gRPCRepositories;
 using RepositoryContracts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 // TILFØJ ALLE DINE SERVICES HER - FØR builder.Build()!
-builder.Services.AddScoped<ICustomerRepository, CustomerInMemoryRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerInDatabaseRepository>();
 // Eller hvis du har en rigtig implementering:
 // builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 

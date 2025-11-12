@@ -3,7 +3,7 @@ using RepositoryContracts;
 
 namespace InMemoryRepositories;
 
-public class CustomerInMemoryRepository : ICustomerRepository
+public class CustomerInMemoryRepository //: ICustomerRepository
 {
     private readonly List<Customer> customers = new()
     {
@@ -36,7 +36,7 @@ public class CustomerInMemoryRepository : ICustomerRepository
         return customers.AsQueryable();
     }
 
-    public Task DeleteAsync(int phone)
+    public Task DeleteAsync(int phone, string name, string email)
     {
         var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);
         if (customerToRemove == null)
