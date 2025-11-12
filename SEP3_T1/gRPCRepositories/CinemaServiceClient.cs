@@ -1,9 +1,8 @@
 ﻿using Entities;
+using Grpc.Net.Client;
+using Grpccinema;
 
 namespace gRPCRepositories;
-
-using Grpccinema;
-using Grpc.Net.Client;
 
 public class CinemaServiceClient
 {
@@ -18,16 +17,14 @@ public class CinemaServiceClient
     public async Task<List<Customer>> GetCustomersAsync()
     {
         var response = await _client.GetCustomersAsync(new GetCustomersRequest());
-        List<Customer> customers = new List<Customer>();
+        var customers = new List<Customer>();
         foreach (var dtoCustomer in response.Customers)
-        {
             customers.Add(new Customer
             {
                 Phone = dtoCustomer.Phone,
-                Name = dtoCustomer.Name,
+                Name = dtoCustomer.Name
                 // Email = dtoCustomer.Email
             });
-        }
 
         return await Task.FromResult(customers);
     }

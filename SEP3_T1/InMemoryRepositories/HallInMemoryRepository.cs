@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Entities;
+﻿using Entities;
 using RepositoryContract;
-
 
 namespace InMemoryRepositories;
 
@@ -15,19 +12,17 @@ public class HallInMemoryRepository : IHallRepository
         Hall.Seats.Clear();
         Hall.BookedSeats.Clear();
 
-        for (int rowIndex = 0; rowIndex < rows; rowIndex++)
+        for (var rowIndex = 0; rowIndex < rows; rowIndex++)
         {
-            char rowLetter = (char)('A' + rowIndex);
+            var rowLetter = (char)('A' + rowIndex);
 
-            for (int seatNumber = 1; seatNumber <= seatsPerRow; seatNumber++)
-            {
+            for (var seatNumber = 1; seatNumber <= seatsPerRow; seatNumber++)
                 Hall.Seats.Add(new Seat
                 {
                     Row = rowLetter,
                     Number = seatNumber,
                     Price = 100m
                 });
-            }
         }
     }
 
@@ -37,19 +32,13 @@ public class HallInMemoryRepository : IHallRepository
         if (!seat.IsBooked)
         {
             var targetSeat = Hall.Seats.FirstOrDefault(s => s.Row == seat.Row && s.Number == seat.Number);
-            if (targetSeat != null)
-            {
-                targetSeat.IsSelected = !targetSeat.IsSelected;
-            }
+            if (targetSeat != null) targetSeat.IsSelected = !targetSeat.IsSelected;
         }
     }
 
     public void ClearSelection()
     {
-        foreach (var seat in Hall.Seats)
-        {
-            seat.IsSelected = false;
-        }
+        foreach (var seat in Hall.Seats) seat.IsSelected = false;
     }
 
     public void BookSelectedSeats()
@@ -79,15 +68,6 @@ public class HallInMemoryRepository : IHallRepository
             .ToList();
     }
 
-    public string GetSelectedSeatsDisplay()
-    {
-        return string.Join(", ", Hall.Seats
-            .Where(s => s.IsSelected)
-            .OrderBy(s => s.Row)
-            .ThenBy(s => s.Number)
-            .Select(s => $"{s.Row}{s.Number}"));
-    }
-
     public string GetBookedSeatsDisplay()
     {
         return string.Join(", ", Hall.BookedSeats.OrderBy(s => s.Row)
@@ -103,5 +83,14 @@ public class HallInMemoryRepository : IHallRepository
     public Hall getHall()
     {
         return Hall;
+    }
+
+    public string GetSelectedSeatsDisplay()
+    {
+        return string.Join(", ", Hall.Seats
+            .Where(s => s.IsSelected)
+            .OrderBy(s => s.Row)
+            .ThenBy(s => s.Number)
+            .Select(s => $"{s.Row}{s.Number}"));
     }
 }

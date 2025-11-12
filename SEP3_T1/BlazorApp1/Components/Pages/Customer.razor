@@ -1,5 +1,4 @@
 ﻿@page "/Customer"
-@using Entities
 @using RepositoryContracts
 @inject ICustomerRepository CustomerRepository
 @rendermode InteractiveServer
@@ -33,9 +32,8 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadCustomersAsync();
-        
-        customers.Add( new Entities.Customer { Name = "Test Customer", Phone = 12345678 } );
-        
+
+        customers.Add(new Entities.Customer { Name = "Test Customer", Phone = 12345678 });
     }
 
     private async Task LoadCustomersAsync()
@@ -48,4 +46,5 @@ else
 
         StateHasChanged();
     }
+
 }

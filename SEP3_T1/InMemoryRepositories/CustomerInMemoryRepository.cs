@@ -5,12 +5,13 @@ namespace InMemoryRepositories;
 
 public class CustomerInMemoryRepository : ICustomerRepository
 {
-    private List<Customer> customers = new()
+    private readonly List<Customer> customers = new()
     {
         new Customer { Name = "John Doe", Phone = 12345678 },
         new Customer { Name = "Jane Smith", Phone = 87654322 },
         new Customer { Name = "Bob Johnson", Phone = 55512345 }
     };
+
     public Task<Customer> AddAsync(Customer customer)
     {
         customer.Phone = customers.Any()
@@ -25,14 +26,19 @@ public class CustomerInMemoryRepository : ICustomerRepository
         var existingCustomer = customers.SingleOrDefault(c => c.Phone == c.Phone);
         if (existingCustomer == null)
             throw new InvalidOperationException($"Customer with phone nr: {customer.Phone} not found.");
-        customers.Remove(existingCustomer); 
+        customers.Remove(existingCustomer);
         customers.Add(customer);
         return Task.CompletedTask;
     }
 
+    public IQueryable<Customer> GetAll()
+    {
+        return customers.AsQueryable();
+    }
+
     public Task DeleteAsync(int phone)
     {
-        var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);    
+        var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);
         if (customerToRemove == null)
             throw new InvalidOperationException($"Customer with phone nr: ,{phone} not found.");
         customers.Remove(customerToRemove);
@@ -45,10 +51,5 @@ public class CustomerInMemoryRepository : ICustomerRepository
         if (customer == null)
             throw new InvalidOperationException($"Customer with phone nr: {Phone} not found.");
         return Task.FromResult(customer);
-    }
-    
-    public IQueryable<Customer> GetAll()
-    {
-        return customers.AsQueryable();
     }
 }

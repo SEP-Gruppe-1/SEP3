@@ -1,8 +1,6 @@
-﻿using Entities;
-
-namespace RepositoryContracts;
+﻿namespace RepositoryContracts;
 
 public interface ISeatRepository
 {
-   public string ToString();
+    public string ToString();
 }

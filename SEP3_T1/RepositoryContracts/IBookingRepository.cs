@@ -1,6 +1,4 @@
-﻿using Entities;
-
-namespace RepositoryContract;
+﻿namespace RepositoryContract;
 
 public interface IBookingRepository
 {

@@ -12,5 +12,4 @@ public class SeatInMemoryRepository : ISeatRepository
     {
         return $"{Seats.Row}{Seats.Number} ({(Seats.IsBooked ? "Booket" : Seats.IsSelected ? "Valgt" : "Ledig")})";
     }
-    
 }

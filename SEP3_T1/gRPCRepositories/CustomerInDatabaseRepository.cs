@@ -1,11 +1,10 @@
 ﻿using Entities;
-using Grpccinema;
 
 namespace gRPCRepositories;
 
 public class CustomerInDatabaseRepository
 {
-    private CinemaServiceClient client;
+    private readonly CinemaServiceClient client;
 
     private List<Customer> customers;
 
@@ -19,7 +18,7 @@ public class CustomerInDatabaseRepository
     {
         customers = await client.GetCustomersAsync();
     }
-    
+
     public Task<Customer> AddAsync(Customer customer)
     {
         customer.Phone = customers.Any()
@@ -34,14 +33,14 @@ public class CustomerInDatabaseRepository
         var existingCustomer = customers.SingleOrDefault(c => c.Phone == c.Phone);
         if (existingCustomer == null)
             throw new InvalidOperationException($"Customer with phone nr: {customer.Phone} not found.");
-        customers.Remove(existingCustomer); 
+        customers.Remove(existingCustomer);
         customers.Add(customer);
         return Task.CompletedTask;
     }
 
     public Task DeleteAsync(int phone)
     {
-        var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);    
+        var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);
         if (customerToRemove == null)
             throw new InvalidOperationException($"Customer with phone nr: ,{phone} not found.");
         customers.Remove(customerToRemove);
@@ -55,7 +54,7 @@ public class CustomerInDatabaseRepository
             throw new InvalidOperationException($"Customer with phone nr: {Phone} not found.");
         return Task.FromResult(customer);
     }
-    
+
     public IQueryable<Customer> GetAll()
     {
         return customers.AsQueryable();
