@@ -10,6 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton(new CinemaServiceClient("http://localhost:9090"));
 builder.Services.AddScoped<ICustomerRepository, CustomerInDatabaseRepository>();
 
 

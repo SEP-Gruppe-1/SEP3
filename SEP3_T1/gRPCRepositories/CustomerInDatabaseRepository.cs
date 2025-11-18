@@ -9,9 +9,9 @@ public class CustomerInDatabaseRepository : ICustomerRepository
 
     private List<Customer> customers;
 
-    public CustomerInDatabaseRepository()
+    public CustomerInDatabaseRepository(CinemaServiceClient client)
     {
-        client = new CinemaServiceClient("http://localhost:9090");
+        this.client = client;
         customers = new List<Customer>();
     }
 

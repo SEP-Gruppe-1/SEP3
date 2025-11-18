@@ -1,6 +1,9 @@
 ﻿@page "/Customer"
+@using ApiContract
+@using BlazorApp1.Services
 @using RepositoryContracts
 @inject ICustomerRepository CustomerRepository
+@inject ICustomerService CustomerService
 @rendermode InteractiveServer
 
 <PageTitle>Customer List</PageTitle>
@@ -27,24 +30,11 @@ else
 }
 
 @code {
-    private List<Entities.Customer>? customers;
+    private List<CustomerDto>? customers;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadCustomersAsync();
-
-        customers.Add(new Entities.Customer { Name = "Test Customer", Phone = 12345678 });
-    }
-
-    private async Task LoadCustomersAsync()
-    {
-        // Since GetAll() returns IQueryable, we need to execute it
-        customers = CustomerRepository.GetAll().ToList();
-
-        // If you want to make it truly async, you could do:
-        // customers = await Task.Run(() => CustomerRepository.GetAll().ToList());
-
-        StateHasChanged();
+        customers = await CustomerService.GetCustomers();
     }
 
 }

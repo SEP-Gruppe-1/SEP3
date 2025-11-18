@@ -2,6 +2,7 @@
 using RepositoryContracts;
 using Entities;
 using ApiContract;
+using gRPCRepositories;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -12,6 +13,7 @@ public class CustomerController : ControllerBase
     public CustomerController(ICustomerRepository customerRepository)
     {
         this.customerRepository = customerRepository;
+       
     }
     
     [HttpGet("{phone:int}")]
@@ -28,24 +30,16 @@ public class CustomerController : ControllerBase
         }
     }
     
+   
     [HttpGet]
-    public ActionResult<IEnumerable<CustomerDto>> GetAll([FromQuery] string? name, [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 20)
+    public async Task<IActionResult> GetAllCustomers()
+    {
+        if (customerRepository is CustomerInDatabaseRepository repo)
         {
-            var query = customerRepository.GetAll();
-            
-            if(!string.IsNullOrWhiteSpace(name))
-                query = query.Where(c => c.Name.Contains(name));
-
-            var total = query.Count();
-            var items = query
-                .OrderBy(c => c.Name)
-                .Skip((page-1) * pageSize)
-                .Take(pageSize)
-                .Select(c => new CustomerDto(c.Name, c.Phone, c.Email))
-                .ToList();
-            
-            Response.Headers.Add("X-Total-Count", total.ToString());
-            return Ok(items);
+            await repo.InitializeAsync();
         }
+
+        var customers = customerRepository.GetAll().ToList();
+        return Ok(customers);
+    }
 }
