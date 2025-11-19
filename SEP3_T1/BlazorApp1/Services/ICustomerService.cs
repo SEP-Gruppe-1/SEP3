@@ -6,4 +6,6 @@ public interface ICustomerService
 {
       Task<List<CustomerDto>> GetCustomers();
       Task<CustomerDto?> GetByPhoneAsync();
+      
+      Task SaveCustomerAsync(CustomerCreateDto customer);
 }

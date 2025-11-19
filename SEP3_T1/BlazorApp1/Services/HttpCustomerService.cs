@@ -32,4 +32,9 @@ public class HttpCustomerService : ICustomerService
     {
         throw new NotImplementedException();
     }
+
+    public Task SaveCustomerAsync(CustomerCreateDto customer)
+    {
+        throw new NotImplementedException();
+    }
 }
