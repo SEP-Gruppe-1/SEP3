@@ -3,6 +3,7 @@ using RepositoryContracts;
 using Entities;
 using ApiContract;
 using gRPCRepositories;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -41,5 +42,24 @@ public class CustomerController : ControllerBase
 
         var customers = customerRepository.GetAll().ToList();
         return Ok(customers);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<CustomerDto>> AddCustomer([FromBody] CustomerCreateDto request)
+    {
+        await customerRepository.VerifyCustomerDoesNotExist(request.Phone, request.Email);
+        Customer customer = new()
+        {
+            Phone = request.Phone,
+            Email = request.Email,
+            Password = request.Password
+        };
+        Customer addedCustomer = await customerRepository.AddAsync(customer);
+        CustomerDto dto = new(
+            addedCustomer.Name,
+            addedCustomer.Phone,
+            addedCustomer.Email
+        );
+        return Created($"/api/customer/{dto.Phone}", dto);
     }
 }

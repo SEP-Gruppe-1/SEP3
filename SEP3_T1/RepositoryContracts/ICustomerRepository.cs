@@ -9,4 +9,5 @@ public interface ICustomerRepository
     Task DeleteAsync(int phone, string name, string email);
     Task<Customer?> GetSingleAsync(int phone);
     IQueryable<Customer> GetAll();
+    Task VerifyCustomerDoesNotExist(int phone, string email);
 }

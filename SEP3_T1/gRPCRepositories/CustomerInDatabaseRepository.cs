@@ -1,6 +1,7 @@
 ﻿using Entities;
 using RepositoryContracts;
 
+
 namespace gRPCRepositories;
 
 public class CustomerInDatabaseRepository : ICustomerRepository
@@ -64,5 +65,21 @@ public class CustomerInDatabaseRepository : ICustomerRepository
     public IQueryable<Customer> GetAll()
     {
         return customers.AsQueryable();
+    }
+
+    public async Task VerifyCustomerDoesNotExist(int phone, string email)
+    {
+        List<Customer> customers = await GetCustomersAsync();
+        bool CustomerPhoneExists = customers.Any(c => c.Phone == phone);
+        if (CustomerPhoneExists)
+        {
+            throw new InvalidOperationException($"Phone number: {phone} already exists.");
+        }
+    }
+    
+    private async Task<List<Customer>> GetCustomersAsync()
+    {
+        List<Customer> customerAsJson = await client.GetCustomersAsync();
+        return customerAsJson;
     }
 }
