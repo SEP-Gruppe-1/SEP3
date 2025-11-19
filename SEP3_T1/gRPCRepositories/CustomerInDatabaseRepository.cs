@@ -76,7 +76,23 @@ public class CustomerInDatabaseRepository : ICustomerRepository
             throw new InvalidOperationException($"Phone number: {phone} already exists.");
         }
     }
-    
+
+    public async Task SaveCustomer(Customer customer)
+    {
+       
+        var savedCustomer = await client.SaveCustomerAsync(customer);
+
+      
+        var existing = customers.SingleOrDefault(c => c.Phone == savedCustomer.Phone);
+        if (existing != null)
+        {
+            customers.Remove(existing);
+        }
+
+        customers.Add(savedCustomer);
+    }
+
+
     private async Task<List<Customer>> GetCustomersAsync()
     {
         List<Customer> customerAsJson = await client.GetCustomersAsync();

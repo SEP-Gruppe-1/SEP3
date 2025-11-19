@@ -34,4 +34,29 @@ public class CinemaServiceClient
         var response = await _client.GetCustomerByPhoneAsync(new GetCustomerByPhoneRequest { Phone = phone });
         return response.Customer;
     }
+    
+    
+    public async Task<Customer> SaveCustomerAsync(Customer customer)
+    {
+        var dto = new DTOCustomer
+        {
+            Name = customer.Name,
+            Email = customer.Email,
+            Password = customer.Password,
+            Phone = customer.Phone
+        };
+
+        var request = new SaveCustomerRequest { Customer = dto };
+
+        var response = await _client.SaveCustomerAsync(request);
+
+        // map DTO back to your Customer entity
+        return new Customer
+        {
+            Name = response.Customer.Name,
+            Email = response.Customer.Email,
+            Password = response.Customer.Password,
+            Phone = response.Customer.Phone
+        };
+    }
 }

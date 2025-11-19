@@ -30,8 +30,17 @@ message GetCustomerByPhoneResponse
   DTOCustomer customer = 1;
 }
 
+message SaveCustomerRequest {
+  DTOCustomer customer = 1;
+}
+
+message SaveCustomerResponse {
+  DTOCustomer customer = 1;
+}
+
 service CinemaService
 {
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
   rpc GetCustomerByPhone (GetCustomerByPhoneRequest) returns (GetCustomerByPhoneResponse);
+  rpc SaveCustomer(SaveCustomerRequest) returns (SaveCustomerResponse);
 }

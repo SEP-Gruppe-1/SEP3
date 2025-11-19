@@ -14,9 +14,8 @@ public class CustomerController : ControllerBase
     public CustomerController(ICustomerRepository customerRepository)
     {
         this.customerRepository = customerRepository;
-       
     }
-    
+
     [HttpGet("{phone:int}")]
     public async Task<ActionResult<CustomerDto>> GetSingle(int phone)
     {
@@ -30,8 +29,8 @@ public class CustomerController : ControllerBase
             return NotFound();
         }
     }
-    
-   
+
+
     [HttpGet]
     public async Task<IActionResult> GetAllCustomers()
     {
@@ -52,13 +51,15 @@ public class CustomerController : ControllerBase
         {
             Phone = request.Phone,
             Email = request.Email,
-            Password = request.Password
+            Password = request.Password,
+            Name = request.Name
         };
-        Customer addedCustomer = await customerRepository.AddAsync(customer);
-        CustomerDto dto = new(
-            addedCustomer.Name,
-            addedCustomer.Phone,
-            addedCustomer.Email
+        await customerRepository.SaveCustomer(customer);
+        SaveCustomerDto dto = new(
+            request.Name,
+            request.Phone,
+            request.Email,
+            request.Password
         );
         return Created($"/api/customer/{dto.Phone}", dto);
     }
