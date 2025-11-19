@@ -2,17 +2,21 @@
 @using System.ComponentModel.DataAnnotations
 @using ApiContract
 @using BlazorApp1.Services
-@using Grpccinema
-@using RepositoryContracts 
 @inject ICustomerService CustomerService
 <PageTitle>Sign up</PageTitle>
 
 <div class="card mb-4">
     <div class="card-header">Sign up</div>
     <div class="card-body">
-        <EditForm Model="newCustomer" OnValidSubmit="SaveCustomerAsync">
+        <EditForm Model="newCustomer" OnValidSubmit="SaveCustomerAsync" FormName="SignUpForm">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
+            
+            <div class="mb-3">
+                <label class="form-label">Name:</label>
+                <InputText @bind-Value="newCustomer.Name" class="form-control"/>
+                <ValidationMessage For="() => newCustomer.Name"/>
+            </div>
 
             <div class="mb-3">
                 <label class="form-label">Phone number:</label>
@@ -20,8 +24,22 @@
                 <ValidationMessage For="() => newCustomer.Phone"/>
             </div>
             
-            <button class="btn btn-success" disabled="@isBusy">Create</button>
+            <div class="mb-3">
+                <label class="form-label">Email:</label>
+                <InputText @bind-Value="newCustomer.Email" class="form-control"/>
+                <ValidationMessage For="() => newCustomer.Email"/>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Password:</label>
+                <InputText @bind-Value="newCustomer.Password" class="form-control"/>
+                <ValidationMessage For="() => newCustomer.Password"/>
+            </div>
+            
+            <button class="btn btn-success" disabled="@isBusy" OnClick="@SaveCustomerAsync" FormName="SignUpForm">Sign Up</button>
         </EditForm>
+        
+        <label></label>
     </div>
 </div>
 
@@ -32,16 +50,16 @@
 
     private class CreateCustomerFromModel
     {
-        [Required (ErrorMessage = "Phone number is required")] [MinLength(8)] [MaxLength(8)]
+        
         public string Phone { get; set; }
         
-        [Required (ErrorMessage = "Name is required")] [MinLength(2)] [MaxLength(50)]
+        
         public string? Name { get; set; }
         
-        [Required (ErrorMessage = "Email is required")] [EmailAddress]
+        
         public string? Email { get; set; }
         
-        [Required (ErrorMessage = "Password is required")] [MinLength(8)] [MaxLength(50)]
+        
         public string? Password { get; set; }
     }
     
@@ -53,7 +71,7 @@
         {
             SaveCustomerDto customerDto = new SaveCustomerDto 
             (
-                Phone: int.Parse( newCustomer.Phone),
+                Phone: int.TryParse( newCustomer.Phone!),
                 Name: newCustomer.Name!,
                 Email: newCustomer.Email!,
                 Password: newCustomer.Password!
