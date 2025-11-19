@@ -33,8 +33,15 @@ public class HttpCustomerService : ICustomerService
         throw new NotImplementedException();
     }
 
-    public Task SaveCustomerAsync(CustomerCreateDto customer)
+    public Task SaveCustomerAsync(SaveCustomerDto customer)
     {
-        throw new NotImplementedException();
+        HttpResponseMessage response =  _httpClient.PostAsJsonAsync("api/Customer", customer).Result;
+        String responseContent =  response.Content.ReadAsStringAsync().Result;
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Error adding Customer: {responseContent}");
+        }
+        return Task.CompletedTask;
+        
     }
 }
