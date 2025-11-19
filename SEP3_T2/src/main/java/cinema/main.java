@@ -11,7 +11,7 @@ public class main
               CustomerDAO dao = CustomerDAOImpl.getInstance();
 
               // Create a new customer
-//              Customer newCustomer = new Customer("Rasmus Duus", "HelloMartin1717!", "342727@via.dk", "30439697");
+//             Customer newCustomer = new Customer("Rasmus Duus", "HelloMartin1717!", "342727@via.dk", "30439697");
 //              dao.createCustomer(newCustomer);
 //              System.out.println("Customer created.");
 
