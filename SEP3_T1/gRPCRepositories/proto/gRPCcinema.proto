@@ -38,9 +38,31 @@ message SaveCustomerResponse {
   DTOCustomer customer = 1;
 }
 
+message DTOHall{
+  int32 id = 1;
+  int32 number = 2;
+  int32 layout = 3;
+
+}
+
+message GetHallsRequest{}
+
+message GetHallsResponse{
+ repeated DTOHall halls = 1;
+}
+
+message GetHallByIdRequest{
+  int32 id = 1;
+}
+
+message GetHallByIdResponse{
+  DTOHall hall = 1;
+}
 service CinemaService
 {
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
   rpc GetCustomerByPhone (GetCustomerByPhoneRequest) returns (GetCustomerByPhoneResponse);
   rpc SaveCustomer(SaveCustomerRequest) returns (SaveCustomerResponse);
+  rpc GetHalls (GetHallsRequest) returns (GetHallsResponse);
+  rpc GetHallByID (GetHallByIdRequest) returns (GetHallByIdResponse);
 }

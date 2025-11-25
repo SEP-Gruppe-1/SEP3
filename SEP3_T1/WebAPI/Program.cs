@@ -1,4 +1,5 @@
 using gRPCRepositories;
+using RepositoryContract;
 using RepositoryContracts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton(new CinemaServiceClient("http://localhost:9090"));
 builder.Services.AddScoped<ICustomerRepository, CustomerInDatabaseRepository>();
+builder.Services.AddScoped<IHallRepository, HallInDatabaseRepository>();
 
 
 var app = builder.Build();

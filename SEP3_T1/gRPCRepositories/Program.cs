@@ -8,5 +8,8 @@ public class Program
 
         var customers = await client.GetCustomersAsync();
         foreach (var customer in customers) Console.WriteLine($"Customer: {customer.Name}");
+        
+        var halls = await client.GetHallsAsync();
+        foreach (var hall in halls) Console.WriteLine($"Hall: {hall.Id} with number {hall.Number}");
     }
 }

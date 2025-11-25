@@ -1,7 +1,9 @@
 package cinema.dto;
 
 import cinema.model.Customer;
+import cinema.model.Hall;
 import grpccinema.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,5 +54,52 @@ public class DTOFactory
     return GetCustomersResponse.newBuilder().addAllCustomers(dtoCustomers)
         .build();
   }
+
+  public static DTOHall createDTOHall(Hall hall){
+      return DTOHall.newBuilder().setId(hall.getId()).setLayout(hall.getLayout())
+              .setNumber(hall.getNumber()).build();
+  }
+  public static Hall createHall(DTOHall dtoHall)
+  {
+      return new Hall(dtoHall.getId(), dtoHall.getLayout(), dtoHall.getNumber());
+  }
+
+  public static Hall createHall(GetHallsResponse r){
+      return createHall(r.getHalls(0));
+  }
+
+  public static GetHallsRequest createGetHallRequest()
+  {
+    return GetHallsRequest.newBuilder().build();
+  }
+
+  public static GetHallsResponse createGetHallResponse(List<Hall> allHalls){
+      GetHallsResponse.Builder builder = GetHallsResponse.newBuilder();
+
+      for (Hall hall : allHalls) {
+          builder.addHalls(
+                  DTOHall.newBuilder()
+                          .setId(hall.getId())
+                          .setNumber(hall.getNumber())
+                          .setLayout(hall.getLayout())
+                          .build()
+          );
+      }
+
+      return builder.build();
+  }
+
+    public static GetHallByIdResponse createGetHallByIdResponse(Hall hall) {
+        return GetHallByIdResponse.newBuilder()
+                .setHall(
+                        DTOHall.newBuilder()
+                                .setId(hall.getId())
+                                .setNumber(hall.getNumber())
+                                .setLayout(hall.getLayout())
+                                .build()
+                )
+                .build();
+    }
+
 
 }

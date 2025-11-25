@@ -2,7 +2,10 @@ package cinema.server;
 
 import cinema.dto.DTOFactory;
 import cinema.model.Customer;
+import cinema.model.Hall;
 import cinema.persistence.CustomerDAO;
+import cinema.persistence.HallDAO;
+import cinema.persistence.HallDAOImpl;
 import grpccinema.*;
 import io.grpc.stub.StreamObserver;
 
@@ -11,10 +14,12 @@ import java.sql.SQLException;
 public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
 {
   private CustomerDAO customerDAO;
+  private HallDAO hallDAO;
 
-  public CinemaServiceImpl(CustomerDAO customerDAO)
+  public CinemaServiceImpl(CustomerDAO customerDAO, HallDAO hallDAO)
   {
     this.customerDAO = customerDAO;
+    this.hallDAO = hallDAO;
   }
 
   @Override public void getCustomers(GetCustomersRequest request,
@@ -26,6 +31,16 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
+
+@Override
+    public void getHalls(GetHallsRequest request, StreamObserver<GetHallsResponse> responseObserver)  {
+        GetHallsResponse response = DTOFactory.createGetHallResponse(hallDAO.getAllHalls());
+
+
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
 
   @Override public void getCustomerByPhone(GetCustomerByPhoneRequest request,
       StreamObserver<GetCustomerByPhoneResponse> responseObserver)
@@ -42,24 +57,16 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
   @Override public void saveCustomer(SaveCustomerRequest request,
       StreamObserver<SaveCustomerResponse> responseObserver)  {
       try {
-          // DTO fra request
+
           DTOCustomer dto = request.getCustomer();
-
-          // Konverter DTO → domain model
           Customer customer = DTOFactory.createCustomer(dto);
-
-          // Tjek om kunden allerede findes (via phone fx.)
           Customer existing = customerDAO.getCustomerByPhone(customer.getPhone());
 
           if (existing == null) {
-              // Ny kunde → create
               customerDAO.createCustomer(customer);
           } else {
-              // Eksisterende kunde → update
               customerDAO.updateCustomer(customer);
           }
-
-          // Konverter til DTO for response
           DTOCustomer savedDto = DTOFactory.createDTOCustomer(customer);
 
           SaveCustomerResponse response = SaveCustomerResponse.newBuilder()
@@ -78,4 +85,17 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
           );
       }
   }
+
+    @Override
+    public void getHallByID(GetHallByIdRequest request, StreamObserver<GetHallByIdResponse> responseObserver) {
+
+            Hall hall = hallDAO.getHallById(request.getId());
+            DTOHall dtoHall = DTOFactory.createDTOHall(hall);
+            GetHallByIdResponse response = GetHallByIdResponse.newBuilder()
+                    .setHall(dtoHall).build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+    }
 }

@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using ApiContract;
+using Entities;
 using Grpc.Net.Client;
 using Grpccinema;
 
@@ -34,8 +35,8 @@ public class CinemaServiceClient
         var response = await _client.GetCustomerByPhoneAsync(new GetCustomerByPhoneRequest { Phone = phone });
         return response.Customer;
     }
-    
-    
+
+
     public async Task<Customer> SaveCustomerAsync(Customer customer)
     {
         var dto = new DTOCustomer
@@ -57,6 +58,46 @@ public class CinemaServiceClient
             Email = response.Customer.Email,
             Password = response.Customer.Password,
             Phone = response.Customer.Phone
+        };
+    }
+
+    public async Task<List<Hall>> GetHallsAsync()
+    {
+        var response = await _client.GetHallsAsync(new GetHallsRequest());
+        Console.WriteLine("gRPC returned hall count: " + response.Halls.Count);
+
+        var halls = new List<Hall>();
+
+        foreach (var dto in response.Halls)
+        {
+            Console.WriteLine($"Hall from gRPC: {dto.Id}, {dto.Number}, {dto.Layout}");
+
+            halls.Add(new Hall
+            {
+                Id = dto.Id,
+                Number = dto.Number,
+                LayoutId = dto.Layout,
+                Capacity = 0,
+                Seats = new List<Seat>()
+            });
+        }
+
+        return await Task.FromResult(halls);
+        
+    }
+
+    public async Task<Hall> GetHallByIdAsync(int id)
+    {
+        var response = await _client.GetHallByIDAsync(new GetHallByIdRequest { Id = id });
+        var dto = response.Hall;
+
+        return new Hall
+        {
+            Id = dto.Id,
+            Number = dto.Number,
+            LayoutId = dto.Layout,
+            Capacity = 0,
+            Seats = new List<Seat>()
         };
     }
 }

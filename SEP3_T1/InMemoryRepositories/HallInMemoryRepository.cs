@@ -10,7 +10,7 @@ public class HallInMemoryRepository : IHallRepository
     public void Initialize(int rows, int seatsPerRow)
     {
         Hall.Seats.Clear();
-        Hall.BookedSeats.Clear();
+       // Hall.BookedSeats.Clear();
 
         for (var rowIndex = 0; rowIndex < rows; rowIndex++)
         {
@@ -43,13 +43,14 @@ public class HallInMemoryRepository : IHallRepository
 
     public void BookSelectedSeats()
     {
-        var selectedSeats = GetSelectedSeats();
-        foreach (var seat in selectedSeats)
-        {
-            seat.IsBooked = true;
-            seat.IsSelected = false; // Fjern selection efter booking
-            Hall.BookedSeats.Add(seat);
-        }
+        // var selectedSeats = GetSelectedSeats();
+        // foreach (var seat in selectedSeats)
+        // {
+        //     seat.IsBooked = true;
+        //     seat.IsSelected = false; // Fjern selection efter booking
+        //     Hall.BookedSeats.Add(seat);
+        // }
+        throw new NotImplementedException();
     }
 
     public List<Seat> GetSelectedSeats()
@@ -70,14 +71,25 @@ public class HallInMemoryRepository : IHallRepository
 
     public string GetBookedSeatsDisplay()
     {
-        return string.Join(", ", Hall.BookedSeats.OrderBy(s => s.Row)
-            .ThenBy(s => s.Number)
-            .Select(s => $"{s.Row}{s.Number}"));
+        // return string.Join(", ", Hall.BookedSeats.OrderBy(s => s.Row)
+        //     .ThenBy(s => s.Number)
+        //     .Select(s => $"{s.Row}{s.Number}"));
+        throw new NotImplementedException();
     }
 
     public Seat GetSeat(char row, int number)
     {
         return Hall.Seats.FirstOrDefault(s => s.Row == row && s.Number == number);
+    }
+
+    public Task<Hall> getHallbyid(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IQueryable<Hall> GetAll()
+    {
+        throw new NotImplementedException();
     }
 
     public Hall getHall()
