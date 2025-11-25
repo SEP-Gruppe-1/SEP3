@@ -1,7 +1,6 @@
 ﻿using Entities;
 using RepositoryContracts;
 
-
 namespace gRPCRepositories;
 
 public class CustomerInDatabaseRepository : ICustomerRepository
@@ -14,11 +13,6 @@ public class CustomerInDatabaseRepository : ICustomerRepository
     {
         this.client = client;
         customers = new List<Customer>();
-    }
-
-    public async Task InitializeAsync()
-    {
-        customers = await client.GetCustomersAsync();
     }
 
     public Task<Customer> AddAsync(Customer customer)
@@ -45,15 +39,6 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync(int phone)
-    {
-        var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);
-        if (customerToRemove == null)
-            throw new InvalidOperationException($"Customer with phone nr: ,{phone} not found.");
-        customers.Remove(customerToRemove);
-        return Task.CompletedTask;
-    }
-
     public Task<Customer?> GetSingleAsync(int Phone)
     {
         var customer = customers.SingleOrDefault(c => c.Phone == Phone);
@@ -69,33 +54,40 @@ public class CustomerInDatabaseRepository : ICustomerRepository
 
     public async Task VerifyCustomerDoesNotExist(int phone, string email)
     {
-        List<Customer> customers = await GetCustomersAsync();
-        bool CustomerPhoneExists = customers.Any(c => c.Phone == phone);
-        if (CustomerPhoneExists)
-        {
-            throw new InvalidOperationException($"Phone number: {phone} already exists.");
-        }
+        var customers = await GetCustomersAsync();
+        var CustomerPhoneExists = customers.Any(c => c.Phone == phone);
+        if (CustomerPhoneExists) throw new InvalidOperationException($"Phone number: {phone} already exists.");
     }
 
     public async Task SaveCustomer(Customer customer)
     {
-       
         var savedCustomer = await client.SaveCustomerAsync(customer);
 
-      
+
         var existing = customers.SingleOrDefault(c => c.Phone == savedCustomer.Phone);
-        if (existing != null)
-        {
-            customers.Remove(existing);
-        }
+        if (existing != null) customers.Remove(existing);
 
         customers.Add(savedCustomer);
+    }
+
+    public async Task InitializeAsync()
+    {
+        customers = await client.GetCustomersAsync();
+    }
+
+    public Task DeleteAsync(int phone)
+    {
+        var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);
+        if (customerToRemove == null)
+            throw new InvalidOperationException($"Customer with phone nr: ,{phone} not found.");
+        customers.Remove(customerToRemove);
+        return Task.CompletedTask;
     }
 
 
     private async Task<List<Customer>> GetCustomersAsync()
     {
-        List<Customer> customerAsJson = await client.GetCustomersAsync();
+        var customerAsJson = await client.GetCustomersAsync();
         return customerAsJson;
     }
 }
