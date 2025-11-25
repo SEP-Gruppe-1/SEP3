@@ -1,6 +1,5 @@
 using BlazorApp1.Components;
 using BlazorApp1.Services;
-using InMemoryRepositories;
 using gRPCRepositories;
 using RepositoryContracts;
 

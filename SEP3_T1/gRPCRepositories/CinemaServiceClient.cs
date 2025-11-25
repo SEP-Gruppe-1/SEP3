@@ -34,8 +34,8 @@ public class CinemaServiceClient
         var response = await _client.GetCustomerByPhoneAsync(new GetCustomerByPhoneRequest { Phone = phone });
         return response.Customer;
     }
-    
-    
+
+
     public async Task<Customer> SaveCustomerAsync(Customer customer)
     {
         var dto = new DTOCustomer

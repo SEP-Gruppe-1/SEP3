@@ -10,6 +10,6 @@ public interface ICustomerRepository
     Task<Customer?> GetSingleAsync(int phone);
     IQueryable<Customer> GetAll();
     Task VerifyCustomerDoesNotExist(int phone, string email);
-    
-    Task SaveCustomer(Customer customer );
+
+    Task SaveCustomer(Customer customer);
 }
