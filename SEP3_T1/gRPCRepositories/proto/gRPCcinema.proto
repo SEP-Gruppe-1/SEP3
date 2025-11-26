@@ -66,3 +66,14 @@ service CinemaService
   rpc GetHalls (GetHallsRequest) returns (GetHallsResponse);
   rpc GetHallByID (GetHallByIdRequest) returns (GetHallByIdResponse);
 }
+
+message DTOScreening{
+  int32 id = 1;
+  string movieTitle = 2;
+  int32 screeningTime = 3;
+  int32 hallId = 4;
+}
+
+message GetAllScreeningsRequest{
+  repeated DTOScreening screenings = 1;
+}
