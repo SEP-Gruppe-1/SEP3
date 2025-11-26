@@ -41,7 +41,9 @@ public class HallInDatabaseRepository : IHallRepository
         throw new NotImplementedException();
     }
 
-    public Task<Hall?> getHallbyid(int id)   {
+    public Task<Hall> getHallbyidAsync(int id)
+    {
+   
         
     var hall = halls.SingleOrDefault(h => h.Id == id);
     if (hall == null)

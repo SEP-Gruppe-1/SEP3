@@ -11,5 +11,8 @@ public class Program
         
         var halls = await client.GetHallsAsync();
         foreach (var hall in halls) Console.WriteLine($"Hall: {hall.Id} with number {hall.Number}");
+        
+        var halle = await client.GetHallByIdAsync(1);
+        Console.WriteLine($"Fetched hall by ID 1: {halle.Id} with number {halle.Number}");
     }
 }

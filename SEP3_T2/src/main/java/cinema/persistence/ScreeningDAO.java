@@ -1,0 +1,11 @@
+package cinema.persistence;
+
+import cinema.model.Screening;
+
+import java.util.List;
+
+public interface ScreeningDAO {
+
+    List<Screening> getAllScreenings();
+    Screening getScreeningById(int id);
+}

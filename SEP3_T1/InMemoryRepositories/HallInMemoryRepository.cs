@@ -82,10 +82,11 @@ public class HallInMemoryRepository : IHallRepository
         return Hall.Seats.FirstOrDefault(s => s.Row == row && s.Number == number);
     }
 
-    public Task<Hall> getHallbyid(int id)
+    public Task<Hall> getHallbyidAsync(int id)
     {
         throw new NotImplementedException();
     }
+
 
     public IQueryable<Hall> GetAll()
     {

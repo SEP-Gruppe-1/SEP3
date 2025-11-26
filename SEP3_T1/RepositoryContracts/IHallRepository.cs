@@ -29,6 +29,6 @@ public interface IHallRepository
 
     public Seat GetSeat(char row, int number);
 
-    Task<Hall> getHallbyid(int id);
+    Task<Hall> getHallbyidAsync(int id);
     IQueryable<Hall> GetAll();
 }

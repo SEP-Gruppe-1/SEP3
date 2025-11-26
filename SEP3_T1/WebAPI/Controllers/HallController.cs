@@ -3,6 +3,7 @@ using gRPCRepositories;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContract;
 
+
 namespace WebAPI.Controllers;
 
 [ApiController]
@@ -36,7 +37,7 @@ public class HallController : ControllerBase
     {
         try
         {
-            var hall = await hallRepository.getHallbyid(id);
+            var hall = await hallRepository.getHallbyidAsync(id);
             return Ok(new HallDTO(hall.Id, hall.Number, hall.LayoutId));
         }
         catch (InvalidOperationException)
