@@ -3,10 +3,8 @@ package cinema.server;
 import cinema.dto.DTOFactory;
 import cinema.model.Customer;
 import cinema.model.Hall;
-import cinema.persistence.CustomerDAO;
-import cinema.persistence.HallDAO;
-import cinema.persistence.HallDAOImpl;
-import cinema.persistence.ScreeningDAO;
+import cinema.model.Movie;
+import cinema.persistence.*;
 import grpccinema.*;
 import io.grpc.stub.StreamObserver;
 
@@ -17,12 +15,14 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
   private CustomerDAO customerDAO;
   private HallDAO hallDAO;
   private ScreeningDAO screeningDAO;
+  private MovieDAO movieDAO;
 
-  public CinemaServiceImpl(CustomerDAO customerDAO, HallDAO hallDAO, ScreeningDAO screeningDAO)
+  public CinemaServiceImpl(CustomerDAO customerDAO, HallDAO hallDAO, ScreeningDAO screeningDAO,  MovieDAO movieDAO)
   {
     this.customerDAO = customerDAO;
     this.hallDAO = hallDAO;
     this.screeningDAO = screeningDAO;
+    this.movieDAO = movieDAO;
 
   }
 
@@ -108,6 +108,18 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
         GetAllScreeningsResponse respones = DTOFactory.createGetAllScreeningsResponse(screeningDAO.getAllScreenings());
 
         responseObserver.onNext(respones);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getMovieByID(GetMovieByIdRequest request, StreamObserver<GetMovieByIdResponse> responseObserver) {
+
+      Movie movie = movieDAO.getMovieById(request.getId());
+        DTOMovie dtoMovie = DTOFactory.createDTOMovie(movie);
+        GetMovieByIdResponse response = GetMovieByIdResponse.newBuilder()
+                .setMovie(dtoMovie).build();
+
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 }

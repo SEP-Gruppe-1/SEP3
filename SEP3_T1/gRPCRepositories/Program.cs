@@ -14,5 +14,9 @@ public class Program
         
         var halle = await client.GetHallByIdAsync(1);
         Console.WriteLine($"Fetched hall by ID 1: {halle.Id} with number {halle.Number}");
+        
+        var screenings = await client.GetScreeningsAsync();
+        foreach (var screening in screenings) Console.WriteLine($"Screening: {screening.movie} at {screening.startTime}");
+        
     }
 }

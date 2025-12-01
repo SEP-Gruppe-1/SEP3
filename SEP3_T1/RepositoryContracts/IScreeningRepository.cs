@@ -1,6 +1,14 @@
-﻿namespace RepositoryContracts;
+﻿using System.Data;
+using Entities;
 
-public class IScreeningRepository
+namespace RepositoryContracts;
+
+public interface IScreeningRepository
 {
-    
+
+    Task<Screening> AddAsync(Screening screening);
+    Task updateAsync(Screening screening);
+    Task deleteAsync(int id);
+    Task<Screening?> getSingleAsync(int id);
+    IQueryable<Screening> getAll();
 }

@@ -43,8 +43,6 @@ public class HallInDatabaseRepository : IHallRepository
 
     public Task<Hall> getHallbyidAsync(int id)
     {
-   
-        
     var hall = halls.SingleOrDefault(h => h.Id == id);
     if (hall == null)
         throw new InvalidOperationException($"Hall with id nr: {id} not found.");

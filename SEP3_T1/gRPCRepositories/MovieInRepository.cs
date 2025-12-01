@@ -14,5 +14,29 @@ public class MovieInRepository : IMovieRepository
         this._client = _client;
         movies = new List<Movie>();
     }
-    
+
+    public Task<Movie> AddAsync(Movie movie)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateAsync(Movie movie)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Movie?> GetSingleAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IQueryable<Movie> GetAll()
+    {
+        throw new NotImplementedException();
+    }
 }

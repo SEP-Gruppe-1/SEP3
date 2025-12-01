@@ -14,7 +14,31 @@ public class ScreeningInRepository : IScreeningRepository
         this._client = _client;
         screenings = new List<Screening>();
     }
-    
+
+    public Task<Screening> AddAsync(Screening screening)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task updateAsync(Screening screening)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task deleteAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Screening?> getSingleAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IQueryable<Screening> getAll()
+    {
+        throw new NotImplementedException();
+    }
 }/*
     public async Task Initialize()
     {

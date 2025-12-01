@@ -125,6 +125,8 @@ public class DTOFactory {
                 dtoScreenings.add(DTOScreening.newBuilder().
                         setId(s.getScreeningId()).
                         setHallId(s.getHallId()).
+                        setStartTime(s.getStartTime().toString()).
+                        setDate(s.getDate().toString()).
                         setMovie(dtoMovie).
                         build());
             }

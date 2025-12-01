@@ -108,7 +108,8 @@ public class CinemaServiceClient
 
         foreach (var dtoScreening in response.Screenings)
         {
-            Movie movie = getMovieById(dtoScreening.Movie.Id).Result;
+            DTOMovie dtoMovie = await getMovieById(dtoScreening.Movie.Id);
+            Movie movie = ConvertToMovie(dtoMovie);
             var timeOnly = TimeOnly.Parse(dtoScreening.StartTime);
             var dateOnly = DateOnly.Parse(dtoScreening.Date);
             screenings.Add(new Screening
@@ -122,6 +123,18 @@ public class CinemaServiceClient
             });
         }
         return await Task.FromResult(screenings);
+    }
+    
+    private Movie ConvertToMovie(DTOMovie dto)
+    {
+        return new Movie
+        {
+            MovieId = dto.Id,
+            MovieTitle = dto.Title,
+            Genre = dto.Genre,
+            DurationMinutes = dto.Playtime,
+            ReleaseDate = dto.ReleaseDate
+        };
     }
 
   public async Task<List<Movie>> GetMoviesAsync()
@@ -141,17 +154,9 @@ public class CinemaServiceClient
         }
         return await Task.FromResult(movies);
     }
-  public async Task<Movie> getMovieById(int id)
+  public async Task<DTOMovie> getMovieById(int id)
     {
         var response = await _client.GetMovieByIDAsync(new GetMovieByIdRequest { Id = id });
-        var dtoMovie = response.Movie;
-        return new Movie
-        {
-            MovieId = dtoMovie.Id,
-            MovieTitle = dtoMovie.Title,
-            DurationMinutes = dtoMovie.Playtime,
-            Genre = dtoMovie.Genre,
-            ReleaseDate = dtoMovie.ReleaseDate
-        };
+        return response.Movie;
     }
 }
