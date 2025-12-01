@@ -6,6 +6,7 @@ import cinema.model.Hall;
 import cinema.persistence.CustomerDAO;
 import cinema.persistence.HallDAO;
 import cinema.persistence.HallDAOImpl;
+import cinema.persistence.ScreeningDAO;
 import grpccinema.*;
 import io.grpc.stub.StreamObserver;
 
@@ -15,11 +16,14 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
 {
   private CustomerDAO customerDAO;
   private HallDAO hallDAO;
+  private ScreeningDAO screeningDAO;
 
-  public CinemaServiceImpl(CustomerDAO customerDAO, HallDAO hallDAO)
+  public CinemaServiceImpl(CustomerDAO customerDAO, HallDAO hallDAO, ScreeningDAO screeningDAO)
   {
     this.customerDAO = customerDAO;
     this.hallDAO = hallDAO;
+    this.screeningDAO = screeningDAO;
+
   }
 
   @Override public void getCustomers(GetCustomersRequest request,
@@ -97,5 +101,13 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
+    }
+
+    @Override
+    public void getAllScreenings(GetAllScreeningsRequest request, StreamObserver<GetAllScreeningsResponse> responseObserver) {
+        GetAllScreeningsResponse respones = DTOFactory.createGetAllScreeningsResponse(screeningDAO.getAllScreenings());
+
+        responseObserver.onNext(respones);
+        responseObserver.onCompleted();
     }
 }

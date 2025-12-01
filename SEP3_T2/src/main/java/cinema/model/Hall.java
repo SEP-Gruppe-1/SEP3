@@ -1,7 +1,9 @@
 package cinema.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Hall {
     public int Id;
@@ -10,11 +12,12 @@ public class Hall {
     public int Capacity;
     public List<Seat> Seats;
 
+    private static final Map<Integer, Hall> instances = new HashMap<>();
 
-    public Hall(int id, int number, int layout) {
+    public Hall(int id) {
         this.Id = id;
-        this.Number = number;
-        this.layout = layout;
+        this.Number = id;
+        this.layout = id;
         Seats = new ArrayList<Seat>();
         switch (layout) {
             case 2: //case for layout id= 2 == BIG_HALL
@@ -29,6 +32,12 @@ public class Hall {
             default:
                 throw new IllegalArgumentException("Invalid layout value" + layout);
         }
+    }
+
+    public static Hall getInstance(int id) {
+        // Opretter kun en Hall hvis den ikke allerede findes
+        instances.putIfAbsent(id, new Hall(id));
+        return instances.get(id);
     }
 
     private void generateSeats(int rows, int seatsPerRow) {

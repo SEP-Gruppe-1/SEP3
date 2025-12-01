@@ -30,11 +30,11 @@ message GetCustomerByPhoneResponse
   DTOCustomer customer = 1;
 }
 
-message SaveCustomerRequest{
+message SaveCustomerRequest {
   DTOCustomer customer = 1;
 }
 
-message SaveCustomerResponse{
+message SaveCustomerResponse {
   DTOCustomer customer = 1;
 }
 
@@ -45,9 +45,7 @@ message DTOHall{
 
 }
 
-message GetHallsRequest{
-
-}
+message GetHallsRequest{}
 
 message GetHallsResponse{
   repeated DTOHall halls = 1;
@@ -61,11 +59,49 @@ message GetHallByIdResponse{
   DTOHall hall = 1;
 }
 
+message DTOMovie{
+  string title = 1;
+  int32 playtime = 2;
+  string genre = 3;
+  string releaseDate = 4;
+  int32 id = 5;
+}
+
+message GetMovieByIdRequest{
+  int32 id = 1;
+}
+message GetMovieByIdResponse{
+  DTOMovie movie = 1;
+}
+
+message GetAllMoviesRequest{}
+
+message GetAllMoviesResponse{
+  repeated DTOMovie movies = 1;
+}
+
+message DTOScreening{
+  int32 id = 1;
+  DTOMovie movie= 2;
+  string startTime = 3;
+  string date = 4;
+  int32 hallId = 5;
+  int32 availableSeats = 6;
+}
+
+message GetAllScreeningsRequest{}
+
+message GetAllScreeningsResponse{
+  repeated DTOScreening screenings = 1;
+}
 service CinemaService
 {
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
   rpc GetCustomerByPhone (GetCustomerByPhoneRequest) returns (GetCustomerByPhoneResponse);
-  rpc SaveCustomer (SaveCustomerRequest) returns (SaveCustomerResponse);
+  rpc SaveCustomer(SaveCustomerRequest) returns (SaveCustomerResponse);
   rpc GetHalls (GetHallsRequest) returns (GetHallsResponse);
   rpc GetHallByID (GetHallByIdRequest) returns (GetHallByIdResponse);
+  rpc GetAllScreenings (GetAllScreeningsRequest) returns (GetAllScreeningsResponse);
+  rpc GetMovieByID (GetMovieByIdRequest) returns (GetMovieByIdResponse);
+  rpc GetAllMovies (GetAllMoviesRequest) returns (GetAllMoviesResponse);
 }

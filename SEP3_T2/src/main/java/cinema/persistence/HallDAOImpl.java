@@ -37,12 +37,11 @@ public class HallDAOImpl implements HallDAO {
              PreparedStatement stmt = conn.prepareStatement(sql))
         {
             stmt.setInt(1, id);
-            try(ResultSet rs = stmt.executeQuery();) {
+            try(ResultSet rs = stmt.executeQuery()) {
 
                 if (rs.next())
                 {
-                    return new Hall(rs.getInt("hall_id"), rs.getInt("Hall_Number"),
-                            rs.getInt("Layout_id"));
+                    return new Hall(rs.getInt("hall_id"));
                 }
             }
 
@@ -66,8 +65,7 @@ public class HallDAOImpl implements HallDAO {
             while (rs.next())
             {
                 halls.add(
-                        new Hall(rs.getInt("hall_id"), rs.getInt("Hall_number"),
-                                rs.getInt("layout_id")));
+                        new Hall(rs.getInt("hall_id")));
             }
         }
         catch (SQLException e)
