@@ -1,4 +1,4 @@
 ﻿namespace ApiContract;
 
 
-    public record HallDTO(int Id, int Number, int LayoutId);
+    public record HallDto(int Id, int Number, int LayoutId);

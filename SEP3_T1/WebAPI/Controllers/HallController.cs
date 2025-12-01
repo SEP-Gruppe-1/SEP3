@@ -33,12 +33,12 @@ public class HallController : ControllerBase
     
     
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<HallDTO>> GetHallById(int id)
+    public async Task<ActionResult<HallDto>> GetHallById(int id)
     {
         try
         {
             var hall = await hallRepository.getHallbyidAsync(id);
-            return Ok(new HallDTO(hall.Id, hall.Number, hall.LayoutId));
+            return Ok(new HallDto(hall.Id, hall.Number, hall.LayoutId));
         }
         catch (InvalidOperationException)
         {

@@ -83,7 +83,7 @@ public class CinemaServiceClient
         }
 
         return await Task.FromResult(halls);
-        
+
     }
 
     public async Task<Hall> GetHallByIdAsync(int id)
@@ -98,6 +98,60 @@ public class CinemaServiceClient
             LayoutId = dto.Layout,
             Capacity = 0,
             Seats = new List<Seat>()
+        };
+    }
+
+    public async Task<List<Screening>> GetScreeningsAsync()
+    {
+        var response = await _client.GetAllScreeningsAsync(new GetAllScreeningsRequest());
+        var screenings = new List<Screening>();
+
+        foreach (var dtoScreening in response.Screenings)
+        {
+            Movie movie = getMovieById(dtoScreening.Movie.Id).Result;
+            var timeOnly = TimeOnly.Parse(dtoScreening.StartTime);
+            var dateOnly = DateOnly.Parse(dtoScreening.Date);
+            screenings.Add(new Screening
+            {
+                movie = movie,
+                screeningId = dtoScreening.Id,
+                hallId = dtoScreening.HallId,
+                startTime = timeOnly,
+                date = dateOnly,
+                availableSeats = dtoScreening.AvailableSeats
+            });
+        }
+        return await Task.FromResult(screenings);
+    }
+
+  public async Task<List<Movie>> GetMoviesAsync()
+    {
+        var response = await _client.GetAllMoviesAsync(new GetAllMoviesRequest());
+        var movies = new List<Movie>();
+        foreach (var dtoMovie in response.Movies)
+        {
+            movies.Add(new Movie
+            {
+                MovieId = dtoMovie.Id,
+                MovieTitle = dtoMovie.Title,
+                DurationMinutes = dtoMovie.Playtime,
+                Genre = dtoMovie.Genre,
+                ReleaseDate = dtoMovie.ReleaseDate
+            });
+        }
+        return await Task.FromResult(movies);
+    }
+  public async Task<Movie> getMovieById(int id)
+    {
+        var response = await _client.GetMovieByIDAsync(new GetMovieByIdRequest { Id = id });
+        var dtoMovie = response.Movie;
+        return new Movie
+        {
+            MovieId = dtoMovie.Id,
+            MovieTitle = dtoMovie.Title,
+            DurationMinutes = dtoMovie.Playtime,
+            Genre = dtoMovie.Genre,
+            ReleaseDate = dtoMovie.ReleaseDate
         };
     }
 }
