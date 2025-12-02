@@ -1,5 +1,4 @@
 ﻿using Entities;
-using Grpccinema;
 using RepositoryContracts;
 
 namespace gRPCRepositories;
@@ -13,11 +12,6 @@ public class MovieInRepository : IMovieRepository
     {
         this._client = _client;
         movies = new List<Movie>();
-    }
-    
-    public async Task InitializeAsync()
-    {
-        movies = await _client.GetMoviesAsync();
     }
 
     public Task<Movie> AddAsync(Movie movie)
@@ -35,16 +29,20 @@ public class MovieInRepository : IMovieRepository
         throw new NotImplementedException();
     }
 
-    public Task<Movie?> GetSingleAsync(int id)
+    public async Task<Movie?> GetSingleAsync(int id)
     {
-        var movie = movies.SingleOrDefault(m => m.MovieId == id);
-        if (movie == null)
-            throw new InvalidOperationException($"Movie with ID: {id} not found.");
-        return Task.FromResult(movie);
+        var all = await _client.GetMoviesAsync();
+        return all.SingleOrDefault(m => m.MovieId == id)
+               ?? throw new InvalidOperationException();
     }
 
     public IQueryable<Movie> GetAll()
     {
         return movies.AsQueryable();
+    }
+
+    public async Task InitializeAsync()
+    {
+        movies = await _client.GetMoviesAsync();
     }
 }

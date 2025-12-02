@@ -1,14 +1,13 @@
 ﻿using Entities;
-using Grpccinema;
 using RepositoryContracts;
 
 namespace gRPCRepositories;
 
 public class ScreeningInRepository : IScreeningRepository
 {
+    private readonly CinemaServiceClient _client;
     private List<Screening> screenings;
-    private CinemaServiceClient _client;
-    
+
     public ScreeningInRepository(CinemaServiceClient _client)
     {
         this._client = _client;
