@@ -11,14 +11,18 @@ public class Hall {
     public int layout;
     public int Capacity;
     public List<Seat> Seats;
+    public Layout layouts;
 
     private static final Map<Integer, Hall> instances = new HashMap<>();
 
-    public Hall(int id) {
+    private Hall(int id) {
         this.Id = id;
         this.Number = id;
         this.layout = id;
         Seats = new ArrayList<Seat>();
+        layouts = Layout.getInstance(layout);
+        int maxletter= layouts.getMaxLetter() -'A' +1;
+        Capacity = maxletter* layouts.getMaxSeatInt();
         switch (layout) {
             case 2: //case for layout id= 2 == BIG_HALL
                 generateSeats(8,12);

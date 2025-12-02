@@ -55,7 +55,7 @@ public class DTOFactory {
     }
 
     public static Hall createHall(DTOHall dtoHall) {
-        return new Hall(dtoHall.getId());
+        return  Hall.getInstance(dtoHall.getId());
     }
 
     public static Hall createHall(GetHallsResponse r) {
