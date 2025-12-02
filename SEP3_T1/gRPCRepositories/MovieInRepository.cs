@@ -6,13 +6,18 @@ namespace gRPCRepositories;
 
 public class MovieInRepository : IMovieRepository
 {
-    private readonly CinemaService.CinemaServiceClient _client;
+    private readonly CinemaServiceClient _client;
     private List<Movie> movies;
 
-    public MovieInRepository(CinemaService.CinemaServiceClient _client)
+    public MovieInRepository(CinemaServiceClient _client)
     {
         this._client = _client;
         movies = new List<Movie>();
+    }
+    
+    public async Task InitializeAsync()
+    {
+        movies = await _client.GetMoviesAsync();
     }
 
     public Task<Movie> AddAsync(Movie movie)
@@ -32,11 +37,14 @@ public class MovieInRepository : IMovieRepository
 
     public Task<Movie?> GetSingleAsync(int id)
     {
-        throw new NotImplementedException();
+        var movie = movies.SingleOrDefault(m => m.MovieId == id);
+        if (movie == null)
+            throw new InvalidOperationException($"Movie with ID: {id} not found.");
+        return Task.FromResult(movie);
     }
 
     public IQueryable<Movie> GetAll()
     {
-        throw new NotImplementedException();
+        return movies.AsQueryable();
     }
 }

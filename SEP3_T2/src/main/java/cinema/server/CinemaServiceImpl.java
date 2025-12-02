@@ -136,7 +136,7 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
 
     @Override
     public void getAllMovies(GetAllMoviesRequest request, StreamObserver<GetAllMoviesResponse> responseObserver) {
-        GetAllMoviesResponse response = DTOFactory.createGetAllMoviesResponse(movieDAO.getAllMovies);
+        GetAllMoviesResponse response = DTOFactory.createGetAllMoviesResponse(movieDAO.getAllMovies());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

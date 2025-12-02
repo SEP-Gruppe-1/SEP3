@@ -17,6 +17,12 @@ public class Program
         
         var screenings = await client.GetScreeningsAsync();
         foreach (var screening in screenings) Console.WriteLine($"Screening: {screening.movie} at {screening.startTime}");
+
+        var movies = await client.GetMoviesAsync();
+        foreach (var movie in movies) Console.WriteLine($"Movie title: {movie.MovieTitle} release date {movie.ReleaseDate}" );
         
+            
+        
+
     }
 }

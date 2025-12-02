@@ -74,8 +74,8 @@ public class MovieDAOImpl implements MovieDAO {
                     new Movie(
 
                             rs.getInt( "movie_id"),
-                            rs.getString( "movie_title"),
-                            rs.getInt("Duration_miniutes"),
+                            rs.getString( "title"),
+                            rs.getInt("Duration_minutes"),
                             rs.getString( "genre"),
                             rs.getDate("release_date").toLocalDate()
 
