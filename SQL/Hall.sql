@@ -16,6 +16,12 @@ CREATE TABLE IF NOT EXISTS Customer (
                                         email varchar(100) UNIQUE NOT NULL CHECK (email LIKE '%@%.%')
 );
 
+-- Layout til sæder
+CREATE TABLE IF NOT EXISTS seat_layout (
+                                           layout_id serial PRIMARY KEY,
+                                           name varchar(50) NOT NULL
+);
+
 -- Biografsal (hall)
 CREATE TABLE IF NOT EXISTS hall (
                                     hall_id serial PRIMARY KEY,
@@ -42,11 +48,7 @@ CREATE TABLE IF NOT EXISTS Screening (
                                          available_seats smallint CHECK (available_seats >= 0)
 );
 
--- Layout til sæder
-CREATE TABLE IF NOT EXISTS seat_layout (
-                                           layout_id serial PRIMARY KEY,
-                                           name varchar(50) NOT NULL
-);
+
 
 CREATE TABLE IF NOT EXISTS layout_seat (
                                            layout_seat_id serial PRIMARY KEY,
