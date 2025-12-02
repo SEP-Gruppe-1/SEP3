@@ -7,9 +7,9 @@ namespace gRPCRepositories;
 public class ScreeningInRepository : IScreeningRepository
 {
     private List<Screening> screenings;
-    private readonly CinemaService.CinemaServiceClient _client;
+    private CinemaServiceClient _client;
     
-    public ScreeningInRepository(CinemaService.CinemaServiceClient _client)
+    public ScreeningInRepository(CinemaServiceClient _client)
     {
         this._client = _client;
         screenings = new List<Screening>();
@@ -30,18 +30,15 @@ public class ScreeningInRepository : IScreeningRepository
         throw new NotImplementedException();
     }
 
-    public Task<Screening?> getSingleAsync(int id)
+    public async Task<Screening?> getSingleAsync(int id)
     {
-        throw new NotImplementedException();
+        var all = await _client.GetScreeningsAsync();
+        return all.SingleOrDefault(s => s.screeningId == id)
+               ?? throw new InvalidOperationException();
     }
 
-    public IQueryable<Screening> getAll()
+    public async Task<List<Screening>> getAll()
     {
-        throw new NotImplementedException();
+        return await _client.GetScreeningsAsync();
     }
-}/*
-    public async Task Initialize()
-    {
-       screenings = await _client.GetScreeningsAsync();
-    }
-}*/
+}

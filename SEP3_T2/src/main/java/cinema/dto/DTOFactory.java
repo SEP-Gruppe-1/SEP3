@@ -105,6 +105,15 @@ public class DTOFactory {
                 build();
     }
 
+    public static GetAllMoviesResponse createGetAllMoviesResponse(List<Movie> movies) {
+        ArrayList<DTOMovie> dtoMovies = new ArrayList<>();
+        for (Movie movie : movies) {
+            dtoMovies.add(createDTOMovie(movie));
+
+        }
+        return GetAllMoviesResponse.newBuilder().addAllMovies(dtoMovies).build();
+    }
+
 
     public static DTOScreening createDTOScreening(Screening screening) {
         DTOMovie dtoMovie = createDTOMovie(screening.getMovie());

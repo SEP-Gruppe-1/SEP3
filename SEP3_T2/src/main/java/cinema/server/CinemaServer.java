@@ -24,7 +24,7 @@ private void run() throws Exception
     screeningDAO = ScreeningDAOImpl.getInstance();
     movieDAO = MovieDAOImpl.getInstance();
 
-
+      System.out.println("DB screenings: " + screeningDAO.getAllScreenings().size());
     Server server = ServerBuilder.forPort(9090)
         .addService(new CinemaServiceImpl(customerDAO, hallDAO, screeningDAO, movieDAO)).build();
 

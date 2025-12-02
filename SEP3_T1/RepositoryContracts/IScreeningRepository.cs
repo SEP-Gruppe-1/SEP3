@@ -10,5 +10,5 @@ public interface IScreeningRepository
     Task updateAsync(Screening screening);
     Task deleteAsync(int id);
     Task<Screening?> getSingleAsync(int id);
-    IQueryable<Screening> getAll();
+    Task<List<Screening>> getAll();
 }

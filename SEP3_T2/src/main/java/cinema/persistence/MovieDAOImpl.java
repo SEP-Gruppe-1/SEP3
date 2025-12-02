@@ -1,8 +1,12 @@
 package cinema.persistence;
 
 import cinema.model.Movie;
+import cinema.model.Screening;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MovieDAOImpl implements MovieDAO {
 
@@ -54,5 +58,33 @@ public class MovieDAOImpl implements MovieDAO {
         }
         return null;
     }
+
+    @Override
+    public List<Movie> getAllMovies(){
+
+        List<Movie> movies = new ArrayList<>();
+    String sql = "SELECT * FROM Movie";
+        try (Connection conn = getConnection();
+    PreparedStatement stmt = conn.prepareStatement(sql);
+    ResultSet rs = stmt.executeQuery()) {
+        while (rs.next()) {
+
+
+            movies.add(
+                    new Movie(
+
+                            rs.getInt( "movie_id"),
+                            rs.getString( "movie_title"),
+                            rs.getInt("Duration_miniutes"),
+                            rs.getString( "genre"),
+                            rs.getDate("release_date").toLocalDate()
+
+                    ));
+        }
+    } catch (SQLException e) {
+        System.out.println(e.toString());
+    }
+        return movies;
+}
 }
 

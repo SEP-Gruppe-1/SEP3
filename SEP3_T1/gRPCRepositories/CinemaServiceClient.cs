@@ -61,7 +61,7 @@ public class CinemaServiceClient
         };
     }
 
-    public async Task<List<Hall>> GetHallsAsync()
+   public async Task<List<Hall>> GetHallsAsync()
     {
         var response = await _client.GetHallsAsync(new GetHallsRequest());
         Console.WriteLine("gRPC returned hall count: " + response.Halls.Count);
@@ -72,14 +72,10 @@ public class CinemaServiceClient
         {
             Console.WriteLine($"Hall from gRPC: {dto.Id}, {dto.Number}, {dto.Layout}");
 
-            halls.Add(new Hall
-            {
-                Id = dto.Id,
-                Number = dto.Number,
-                LayoutId = dto.Layout,
-                Capacity = 0,
-                Seats = new List<Seat>()
-            });
+            Hall hall = Hall.GetInstance(dto.Id);
+            hall.Number = dto.Number;
+            hall.LayoutId = dto.Layout;
+            hall.Id = dto.Id;
         }
 
         return await Task.FromResult(halls);
@@ -91,14 +87,14 @@ public class CinemaServiceClient
         var response = await _client.GetHallByIDAsync(new GetHallByIdRequest { Id = id });
         var dto = response.Hall;
 
-        return new Hall
-        {
-            Id = dto.Id,
-            Number = dto.Number,
-            LayoutId = dto.Layout,
-            Capacity = 0,
-            Seats = new List<Seat>()
-        };
+
+        Hall hall = Hall.GetInstance(id);
+
+        hall.Number= dto.Number;
+        hall.LayoutId= dto.Layout;
+        hall.Id = dto.Id;
+        
+        return hall;
     }
 
     public async Task<List<Screening>> GetScreeningsAsync()

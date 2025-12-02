@@ -4,6 +4,7 @@ import cinema.dto.DTOFactory;
 import cinema.model.Customer;
 import cinema.model.Hall;
 import cinema.model.Movie;
+import cinema.model.Screening;
 import cinema.persistence.*;
 import grpccinema.*;
 import io.grpc.stub.StreamObserver;
@@ -112,6 +113,16 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
     }
 
     @Override
+    public void getScreeningByID(GetScreeningByIdRequest request, StreamObserver<GetScreeningByIdResponse> responseObserver) {
+        Screening screening = screeningDAO.getScreeningById(request.getId());
+        DTOScreening dtoScreening = DTOFactory.createDTOScreening(screening);
+        GetScreeningByIdResponse response = GetScreeningByIdResponse.newBuilder()
+                .setScreening(dtoScreening).build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
     public void getMovieByID(GetMovieByIdRequest request, StreamObserver<GetMovieByIdResponse> responseObserver) {
 
       Movie movie = movieDAO.getMovieById(request.getId());
@@ -119,6 +130,13 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
         GetMovieByIdResponse response = GetMovieByIdResponse.newBuilder()
                 .setMovie(dtoMovie).build();
 
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getAllMovies(GetAllMoviesRequest request, StreamObserver<GetAllMoviesResponse> responseObserver) {
+        GetAllMoviesResponse response = DTOFactory.createGetAllMoviesResponse(movieDAO.getAllMovies);
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

@@ -94,6 +94,16 @@ message GetAllScreeningsRequest{}
 message GetAllScreeningsResponse{
   repeated DTOScreening screenings = 1;
 }
+
+message GetScreeningByIdRequest{
+  int32 id = 1;
+}
+
+message GetScreeningByIdResponse{
+  DTOScreening screening = 1;
+}
+
+
 service CinemaService
 {
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
@@ -104,4 +114,5 @@ service CinemaService
   rpc GetAllScreenings (GetAllScreeningsRequest) returns (GetAllScreeningsResponse);
   rpc GetMovieByID (GetMovieByIdRequest) returns (GetMovieByIdResponse);
   rpc GetAllMovies (GetAllMoviesRequest) returns (GetAllMoviesResponse);
+  rpc GetScreeningByID (GetScreeningByIdRequest) returns (GetScreeningByIdResponse);
 }
