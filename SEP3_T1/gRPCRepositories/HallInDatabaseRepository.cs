@@ -5,22 +5,16 @@ namespace gRPCRepositories;
 
 public class HallInDatabaseRepository : IHallRepository
 {
-    
     private readonly CinemaServiceClient client;
     private List<Hall> halls;
-    
+
     public HallInDatabaseRepository(CinemaServiceClient client)
     {
         this.client = client;
         halls = new List<Hall>();
-        
     }
-    public async Task Initialize()
-    {
-       halls = client.GetHallsAsync().Result;
-    }
-    
-    
+
+
     public List<Seat> GetSelectedSeats()
     {
         throw new NotImplementedException();
@@ -43,14 +37,19 @@ public class HallInDatabaseRepository : IHallRepository
 
     public Task<Hall> getHallbyidAsync(int id)
     {
-    var hall = halls.SingleOrDefault(h => h.Id == id);
-    if (hall == null)
-        throw new InvalidOperationException($"Hall with id nr: {id} not found.");
-    return Task.FromResult(hall);
+        var hall = halls.SingleOrDefault(h => h.Id == id);
+        if (hall == null)
+            throw new InvalidOperationException($"Hall with id nr: {id} not found.");
+        return Task.FromResult(hall);
     }
 
     public IQueryable<Hall> GetAll()
     {
         return halls.AsQueryable();
+    }
+
+    public async Task Initialize()
+    {
+        halls = client.GetHallsAsync().Result;
     }
 }

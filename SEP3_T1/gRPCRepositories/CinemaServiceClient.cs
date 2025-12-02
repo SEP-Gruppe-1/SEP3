@@ -1,5 +1,4 @@
-﻿using ApiContract;
-using Entities;
+﻿using Entities;
 using Grpc.Net.Client;
 using Grpccinema;
 
@@ -61,7 +60,7 @@ public class CinemaServiceClient
         };
     }
 
-   public async Task<List<Hall>> GetHallsAsync()
+    public async Task<List<Hall>> GetHallsAsync()
     {
         var response = await _client.GetHallsAsync(new GetHallsRequest());
         Console.WriteLine("gRPC returned hall count: " + response.Halls.Count);
@@ -72,14 +71,13 @@ public class CinemaServiceClient
         {
             Console.WriteLine($"Hall from gRPC: {dto.Id}, {dto.Number}, {dto.Layout}");
 
-            Hall hall = Hall.GetInstance(dto.Id);
+            var hall = Hall.GetInstance(dto.Id);
             hall.Number = dto.Number;
             hall.LayoutId = dto.Layout;
             hall.Id = dto.Id;
         }
 
         return await Task.FromResult(halls);
-
     }
 
     public async Task<Hall> GetHallByIdAsync(int id)
@@ -88,12 +86,12 @@ public class CinemaServiceClient
         var dto = response.Hall;
 
 
-        Hall hall = Hall.GetInstance(id);
+        var hall = Hall.GetInstance(id);
 
-        hall.Number= dto.Number;
-        hall.LayoutId= dto.Layout;
+        hall.Number = dto.Number;
+        hall.LayoutId = dto.Layout;
         hall.Id = dto.Id;
-        
+
         return hall;
     }
 
@@ -104,8 +102,8 @@ public class CinemaServiceClient
 
         foreach (var dtoScreening in response.Screenings)
         {
-            DTOMovie dtoMovie = await getMovieById(dtoScreening.Movie.Id);
-            Movie movie = ConvertToMovie(dtoMovie);
+            var dtoMovie = await getMovieById(dtoScreening.Movie.Id);
+            var movie = ConvertToMovie(dtoMovie);
             var timeOnly = TimeOnly.Parse(dtoScreening.StartTime);
             var dateOnly = DateOnly.Parse(dtoScreening.Date);
             screenings.Add(new Screening
@@ -118,9 +116,10 @@ public class CinemaServiceClient
                 availableSeats = dtoScreening.AvailableSeats
             });
         }
+
         return await Task.FromResult(screenings);
     }
-    
+
     private Movie ConvertToMovie(DTOMovie dto)
     {
         return new Movie
@@ -133,12 +132,11 @@ public class CinemaServiceClient
         };
     }
 
-  public async Task<List<Movie>> GetMoviesAsync()
+    public async Task<List<Movie>> GetMoviesAsync()
     {
         var response = await _client.GetAllMoviesAsync(new GetAllMoviesRequest());
         var movies = new List<Movie>();
         foreach (var dtoMovie in response.Movies)
-        {
             movies.Add(new Movie
             {
                 MovieId = dtoMovie.Id,
@@ -147,10 +145,10 @@ public class CinemaServiceClient
                 Genre = dtoMovie.Genre,
                 ReleaseDate = dtoMovie.ReleaseDate
             });
-        }
         return await Task.FromResult(movies);
     }
-  public async Task<DTOMovie> getMovieById(int id)
+
+    public async Task<DTOMovie> getMovieById(int id)
     {
         var response = await _client.GetMovieByIDAsync(new GetMovieByIdRequest { Id = id });
         return response.Movie;

@@ -39,12 +39,11 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         throw new NotImplementedException();
     }
 
-    public Task<Customer?> GetSingleAsync(int Phone)
+    public async Task<Customer?> GetSingleAsync(int Phone)
     {
-        var customer = customers.SingleOrDefault(c => c.Phone == Phone);
-        if (customer == null)
-            throw new InvalidOperationException($"Customer with phone nr: {Phone} not found.");
-        return Task.FromResult(customer);
+        var customers = await GetCustomersAsync();
+        return customers.SingleOrDefault(c => c.Phone == Phone) 
+               ?? throw new InvalidOperationException($"Customer with phone nr: {Phone} not found.");
     }
 
     public IQueryable<Customer> GetAll()

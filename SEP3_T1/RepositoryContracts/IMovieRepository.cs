@@ -9,6 +9,4 @@ public interface IMovieRepository
     Task DeleteAsync(int id);
     Task<Movie?> GetSingleAsync(int id);
     IQueryable<Movie> GetAll();
-    
-    
 }

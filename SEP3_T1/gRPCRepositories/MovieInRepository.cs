@@ -1,15 +1,14 @@
 ﻿using Entities;
-using Grpccinema;
 using RepositoryContracts;
 
 namespace gRPCRepositories;
 
 public class MovieInRepository : IMovieRepository
 {
-    private readonly CinemaService.CinemaServiceClient _client;
+    private readonly CinemaServiceClient _client;
     private List<Movie> movies;
 
-    public MovieInRepository(CinemaService.CinemaServiceClient _client)
+    public MovieInRepository(CinemaServiceClient _client)
     {
         this._client = _client;
         movies = new List<Movie>();
@@ -30,13 +29,20 @@ public class MovieInRepository : IMovieRepository
         throw new NotImplementedException();
     }
 
-    public Task<Movie?> GetSingleAsync(int id)
+    public async Task<Movie?> GetSingleAsync(int id)
     {
-        throw new NotImplementedException();
+        var all = await _client.GetMoviesAsync();
+        return all.SingleOrDefault(m => m.MovieId == id)
+               ?? throw new InvalidOperationException();
     }
 
     public IQueryable<Movie> GetAll()
     {
-        throw new NotImplementedException();
+        return movies.AsQueryable();
+    }
+
+    public async Task InitializeAsync()
+    {
+        movies = await _client.GetMoviesAsync();
     }
 }
