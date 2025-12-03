@@ -8,27 +8,30 @@ public class AuthService
     {
         http = new HttpClient
         {
-            BaseAddress = new Uri("http://localhost:5088/")
+            BaseAddress = new Uri("http://localhost:5099/")
         };
     }
 
-    public async Task<string> LoginAndReturnToken(int phone, string password)
+    public async Task<string> LoginAndReturnToken(int? phone, string password)
     {
+       
+        
         var response = await http.PostAsJsonAsync("api/Auth/login", new
         {
-            Phone = phone, Password = password
+            Phone = phone.Value, 
+            Password = password
         });
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync();
             throw new Exception($"Login failed: {errorContent}");
-    }
+        }
         var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
         return tokenResponse?.Token ?? "No Token Recieved";
 }
 
     private class TokenResponse
     {
-        public string Token { get; set; } = string.Empty;
+        public string Token { get; set; } 
     }
 }

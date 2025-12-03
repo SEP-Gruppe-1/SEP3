@@ -12,4 +12,5 @@ public interface ICustomerRepository
     Task VerifyCustomerDoesNotExist(int phone, string email);
 
     Task SaveCustomer(Customer customer);
+    Task<Customer?> GetByPhoneAndPasswordAsync(int phone, string password);
 }

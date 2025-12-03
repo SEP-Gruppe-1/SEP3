@@ -2,9 +2,11 @@
 using System.Security.Claims;
 using System.Text;
 using ApiContract;
+using gRPCRepositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using RepositoryContracts;
 
 namespace WebAPI.Controllers;
 
@@ -13,15 +15,37 @@ namespace WebAPI.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    [HttpGet("login")]
-    public IActionResult Login([FromBody] LoginDto login)
+    
+    private readonly ICustomerRepository ICustomerRepository;
+    
+    public AuthController(ICustomerRepository customerRepository)
     {
+        ICustomerRepository = customerRepository;
+    }
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto login)
+    {
+        if (ICustomerRepository is CustomerInDatabaseRepository repo)
+            await repo.InitializeAsync();
+
+        var customer = await ICustomerRepository
+            .GetByPhoneAndPasswordAsync(login.Phone, login.Password);
+
+        if (customer == null)
+            return Unauthorized("Invalid phone or password");
+
+        // JWT generation …
+    
+
+        
+
         var claims = new[]
         {
-            new Claim(ClaimTypes.Name, login.Phone.ToString())
+            new Claim(ClaimTypes.Name, customer.Name),
+            new Claim("phone", customer.Phone.ToString())
         };
         
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretLeyThatIsMinimum32CharactersLong"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretlyThatIsMinimum32CharactersLong"));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 

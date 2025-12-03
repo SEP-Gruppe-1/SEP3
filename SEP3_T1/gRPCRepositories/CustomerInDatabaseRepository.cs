@@ -24,9 +24,9 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         return Task.FromResult(customer);
     }
 
-    public Task UpdateAsync(Customer customer)
+    public Task UpdateAsync(Customer customer) // Tjek hele metoden, det må kunne laves smartere end at fjerne hele customer og tilføje igen
     {
-        var existingCustomer = customers.SingleOrDefault(c => c.Phone == c.Phone);
+        var existingCustomer = customers.SingleOrDefault(c => c.Phone == customer.Phone);
         if (existingCustomer == null)
             throw new InvalidOperationException($"Customer with phone nr: {customer.Phone} not found.");
         customers.Remove(existingCustomer);
@@ -89,5 +89,12 @@ public class CustomerInDatabaseRepository : ICustomerRepository
     {
         var customerAsJson = await client.GetCustomersAsync();
         return customerAsJson;
+    }
+
+    public Task<Customer?> GetByPhoneAndPasswordAsync(int phone, string password)
+    {
+        var customer = customers.SingleOrDefault(c => c.Phone == phone && c.Password == password);
+
+        return Task.FromResult(customer);
     }
 }

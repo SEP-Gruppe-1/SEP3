@@ -29,7 +29,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidIssuer = builder.Configuration["JwtIssuer"],
         ValidAudience = builder.Configuration["JwtAudience"],
         IssuerSigningKey =
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretLeyThatIsMinimum32CharactersLong"))
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretlyThatIsMinimum32CharactersLong"))
     };
 });
 

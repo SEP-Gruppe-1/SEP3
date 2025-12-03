@@ -1,9 +1,10 @@
 ﻿@page "/login"
-
+@rendermode InteractiveServer
 @using BlazorApp1.Services
 @inject AuthService AuthService
 @inject IJSRuntime JsRuntime
 @inject NavigationManager Nav
+
 
 <div class="container mt-5">
     <div class="card shadow p-4 mx-auto" style="max-width: 400px;">
@@ -23,7 +24,7 @@
 
         <div class="text-center mt-3">
             <p>Don't have an account? 
-                <a href="/create-user" class="link-primary">Create one here</a>
+                <a href="/Signup" class="link-primary">Create one here</a>
             </p>
         </div>
 
@@ -35,7 +36,7 @@
 </div>
 
 @code {
-    private int phone = null;
+    private int? phone;
     private string password = "";
     private string jwt = "";
     private string message = "";
@@ -46,6 +47,7 @@
         {
             jwt = await AuthService.LoginAndReturnToken(phone, password);
             await JsRuntime.InvokeVoidAsync("localStorage.setItem", "jwt", jwt);
+            Console.WriteLine(jwt);
             Nav.NavigateTo("/");
         }
         catch (Exception ex)

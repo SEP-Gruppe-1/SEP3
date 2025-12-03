@@ -24,7 +24,8 @@ public class CinemaServiceClient
             {
                 Phone = dtoCustomer.Phone,
                 Name = dtoCustomer.Name,
-                Email = dtoCustomer.Email
+                Email = dtoCustomer.Email,
+                Password = dtoCustomer.Password
             });
 
         return await Task.FromResult(customers);
