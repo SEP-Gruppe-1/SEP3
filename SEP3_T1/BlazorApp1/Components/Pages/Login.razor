@@ -1,0 +1,58 @@
+﻿@page "/login"
+
+@using BlazorApp1.Services
+@inject AuthService AuthService
+@inject IJSRuntime JsRuntime
+@inject NavigationManager Nav
+
+<div class="container mt-5">
+    <div class="card shadow p-4 mx-auto" style="max-width: 400px;">
+        <h3 class="text-center mb-3">Login</h3>
+
+        <div class="form-group mb-2">
+            <label>Phone</label>
+            <input @bind="phone" class="form-control" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Password</label>
+            <input @bind="password" type="password" class="form-control" />
+        </div>
+
+        <button class="btn btn-primary w-100" @onclick="LoginMethodAsync">Login</button>
+
+        <div class="text-center mt-3">
+            <p>Don't have an account? 
+                <a href="/create-user" class="link-primary">Create one here</a>
+            </p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert alert-info mt-3">@message</div>
+        }
+    </div>
+</div>
+
+@code {
+    private int phone = null;
+    private string password = "";
+    private string jwt = "";
+    private string message = "";
+    
+    private async Task LoginMethodAsync()
+    {
+        try
+        {
+            jwt = await AuthService.LoginAndReturnToken(phone, password);
+            await JsRuntime.InvokeVoidAsync("localStorage.setItem", "jwt", jwt);
+            Nav.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+    }
+    
+    
+}

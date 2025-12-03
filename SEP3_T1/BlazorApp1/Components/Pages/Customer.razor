@@ -2,39 +2,133 @@
 @using ApiContract
 @using BlazorApp1.Services
 @using RepositoryContracts
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
 @inject ICustomerRepository CustomerRepository
 @inject ICustomerService CustomerService
+@inject AuthenticationStateProvider AuthProvider
 @rendermode InteractiveServer
 
 <PageTitle>Customer List</PageTitle>
 
-<h3>Customer List</h3>
+<AuthorizeView>
+    <Authorized>
+        <h3>Customer List</h3>
 
-@if (customers == null)
-{
-    <p>Loading...</p>
-}
-else if (!customers.Any())
-{
-    <p>No customers found.</p>
-}
-else
-{
-    <ul>
-        @foreach (var customer in customers)
+        <button class="btn btn-outline-secondary mb-3" @onclick="SignOut">Sign out</button>
+
+        @if (customers == null)
         {
-            //<li>@Entities.Customer.getName - Phone: @Entities.Customer.Phone</li>
-            <li>Name: @customer.Name - Phone Number: @customer.Phone</li>
+            <p>Loading...</p>
         }
-    </ul>
-}
+        else if (!customers.Any())
+        {
+            <p>No customers found.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var customer in customers)
+                {
+                    <li>Name: @customer.Name - Phone Number: @customer.Phone</li>
+                }
+            </ul>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <h3>Log in with JWT</h3>
+        <p>Insert your JWT-token</p>
+
+        <div class="mb-3">
+            <label for="jwtBox" class="form-label">JWT</label>
+            <textarea id="jwtBox"
+                      class="form-control"
+                      @bind="jwt"
+                      rows="5"
+                      placeholder="eyJhbGciOi..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" @onclick="SignIn">Sign In</button>
+
+        @if (!string.IsNullOrWhiteSpace(error))
+        {
+            <div class="text-danger mt-2">@error</div>
+        }
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private List<CustomerDto>? customers;
+    private string jwt = string.Empty;
+    private string? error;
 
     protected override async Task OnInitializedAsync()
     {
-        customers = await CustomerService.GetCustomers();
+        await LoadCustomersIfAuthenticated();
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        // Called when authentication state changes and component re-renders;
+        // attempt to load customers if now authenticated.
+        await LoadCustomersIfAuthenticated();
+    }
+
+    private async Task LoadCustomersIfAuthenticated()
+    {
+        try
+        {
+            var authState = await AuthProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            if (user?.Identity?.IsAuthenticated == true)
+            {
+                if (customers == null)
+                {
+                    customers = await CustomerService.GetCustomers();
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                // clear when not authenticated
+                customers = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            error = $"Failed to load customers: {ex.Message}";
+        }
+    }
+
+    private async Task SignIn()
+    {
+        try
+        {
+            if (AuthProvider is TokenAuthenticationStateProvider provider)
+            {
+                await provider.SignIn(jwt);
+                jwt = string.Empty;
+                error = null;
+                await LoadCustomersIfAuthenticated();
+            }
+            else
+            {
+                error = "AuthenticationStateProvider not an instance of TokenAuthenticationStateProvider.";
+            }
+        }
+        catch (Exception ex)
+        {
+            error = $"Invalid token: {ex.Message}";
+        }
+    }
+
+    private async Task SignOut()
+    {
+        if (AuthProvider is TokenAuthenticationStateProvider provider)
+        {
+            await provider.SignOut();
+            customers = null;
+        }
+    }
 }
