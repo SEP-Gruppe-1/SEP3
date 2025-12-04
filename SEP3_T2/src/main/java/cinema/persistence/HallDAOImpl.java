@@ -41,7 +41,7 @@ public class HallDAOImpl implements HallDAO {
 
                 if (rs.next())
                 {
-                    return new Hall(rs.getInt("hall_id"));
+                    return  Hall.getInstance(rs.getInt("hall_id"));
                 }
             }
 
@@ -65,7 +65,7 @@ public class HallDAOImpl implements HallDAO {
             while (rs.next())
             {
                 halls.add(
-                        new Hall(rs.getInt("hall_id")));
+                         Hall.getInstance(rs.getInt("hall_id")));
             }
         }
         catch (SQLException e)

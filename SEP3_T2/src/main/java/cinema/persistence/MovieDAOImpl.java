@@ -40,7 +40,7 @@ public class MovieDAOImpl implements MovieDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()){
+                if (rs.next()) {
                     return new Movie(
                             rs.getInt("movie_id"),
                             rs.getString("title"),
@@ -51,40 +51,38 @@ public class MovieDAOImpl implements MovieDAO {
                     );
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             System.out.println(e.toString());
         }
         return null;
     }
 
     @Override
-    public List<Movie> getAllMovies(){
+    public List<Movie> getAllMovies() {
 
         List<Movie> movies = new ArrayList<>();
-    String sql = "SELECT * FROM Movie";
+        String sql = "SELECT * FROM Movie";
         try (Connection conn = getConnection();
-    PreparedStatement stmt = conn.prepareStatement(sql);
-    ResultSet rs = stmt.executeQuery()) {
-        while (rs.next()) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
 
 
-            movies.add(
-                    new Movie(
+                movies.add(
+                        new Movie(
 
-                            rs.getInt( "movie_id"),
-                            rs.getString( "title"),
-                            rs.getInt("Duration_minutes"),
-                            rs.getString( "genre"),
-                            rs.getDate("release_date").toLocalDate()
+                                rs.getInt("movie_id"),
+                                rs.getString("title"),
+                                rs.getInt("Duration_minutes"),
+                                rs.getString("genre"),
+                                rs.getDate("release_date").toLocalDate()
 
-                    ));
+                        ));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.toString());
         }
-    } catch (SQLException e) {
-        System.out.println(e.toString());
-    }
         return movies;
-}
+    }
 }
 

@@ -8,9 +8,9 @@ public class Booking
     public DateTime BookingTime { get; set; }
 
 
-    public override string ToString()
-    {
-        var seatIds = string.Join(", ", Seats.Select(s => s.Id));
-        return $"Booking {BookingId}: {seatIds} - {TotalPrice} kr - {BookingTime:yyyy-MM-dd HH:mm}";
-    }
+    // public override string ToString()
+    // {
+    //     var seatIds = string.Join(", ", Seats.Select(s => s.Id));
+    //     return $"Booking {BookingId}: {seatIds} - {TotalPrice} kr - {BookingTime:yyyy-MM-dd HH:mm}";
+    // }
 }

@@ -12,7 +12,10 @@ public class BookingInMemoryRepository : IBookingRepository
 
     public string toString()
     {
-        var seatIds = string.Join(", ", Seats.Select(s => s.Id));
-        return $"Booking {BookingId}: {seatIds} - {TotalPrice} kr - {BookingTime:yyyy-MM-dd HH:mm}";
+        return "";
     }
+    // {
+    //     var seatIds = string.Join(", ", Seats.Select(s => s.Id));
+    //     return $"Booking {BookingId}: {seatIds} - {TotalPrice} kr - {BookingTime:yyyy-MM-dd HH:mm}";
+    // }
 }

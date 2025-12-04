@@ -11,6 +11,7 @@ public class CinemaServer
   private HallDAO hallDAO;
   private ScreeningDAO screeningDAO;
   private MovieDAO movieDAO;
+  private LayoutDAO layoutDAO;
 
   public static void main(String[] args) throws Exception
   {
@@ -23,10 +24,15 @@ private void run() throws Exception
     hallDAO = HallDAOImpl.getInstance();
     screeningDAO = ScreeningDAOImpl.getInstance();
     movieDAO = MovieDAOImpl.getInstance();
+    layoutDAO = LayoutDAOImpl.getInstance();
 
       System.out.println("DB screenings: " + screeningDAO.getAllScreenings().size());
+      System.out.println("DB movies: " + movieDAO.getAllMovies().size());
+      System.out.println("DB Halls "  + hallDAO.getAllHalls().size());
+      System.out.println("i denne hall er det højste sæde "+ screeningDAO.getAllScreenings().get(0).getHall().getLayouts().getMaxLetter() + " " +screeningDAO.getAllScreenings().get(0).getHall().getLayouts().getMaxSeatInt()) ;
+
     Server server = ServerBuilder.forPort(9090)
-        .addService(new CinemaServiceImpl(customerDAO, hallDAO, screeningDAO, movieDAO)).build();
+        .addService(new CinemaServiceImpl(customerDAO, hallDAO, screeningDAO, movieDAO, layoutDAO)).build();
 
     server.start();
     server.awaitTermination();
