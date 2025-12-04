@@ -97,6 +97,8 @@ public class CinemaServiceClient
 
     public async Task<List<Screening>> GetScreeningsAsync()
     {
+        
+        await GetLayoutsAsync();
         var response = await _client.GetAllScreeningsAsync(new GetAllScreeningsRequest());
         var screenings = new List<Screening>();
 
@@ -104,12 +106,14 @@ public class CinemaServiceClient
         {
             var dtoMovie = await getMovieById(dtoScreening.Movie.Id);
             var movie = ConvertToMovie(dtoMovie);
+           
             var timeOnly = TimeOnly.Parse(dtoScreening.StartTime);
             var dateOnly = DateOnly.Parse(dtoScreening.Date);
             screenings.Add(new Screening
             {
                 movie = movie,
                 screeningId = dtoScreening.Id,
+                hall = ConvertToHall(dtoScreening.Hall),
                 hallId = dtoScreening.HallId,
                 startTime = timeOnly,
                 date = dateOnly,
@@ -130,6 +134,15 @@ public class CinemaServiceClient
             DurationMinutes = dto.Playtime,
             ReleaseDate = dto.ReleaseDate
         };
+    }
+    
+    private Hall ConvertToHall(DTOHall dto)
+    {
+        var hall = Hall.GetInstance(dto.Id);
+        hall.Number = dto.Number;
+        hall.LayoutId = dto.Layout;
+        hall.Id = dto.Id;
+        return hall;
     }
 
     public async Task<List<Movie>> GetMoviesAsync()
@@ -152,5 +165,23 @@ public class CinemaServiceClient
     {
         var response = await _client.GetMovieByIDAsync(new GetMovieByIdRequest { Id = id });
         return response.Movie;
+    }
+    
+    
+    public async Task<List<Layout>> GetLayoutsAsync()
+    {
+        var response = await _client.GetAllLayoutsAsync(new GetAllLayoutsRequest());
+        var layouts = new List<Layout>();
+        foreach (var dtoLayout in response.Layouts)
+        {
+         var layout = Layout.Create(dtoLayout.Id, dtoLayout.MaxLetter[0], dtoLayout.MaxSeatInt);
+         
+         
+            layout.maxLetter = dtoLayout.MaxLetter[0];
+            layout.maxSeatInt = dtoLayout.MaxSeatInt;
+            layout.id= dtoLayout.Id;
+            layouts.Add(layout);
+        }
+        return await Task.FromResult(layouts);
     }
 }

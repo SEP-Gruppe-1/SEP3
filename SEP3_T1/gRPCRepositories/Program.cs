@@ -17,16 +17,15 @@ public class Program
 
         var screenings = await client.GetScreeningsAsync();
         foreach (var screening in screenings)
-            Console.WriteLine($"Screening: {screening.movie} at {screening.startTime}");
+            Console.WriteLine($"Screening: {screening.movie} at {screening.startTime} in hall {screening.hall.Id}");
 
         var movies = await client.GetMoviesAsync();
         foreach (var movie in movies)
             Console.WriteLine($"Movie title: {movie.MovieTitle} release date {movie.ReleaseDate}");
         
         var movieById = await client.getMovieById(1);
-        Console.WriteLine($"Fetched movie by ID 1: {movieById.Id}");
+        Console.WriteLine($"Fetched movie by ID 1: {movieById.Id} hall ");
         
-        var customerByPhone = await client.GetCustomerByPhoneAsync(5550001);
-        Console.WriteLine($"Fetched customer by phone 5550001: {customerByPhone.Name}");
+      
     }
 }

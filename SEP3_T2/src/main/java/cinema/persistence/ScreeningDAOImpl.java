@@ -13,11 +13,13 @@ public class ScreeningDAOImpl implements ScreeningDAO {
 
     public static ScreeningDAOImpl instance;
     public static MovieDAO movieInstance;
+    public  static LayoutDAO layoutInstance;
 
 
     public ScreeningDAOImpl(MovieDAO movieDAO) throws SQLException {
         DriverManager.registerDriver(new org.postgresql.Driver());
         this.movieInstance = movieDAO;
+        this.layoutInstance = new LayoutDAOImpl();
     }
 
     public static Connection getConnection() throws SQLException {
@@ -43,6 +45,8 @@ public class ScreeningDAOImpl implements ScreeningDAO {
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
+                layoutInstance.getLayoutById(rs.getInt("hall_id"));
+
                 int movieId = rs.getInt("movie_id");
                 Movie movie = movieInstance.getMovieById(movieId);
 

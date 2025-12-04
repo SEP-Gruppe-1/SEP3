@@ -20,23 +20,12 @@ public class Hall {
         this.Number = id;
         this.layout = id;
         Seats = new ArrayList<Seat>();
-        layouts = Layout.getInstance(layout);
+        this.layouts = Layout.getInstance(id);
         int maxletter= layouts.getMaxLetter() -'A' +1;
         Capacity = maxletter* layouts.getMaxSeatInt();
-        switch (layout) {
-            case 2: //case for layout id= 2 == BIG_HALL
-                generateSeats(8,12);
-                Capacity = 96;
-                break;
-
-            case 1: // case for layout id=1 == SMALL = HALL
-                generateSeats(4,10);
-                Capacity = 40;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid layout value" + layout);
+        generateSeats(maxletter,layouts.getMaxSeatInt());
         }
-    }
+
 
     public static Hall getInstance(int id) {
         // Opretter kun en Hall hvis den ikke allerede findes
@@ -72,5 +61,10 @@ public class Hall {
 
     public List<Seat> getSeats() {
         return Seats;
+    }
+
+    @Override
+    public String toString() {
+        return " denne hall har nummer" + getNumber();
     }
 }

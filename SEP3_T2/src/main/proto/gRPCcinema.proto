@@ -3,6 +3,8 @@ option java_multiple_files = true;
 
 package grpccinema;
 
+
+//---------- Customer ----------\\
 message DTOCustomer
 {
   string name = 1;
@@ -37,7 +39,7 @@ message SaveCustomerRequest {
 message SaveCustomerResponse {
   DTOCustomer customer = 1;
 }
-
+//---------- Hall ----------\\
 message DTOHall{
   int32 id = 1;
   int32 number = 2;
@@ -58,6 +60,8 @@ message GetHallByIdRequest{
 message GetHallByIdResponse{
   DTOHall hall = 1;
 }
+
+//---------- Movie ----------\\
 
 message DTOMovie{
   string title = 1;
@@ -80,6 +84,8 @@ message GetAllMoviesResponse{
   repeated DTOMovie movies = 1;
 }
 
+
+//---------- Screening ----------\\
 message DTOScreening{
   int32 id = 1;
   DTOMovie movie= 2;
@@ -87,6 +93,7 @@ message DTOScreening{
   string date = 4;
   int32 hallId = 5;
   int32 availableSeats = 6;
+  DTOHall hall = 7;
 }
 
 message GetAllScreeningsRequest{}
@@ -104,6 +111,22 @@ message GetScreeningByIdResponse{
 }
 
 
+
+//---------- Layout ----------\\
+
+message DTOLayout{
+  string maxLetter = 1;
+  int32 maxSeatInt = 2;
+  int32 id = 3;
+}
+
+message GetAllLayoutsRequest{
+
+}
+message GetAllLayoutsResponse{
+  repeated DTOLayout Layouts = 1;
+}
+
 service CinemaService
 {
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
@@ -115,4 +138,5 @@ service CinemaService
   rpc GetMovieByID (GetMovieByIdRequest) returns (GetMovieByIdResponse);
   rpc GetAllMovies (GetAllMoviesRequest) returns (GetAllMoviesResponse);
   rpc GetScreeningByID (GetScreeningByIdRequest) returns (GetScreeningByIdResponse);
+  rpc GetAllLayouts (GetAllLayoutsRequest) returns (GetAllLayoutsResponse);
 }

@@ -3,40 +3,38 @@
 public class Hall
 {
     public static readonly Dictionary<int, Hall> instance = new();
-
+    public int Number { get; set; }
+    public int LayoutId { get; set; }
+    public int Capacity { get; set; }
+    public List<Seat> Seats { get; set; } = new();
+    public Layout Layout { get; set; }
+    public int Id { get; set; }
 
     private Hall(int id)
     {
         Id = id;
         Number = id;
-        LayoutId = id; // samme som Java: layout == id
+        
 
         Seats = new List<Seat>();
+     
 
-        switch (LayoutId)
-        {
-            case 2: // BIG_HALL
-                GenerateSeats(8, 12);
-                Capacity = 96;
-                break;
 
-            case 1: // SMALL_HALL
-                GenerateSeats(4, 10);
-                Capacity = 40;
-                break;
-
-            default:
-                throw new ArgumentException("Invalid layout value " + LayoutId);
-        }
     }
+    
+    public void InitializeLayoutAndSeats()
+    {
+        Layout = Layout.GetInstance(LayoutId);
 
-    public int Number { get; set; }
-    public int LayoutId { get; set; }
-    public int Capacity { get; set; }
-    public List<Seat> Seats { get; set; } = new();
-    public int Id { get; set; }
+        if (Layout == null)
+            throw new Exception($"Layout {LayoutId} not loaded before Hall {Id}!");
 
+        int rows = Layout.maxLetter - 'A' + 1;
+        int seatsPerRow = Layout.maxSeatInt;
 
+        Capacity = rows * seatsPerRow;
+        GenerateSeats(rows, seatsPerRow);
+    }
     private void GenerateSeats(int rows, int seatsPerRow)
     {
         for (var r = 0; r < rows; r++)

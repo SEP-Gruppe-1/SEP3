@@ -17,13 +17,15 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
   private HallDAO hallDAO;
   private ScreeningDAO screeningDAO;
   private MovieDAO movieDAO;
+  private LayoutDAO layoutDAO;
 
-  public CinemaServiceImpl(CustomerDAO customerDAO, HallDAO hallDAO, ScreeningDAO screeningDAO,  MovieDAO movieDAO)
+  public CinemaServiceImpl(CustomerDAO customerDAO, HallDAO hallDAO, ScreeningDAO screeningDAO,  MovieDAO movieDAO,  LayoutDAO layoutDAO)
   {
     this.customerDAO = customerDAO;
     this.hallDAO = hallDAO;
     this.screeningDAO = screeningDAO;
     this.movieDAO = movieDAO;
+    this.layoutDAO = layoutDAO;
 
   }
 
@@ -137,6 +139,14 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
     @Override
     public void getAllMovies(GetAllMoviesRequest request, StreamObserver<GetAllMoviesResponse> responseObserver) {
         GetAllMoviesResponse response = DTOFactory.createGetAllMoviesResponse(movieDAO.getAllMovies());
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+
+    @Override
+    public void getAllLayouts(GetAllLayoutsRequest request, StreamObserver<GetAllLayoutsResponse> responseObserver) {
+        GetAllLayoutsResponse response = DTOFactory.createGetAllLayoutsResponse(layoutDAO.getAllLayouts());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
