@@ -43,7 +43,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
-    .AddAdditionalAssemblies(typeof(Program).Assembly);
+    .AddInteractiveServerRenderMode();
+    
 
 app.Run();

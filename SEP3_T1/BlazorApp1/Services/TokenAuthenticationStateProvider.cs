@@ -16,10 +16,11 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
         var claims = ParseClaimsFromJwt(jwt);
         var identity = new ClaimsIdentity(claims, "jwt", nameType: "name", roleType: "role");
         var user = new ClaimsPrincipal(identity);
-
+        Console.WriteLine("SignIn called with: " + jwt);
         state = new AuthenticationState(user);
         NotifyAuthenticationStateChanged(Task.FromResult(state));
         return Task.CompletedTask;
+        
     }
     
     public Task SignOut()

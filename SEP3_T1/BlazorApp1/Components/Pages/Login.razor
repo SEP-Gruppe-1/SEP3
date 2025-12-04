@@ -1,5 +1,5 @@
 ﻿@page "/login"
-@rendermode InteractiveServer
+
 @using BlazorApp1.Services
 @inject AuthService AuthService
 @inject TokenAuthenticationStateProvider TokenProvider
@@ -47,7 +47,8 @@
     {
         try
         {
-            jwt = await AuthService.LoginAndReturnToken(phone, password);
+            Console.WriteLine("Jwt:" + jwt);
+            jwt = await AuthService.LoginAndReturnToken(phone!.Value, password);
             await TokenProvider.SignIn(jwt);
             await JsRuntime.InvokeVoidAsync("localStorage.setItem", "jwt", jwt);
 
