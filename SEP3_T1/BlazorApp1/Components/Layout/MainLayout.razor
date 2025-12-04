@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using BlazorApp1.Services
+@inherits LayoutComponentBase
+@inject TokenAuthenticationStateProvider TokenProvider
+@inject IJSRuntime JS
 
 <div class="page">
     <div class="sidebar">
@@ -6,6 +9,7 @@
     </div>
 
     <main>
+        
         <div class="top-row px-4">
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
         </div>
@@ -21,3 +25,4 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+

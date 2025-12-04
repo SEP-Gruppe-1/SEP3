@@ -2,8 +2,10 @@
 @rendermode InteractiveServer
 @using BlazorApp1.Services
 @inject AuthService AuthService
+@inject TokenAuthenticationStateProvider TokenProvider
 @inject IJSRuntime JsRuntime
 @inject NavigationManager Nav
+
 
 
 <div class="container mt-5">
@@ -40,21 +42,22 @@
     private string password = "";
     private string jwt = "";
     private string message = "";
-    
+
     private async Task LoginMethodAsync()
     {
         try
         {
             jwt = await AuthService.LoginAndReturnToken(phone, password);
+            await TokenProvider.SignIn(jwt);
             await JsRuntime.InvokeVoidAsync("localStorage.setItem", "jwt", jwt);
-            Console.WriteLine(jwt);
-            Nav.NavigateTo("/");
+
+            Nav.NavigateTo("/secure");
         }
         catch (Exception ex)
         {
             message = ex.Message;
         }
     }
-    
-    
+
+
 }

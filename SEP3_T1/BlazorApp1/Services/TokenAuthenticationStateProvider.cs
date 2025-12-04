@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 
 namespace BlazorApp1.Services;
 
@@ -34,6 +35,16 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
         var token = handler.ReadJwtToken(jwt);
         return token.Claims;
     }
+    
+    public async Task LoadJwtFromStorage(IJSRuntime js)
+    {
+        var saved = await js.InvokeAsync<string>("localStorage.getItem", "jwt");
+        if (!string.IsNullOrEmpty(saved))
+        {
+            await SignIn(saved);
+        }
+    }
+
 
   
 }

@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
             new Claim("phone", customer.Phone.ToString())
         };
         
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretlyThatIsMinimum32CharactersLong"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretThatIsMinimum32CharactersLong"));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 

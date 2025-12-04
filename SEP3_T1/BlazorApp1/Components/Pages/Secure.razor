@@ -1,0 +1,80 @@
+﻿@page "/secure"
+@rendermode InteractiveServer
+@using BlazorApp1.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthService AuthService
+@inject TokenAuthenticationStateProvider TokenProvider
+@inject IJSRuntime Js
+@inject NavigationManager Nav
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Welcome!</h3>
+        <p>You have access to the secure area.</p>
+
+        <p>
+            <button class="btn btn-outline-secondary" @onclick="SignOut">
+                Sign out
+            </button>
+        </p>
+    </Authorized>
+
+    <NotAuthorized>
+        <h3>Log in</h3>
+        <p>Use your phone and password to log in.</p>
+
+        <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input class="form-control" @bind="phone" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" type="password" @bind="password" />
+        </div>
+
+        <button class="btn btn-primary" @onclick="LoginAsync">Login</button>
+
+        @if (!string.IsNullOrWhiteSpace(error))
+        {
+            <div class="text-danger mt-2">@error</div>
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private int? phone;
+    private string password = "";
+    private string? error;
+
+    private async Task LoginAsync()
+    {
+        try
+        {
+            error = null;
+
+            // 1. Få token fra API
+            var jwt = await AuthService.LoginAndReturnToken(phone, password);
+
+            // 2. Fortæl vores AuthenticationStateProvider at brugeren er logget ind
+            await TokenProvider.SignIn(jwt);
+
+            // 3. Gem token i localStorage (hvis du vil bruge den senere)
+            await Js.InvokeVoidAsync("localStorage.setItem", "jwt", jwt);
+
+            // 4. Force re-render
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private async Task SignOut()
+    {
+        await Js.InvokeVoidAsync("localStorage.removeItem", "jwt");
+        await TokenProvider.SignOut();
+        StateHasChanged();
+    }
+}
