@@ -23,7 +23,7 @@ public class Hall {
         this.layouts = Layout.getInstance(id);
         int maxletter= layouts.getMaxLetter() -'A' +1;
         Capacity = maxletter* layouts.getMaxSeatInt();
-        generateSeats(maxletter,layouts.getMaxSeatInt());
+        
         }
 
 
@@ -33,14 +33,7 @@ public class Hall {
         return instances.get(id);
     }
 
-    private void generateSeats(int rows, int seatsPerRow) {
-        for (int r = 0; r < rows; r++) {
-            char rowChar = (char) ('A' + r);
-            for (int s = 1; s <= seatsPerRow; s++) {
-                Seats.add(new Seat(rowChar, s));
-            }
-        }
-    }
+
 
 
     public int getCapacity() {
@@ -53,6 +46,10 @@ public class Hall {
 
     public int getLayout() {
         return layout;
+    }
+
+    public Layout getLayouts() {
+        return layouts;
     }
 
     public int getNumber() {

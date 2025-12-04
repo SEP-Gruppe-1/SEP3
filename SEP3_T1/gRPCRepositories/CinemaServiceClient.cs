@@ -82,12 +82,16 @@ public class CinemaServiceClient
 
     public async Task<Hall> GetHallByIdAsync(int id)
     {
+       
+        
         var response = await _client.GetHallByIDAsync(new GetHallByIdRequest { Id = id });
         var dto = response.Hall;
 
-
+     
         var hall = Hall.GetInstance(id);
-
+        
+       
+        
         hall.Number = dto.Number;
         hall.LayoutId = dto.Layout;
         hall.Id = dto.Id;
@@ -174,7 +178,7 @@ public class CinemaServiceClient
         var layouts = new List<Layout>();
         foreach (var dtoLayout in response.Layouts)
         {
-         var layout = Layout.Create(dtoLayout.Id, dtoLayout.MaxLetter[0], dtoLayout.MaxSeatInt);
+            var layout = Layout.Create(dtoLayout.Id, dtoLayout.MaxLetter[0], dtoLayout.MaxSeatInt);
          
          
             layout.maxLetter = dtoLayout.MaxLetter[0];

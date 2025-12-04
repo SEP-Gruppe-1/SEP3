@@ -14,14 +14,14 @@ public class Hall
     {
         Id = id;
         Number = id;
-        
+
 
         Seats = new List<Seat>();
-     
 
 
+        InitializeLayoutAndSeats();
     }
-    
+
     public void InitializeLayoutAndSeats()
     {
         Layout = Layout.GetInstance(LayoutId);
@@ -35,21 +35,29 @@ public class Hall
         Capacity = rows * seatsPerRow;
         GenerateSeats(rows, seatsPerRow);
     }
+
     private void GenerateSeats(int rows, int seatsPerRow)
     {
+        int seatid = 1;
         for (var r = 0; r < rows; r++)
         {
             var rowChar = (char)('A' + r);
 
             for (var s = 1; s <= seatsPerRow; s++)
+            {
                 Seats.Add(new Seat
                 {
                     Row = rowChar,
                     Number = s,
                     IsBooked = false,
-                    Price = 100 // Hvis du vil have denne med
+                    Price = 100, // Hvis du vil have denne med
+                    id = seatid
                 });
+                seatid++;
+            }
+
         }
+        
     }
 
 

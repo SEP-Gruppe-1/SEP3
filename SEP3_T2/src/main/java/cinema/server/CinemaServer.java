@@ -29,7 +29,7 @@ private void run() throws Exception
       System.out.println("DB screenings: " + screeningDAO.getAllScreenings().size());
       System.out.println("DB movies: " + movieDAO.getAllMovies().size());
       System.out.println("DB Halls "  + hallDAO.getAllHalls().size());
-      System.out.println("i denne hall skere filmen"+ screeningDAO.getAllScreenings().get(0).getHall().toString());
+      System.out.println("i denne hall er det højste sæde "+ screeningDAO.getAllScreenings().get(0).getHall().getLayouts().getMaxLetter() + " " +screeningDAO.getAllScreenings().get(0).getHall().getLayouts().getMaxSeatInt()) ;
 
     Server server = ServerBuilder.forPort(9090)
         .addService(new CinemaServiceImpl(customerDAO, hallDAO, screeningDAO, movieDAO, layoutDAO)).build();

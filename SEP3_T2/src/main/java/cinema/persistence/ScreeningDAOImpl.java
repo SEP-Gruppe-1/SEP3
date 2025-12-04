@@ -16,9 +16,9 @@ public class ScreeningDAOImpl implements ScreeningDAO {
     public  static LayoutDAO layoutInstance;
 
 
-    public ScreeningDAOImpl(MovieDAO movieDAO) throws SQLException {
+    public ScreeningDAOImpl() throws SQLException {
         DriverManager.registerDriver(new org.postgresql.Driver());
-        this.movieInstance = movieDAO;
+        this.movieInstance = new MovieDAOImpl();
         this.layoutInstance = new LayoutDAOImpl();
     }
 
@@ -32,7 +32,7 @@ public class ScreeningDAOImpl implements ScreeningDAO {
     public static ScreeningDAOImpl getInstance() throws SQLException {
         if (instance == null) {
             MovieDAO movieInstance = MovieDAOImpl.getInstance();
-            instance = new ScreeningDAOImpl(movieInstance);
+            instance = new ScreeningDAOImpl();
         }
         return instance;
     }
