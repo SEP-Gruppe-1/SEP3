@@ -42,7 +42,7 @@ public class CustomerInDatabaseRepository : ICustomerRepository
     public async Task<Customer?> GetSingleAsync(int Phone)
     {
         var customers = await GetCustomersAsync();
-        return customers.SingleOrDefault(c => c.Phone == Phone) 
+        return customers.SingleOrDefault(c => c.Phone == Phone)
                ?? throw new InvalidOperationException($"Customer with phone nr: {Phone} not found.");
     }
 

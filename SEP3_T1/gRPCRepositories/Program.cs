@@ -22,10 +22,10 @@ public class Program
         var movies = await client.GetMoviesAsync();
         foreach (var movie in movies)
             Console.WriteLine($"Movie title: {movie.MovieTitle} release date {movie.ReleaseDate}");
-        
+
         var movieById = await client.getMovieById(1);
         Console.WriteLine($"Fetched movie by ID 1: {movieById.Id}");
-        
+
         var customerByPhone = await client.GetCustomerByPhoneAsync(5550001);
         Console.WriteLine($"Fetched customer by phone 5550001: {customerByPhone.Name}");
     }

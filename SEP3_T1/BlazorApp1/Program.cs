@@ -20,6 +20,7 @@ builder.Services.AddScoped<ICustomerRepository, CustomerInDatabaseRepository>();
 // Eller hvis du har en rigtig implementering:
 // builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddSingleton(new CinemaServiceClient("http://localhost:9090"));
+builder.Services.AddScoped<IMovieRepository, MovieInRepository>();
 
 // FØRST HER KALDER DU builder.Build()
 var app = builder.Build();
@@ -34,6 +35,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Tilføj denne linje hvis den mangler
 app.UseAntiforgery();
+
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()

@@ -7,4 +7,8 @@ public class Movie
     public int DurationMinutes { get; set; }
     public int MovieId { get; set; }
     public string ReleaseDate { get; set; }
+    
+    public string PosterPath { get; set; }
+    
+    public string? Description { get; set; }
 }
