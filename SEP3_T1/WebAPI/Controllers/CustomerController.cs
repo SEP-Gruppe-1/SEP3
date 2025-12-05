@@ -23,7 +23,7 @@ public class CustomerController : ControllerBase
         try
         {
             var customer = await customerRepository.GetSingleAsync(phone);
-            return Ok(new CustomerDto(customer.Name, customer.Phone, customer.Email));
+            return Ok(new CustomerDto(customer.Name, customer.Phone, customer.Email, customer.Role));
         }
         catch (InvalidOperationException)
         {
@@ -49,7 +49,8 @@ public class CustomerController : ControllerBase
             Phone = request.Phone,
             Email = request.Email,
             Password = request.Password,
-            Name = request.Name
+            Name = request.Name,
+            Role = request.Role
         };
         try
         {
@@ -79,7 +80,8 @@ public class CustomerController : ControllerBase
             request.Name,
             request.Phone,
             request.Email,
-            request.Password
+            request.Password,
+            request.Role
         );
         return Created($"/api/customer/{dto.Phone}", dto);
         

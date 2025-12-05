@@ -174,4 +174,8 @@ FROM b
          JOIN seat s ON s.hall_id = (SELECT hall_id FROM hall WHERE hall_number = 1)
 WHERE (s.row_letter, s.seat_number) IN ( ('A',1), ('A',2) );
 
+ALTER TABLE Customer
+    ADD COLUMN role VARCHAR(50) NOT NULL DEFAULT 'customer'
+        CHECK (role IN ('customer', 'employee', 'admin'));
+
 COMMIT;

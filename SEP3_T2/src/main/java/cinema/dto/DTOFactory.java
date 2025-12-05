@@ -20,7 +20,7 @@ public class DTOFactory
   public static Customer createCustomer(DTOCustomer dtoCustomer)
   {
     return new Customer(dtoCustomer.getName(), dtoCustomer.getPassword(),
-        dtoCustomer.getEmail(), dtoCustomer.getPhone());
+        dtoCustomer.getEmail(), dtoCustomer.getPhone(), dtoCustomer.getRole());
   }
 
   public static Customer createCustomer(GetCustomersResponse r)

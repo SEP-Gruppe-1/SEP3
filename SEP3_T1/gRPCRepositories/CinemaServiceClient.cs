@@ -25,7 +25,8 @@ public class CinemaServiceClient
                 Phone = dtoCustomer.Phone,
                 Name = dtoCustomer.Name,
                 Email = dtoCustomer.Email,
-                Password = dtoCustomer.Password
+                Password = dtoCustomer.Password,
+                Role = dtoCustomer.Role
             });
 
         return await Task.FromResult(customers);
@@ -45,7 +46,8 @@ public class CinemaServiceClient
             Name = customer.Name,
             Email = customer.Email,
             Password = customer.Password,
-            Phone = customer.Phone
+            Phone = customer.Phone,
+            Role = customer.Role
         };
 
         var request = new SaveCustomerRequest { Customer = dto };
@@ -58,7 +60,8 @@ public class CinemaServiceClient
             Name = response.Customer.Name,
             Email = response.Customer.Email,
             Password = response.Customer.Password,
-            Phone = response.Customer.Phone
+            Phone = response.Customer.Phone,
+            Role = response.Customer.Role
         };
     }
 

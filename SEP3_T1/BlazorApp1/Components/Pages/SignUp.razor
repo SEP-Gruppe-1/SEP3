@@ -95,7 +95,8 @@
                 Phone: int.Parse(newCustomer.Phone!),
                 Name: newCustomer.Name!,
                 Email: newCustomer.Email!,
-                Password: newCustomer.Password!
+                Password: newCustomer.Password!,
+                Role: "Customer"
             );
 
             await CustomerService.SaveCustomerAsync(customerDto);

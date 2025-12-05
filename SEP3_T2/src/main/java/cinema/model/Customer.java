@@ -5,14 +5,16 @@ public class Customer {
     private String password;
     private String email;
     private int phone;
+    private String role;
 
     public Customer() {}
 
-    public Customer(String name, String password, String email, int phone) {
+    public Customer(String name, String password, String email, int phone,String role) {
         this.name = name;
         this.password = password;
         this.email = email;
         this.phone = phone;
+        this.role = role;
     }
 
     public String getName() {
@@ -46,4 +48,10 @@ public class Customer {
     public void setPhone(int phone) {
         this.phone = phone;
     }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {}
 }

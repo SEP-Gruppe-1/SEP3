@@ -33,7 +33,7 @@ public class CustomerDAOImpl implements CustomerDAO
 
   @Override public Customer getCustomerByEmail(String email) throws SQLException
   {
-    String sql = "SELECT name, password, email, phone FROM Customer WHERE email = ?";
+    String sql = "SELECT name, password, email, phone, role FROM Customer WHERE email = ?";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql))
     {
@@ -43,7 +43,7 @@ public class CustomerDAOImpl implements CustomerDAO
         if (rs.next())
         {
           return new Customer(rs.getString("name"), rs.getString("password"),
-              rs.getString("email"), rs.getInt("phone"));
+              rs.getString("email"), rs.getInt("phone"), rs.getString("role"));
         }
       }
     }
@@ -52,7 +52,7 @@ public class CustomerDAOImpl implements CustomerDAO
 
   @Override public Customer getCustomerByPhone(int phone)
   {
-    String sql = "SELECT name, password, email, phone FROM Customer WHERE phone = ?";
+    String sql = "SELECT name, password, email, role, phone FROM Customer WHERE phone = ?";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql))
     {
@@ -62,7 +62,7 @@ public class CustomerDAOImpl implements CustomerDAO
         if (rs.next())
         {
           return new Customer(rs.getString("name"), rs.getString("password"),
-              rs.getString("email"), rs.getInt("phone"));
+              rs.getString("email"), rs.getInt("phone"), rs.getString("role"));
         }
       }
     }
@@ -76,7 +76,7 @@ public class CustomerDAOImpl implements CustomerDAO
   @Override public List<Customer> getAllCustomers()
   {
     List<Customer> customers = new ArrayList<>();
-    String sql = "SELECT name, password, email, phone FROM Customer";
+    String sql = "SELECT name, password, email, role, phone FROM Customer";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery())
@@ -85,7 +85,7 @@ public class CustomerDAOImpl implements CustomerDAO
       {
         customers.add(
             new Customer(rs.getString("name"), rs.getString("password"),
-                rs.getString("email"), rs.getInt("phone")));
+                rs.getString("email"), rs.getInt("phone"), rs.getString("role")));
       }
     }
     catch (SQLException e)
@@ -97,26 +97,28 @@ public class CustomerDAOImpl implements CustomerDAO
 
   @Override
   public void createCustomer(Customer customer) throws SQLException {
-    String sql = "INSERT INTO Customer (name, password, email, phone) VALUES (?, ?, ?, ?)";
+    String sql = "INSERT INTO Customer (name, password, email, role,  phone) VALUES (?, ?, ?, ?)";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
       stmt.setString(1, customer.getName());
       stmt.setString(2, customer.getPassword());
       stmt.setString(3, customer.getEmail());
       stmt.setInt(4, customer.getPhone());
+      stmt.setString(5, customer.getRole());
       stmt.executeUpdate();
     }
   }
 
   @Override
   public void updateCustomer(Customer customer) throws SQLException {
-    String sql = "UPDATE Customer SET name = ?, password = ?, phone = ? WHERE email = ?";
+    String sql = "UPDATE Customer SET name = ?, password = ?, phone = ?, role = ? WHERE email = ?";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
       stmt.setString(1, customer.getName());
       stmt.setString(2, customer.getPassword());
       stmt.setInt(3, customer.getPhone());
       stmt.setString(4, customer.getEmail());
+      stmt.setString(5, customer.getRole());
       stmt.executeUpdate();
     }
   }
