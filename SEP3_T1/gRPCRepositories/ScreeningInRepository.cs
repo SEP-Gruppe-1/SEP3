@@ -31,13 +31,26 @@ public class ScreeningInRepository : IScreeningRepository
 
     public async Task<Screening?> getSingleAsync(int id)
     {
-        var all = await _client.GetScreeningsAsync();
-        return all.SingleOrDefault(s => s.screeningId == id)
-               ?? throw new InvalidOperationException();
+        var screening  = (await _client.GetScreeningsAsync()).First(s => s.screeningId == id);
+        
+        var seats = await _client.GetSeatsByScreeningIdAsync(id);
+        
+        screening.hall.Seats = seats;
+
+        return screening;
     }
 
     public async Task<List<Screening>> getAll()
     {
-        return await _client.GetScreeningsAsync();
+        var screenings = await _client.GetScreeningsAsync();
+
+        foreach (var s in screenings)
+        {
+            var seats = await _client.GetSeatsByScreeningIdAsync(s.screeningId);
+            s.hall.Seats = seats;
+        }
+        
+        
+        return screenings;
     }
 }

@@ -7,6 +7,7 @@ public record ScreenDto(
     Movie Movie,
     Hall hall,
     int hallId,
+    List<Seat> seats,
     TimeOnly StartTime,
     DateOnly Date,
     int AvailableSeats);

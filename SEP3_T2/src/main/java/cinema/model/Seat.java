@@ -12,6 +12,7 @@ public class Seat {
         this.seatNumber = seatNumber;
         this.id = id;
         this.booked = false;
+        this.customer = null;
     }
 
     public char getRow() {
@@ -30,17 +31,29 @@ public class Seat {
         return seatNumber;
     }
 
-    public void bookSeat() {
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void bookSeat(Customer customer) {
         this.booked = true;
+        this.customer = customer;
 
     }
     public void unBookSeat() {
         this.booked = false;
+        this.customer = null;
     }
 
+    public boolean isBooked() {
+        return booked;
+    }
 
     @Override
     public String toString() {
-        return  "Seat{" + "row=" + row + ", seatNumber=" + seatNumber + '}';
+        if (customer != null) {
+            return "Seat{" + "row=" + row + ", seatNumber=" + seatNumber + '}' + "seat ID :"+ getId()+ " " + isBooked() + " " + customer.getPhone();
+        }
+        return "Seat{" + "row=" + row + ", seatNumber=" + seatNumber + '}' + "seat ID :"+ getId()+  " " + isBooked();
     }
 }

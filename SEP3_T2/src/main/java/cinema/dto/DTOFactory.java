@@ -13,6 +13,10 @@ public class DTOFactory {
     //---------- Customer ----------\\
 
     public static DTOCustomer createDTOCustomer(Customer customer) {
+        if (customer == null) {
+            return null; // returnér null hvis ingen har booket sædet
+        }
+
         return DTOCustomer.newBuilder().setName(customer.getName())
                 .setPassword(customer.getPassword()).setEmail(customer.getEmail())
                 .setPhone(customer.getPhone()).build();
@@ -58,7 +62,7 @@ public class DTOFactory {
     }
 
     public static Hall createHall(DTOHall dtoHall) {
-        return  Hall.getInstance(dtoHall.getId());
+        return Hall.getInstance(dtoHall.getId());
     }
 
     public static Hall createHall(GetHallsResponse r) {
@@ -136,14 +140,14 @@ public class DTOFactory {
 
 
     public static GetAllScreeningsResponse createGetAllScreeningsResponse(
-        List<Screening> screenings){
-            ArrayList<DTOScreening> dtoScreenings = new ArrayList<>();
-            for (Screening s : screenings) {
-                dtoScreenings.add(createDTOScreening(s));
+            List<Screening> screenings) {
+        ArrayList<DTOScreening> dtoScreenings = new ArrayList<>();
+        for (Screening s : screenings) {
+            dtoScreenings.add(createDTOScreening(s));
 
-            }
-            return GetAllScreeningsResponse.newBuilder().addAllScreenings(dtoScreenings)
-                    .build();
+        }
+        return GetAllScreeningsResponse.newBuilder().addAllScreenings(dtoScreenings)
+                .build();
     }
 
     public static GetAllScreeningsRequest createGetAllScreeningsRequest() {
@@ -167,11 +171,41 @@ public class DTOFactory {
     }
 
 
-
-
     public static GetAllLayoutsRequest createGetAllLayoutsRequest() {
         return GetAllLayoutsRequest.newBuilder().build();
     }
 
+
+    //---------- Seat ----------\\
+
+    public static DTOSeat createDTOSeat(Seat seat) {
+        DTOSeat.Builder builder = DTOSeat.newBuilder()
+                .setId(seat.getId())
+                .setLetter(String.valueOf(seat.getRow()))
+                .setNumber(seat.getSeatNumber())
+                .setBooked(seat.isBooked());
+
+        // Kunde KUN hvis seat er booket
+        if (seat.isBooked() && seat.getCustomer() != null) {
+            builder.setCustomer(createDTOCustomer(seat.getCustomer()));
+        } else {
+            // Sæt IKKE customer → protobuf håndterer det automatisk som null
+        }
+
+        return builder.build();
+
+    }
+
+    public static GetAllSeatsResponse createGetAllSeatsResponse(List<Seat> seats) {
+        ArrayList<DTOSeat> dtoSeats = new ArrayList<>();
+        for (Seat seat : seats) {
+            dtoSeats.add(createDTOSeat(seat));
+        }
+        return  GetAllSeatsResponse.newBuilder().addAllSeats(dtoSeats).build();
+    }
+
+    public static GetAllSeatsRequest createGetAllSeatsRequest() {
+        return GetAllSeatsRequest.newBuilder().build();
+    }
 
 }

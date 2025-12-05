@@ -17,7 +17,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("{phone:int}")]
-    public async Task<ActionResult<CustomerDto>> GetSingle(int phone)
+    public async Task<ActionResult<CustomerDto>> GetSingle(string phone)
     {
         try
         {
