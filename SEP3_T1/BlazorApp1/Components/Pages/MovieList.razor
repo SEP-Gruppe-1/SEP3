@@ -1,0 +1,94 @@
+﻿@page "/Movies"
+@using Entities
+@using gRPCRepositories
+@using RepositoryContracts
+@inject IMovieRepository MovieRepo
+@inject NavigationManager Nav
+
+<h3>MovieList</h3>
+
+@if (movies == null)
+{
+    <p>Henter Film...</p>
+}
+else if (!movies.Any())
+{
+    <p>Ingen film fundet.</p>
+}
+
+else
+{
+    <div class="container my-4">
+        <div class="row row-cols-1 row-cols-lg-2 g-4">
+            @foreach (var movie in movies)
+            {
+                <div class="col">
+                    <div class="card h-100 movie-card shadow-sm">
+                        <div class="row g-0 h-100">
+                            <!-- Plakat -->
+                            <div class="col-md-4 col-lg-5">
+                                <a @onclick="@(() => GoToMovieDetails(movie.MovieId))">
+                                    <img src="@GetPoster(movie)"
+                                         class="img-fluid movie-poster"
+                                         alt="@movie.MovieTitle" />
+                                </a>
+                            </div>
+
+                            <!-- Tekst -->
+                            <div class="col-md-8 col-lg-7">
+                                <div class="card-body d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h2 class="card-title">@movie.MovieTitle</h2>
+                                        <p><strong>Release Date: </strong> @movie.ReleaseDate</p>
+                                        <p><strong>Genre: </strong> @movie.Genre</p>
+                                        <p><strong>Spilletid: </strong> @movie.DurationMinutes min</p>
+                                        <p>@movie.Description</p>
+                                    </div>
+
+                                    <div class="text-end mt-3">
+                                        <button class="btn btn-danger mt-auto"
+                                                @onclick="() => GoToTicket(movie.MovieId)">
+                                            Billetter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<Movie>? movies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (MovieRepo is MovieInRepository repo)
+            await repo.InitializeAsync();
+
+        movies = MovieRepo.GetAll().ToList();
+    }
+
+    private string GetPoster(Movie movie)
+    {
+        // simpelt eksempel: generér filnavn ud fra titel
+        var fileName = movie.MovieTitle
+            .ToLower()
+            .Replace(" ", "-") + ".png";
+
+        return $"images/posters/{fileName}";
+    }
+
+    private void GoToMovieDetails(int movieId)
+    {
+        Nav.NavigateTo($"/MovieDetails/{movieId}");
+    }
+
+    private void GoToTicket(int movieId)
+    {
+        Nav.NavigateTo($"/Tickets/{movieId}");
+    }
+}
