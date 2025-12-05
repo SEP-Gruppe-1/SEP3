@@ -27,8 +27,10 @@ public class ScreeningController : ControllerBase
     {
         try
         {
+            
+            
             var screening = await screeningRepository.getSingleAsync(id);
-            return Ok(new ScreenDto(screening.screeningId, screening.movie,screening.hall , screening.hallId, screening.startTime,
+            return Ok(new ScreenDto(screening.screeningId, screening.movie,screening.hall , screening.hallId,  screening.hall.Seats, screening.startTime,
                 screening.date, screening.availableSeats));
         }
         catch (InvalidOperationException)
