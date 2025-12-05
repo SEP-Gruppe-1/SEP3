@@ -127,6 +127,30 @@ message GetAllLayoutsResponse{
   repeated DTOLayout Layouts = 1;
 }
 
+//---------- Layout ----------\\
+
+message DTOSeat{
+  string letter = 1;
+  int32 number =2;
+  int32 id = 3;
+  bool booked = 4;
+  DTOCustomer customer = 5;
+}
+
+message GetAllSeatsRequest{}
+
+message GetAllSeatsResponse{
+  repeated DTOSeat seats = 1;
+}
+
+message GetSeatsByScreeningRequest {
+  int32 screening_id = 1;
+}
+
+message GetSeatsByScreeningResponse {
+  repeated DTOSeat seats = 1;
+}
+
 service CinemaService
 {
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
@@ -139,4 +163,6 @@ service CinemaService
   rpc GetAllMovies (GetAllMoviesRequest) returns (GetAllMoviesResponse);
   rpc GetScreeningByID (GetScreeningByIdRequest) returns (GetScreeningByIdResponse);
   rpc GetAllLayouts (GetAllLayoutsRequest) returns (GetAllLayoutsResponse);
+  rpc GetAllSeats (GetAllSeatsRequest) returns (GetAllSeatsResponse);
+  rpc GetSeatsByScreening(GetSeatsByScreeningRequest) returns (GetSeatsByScreeningResponse);
 }

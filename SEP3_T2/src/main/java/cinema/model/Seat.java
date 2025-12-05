@@ -31,6 +31,10 @@ public class Seat {
         return seatNumber;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
     public void bookSeat(Customer customer) {
         this.booked = true;
         this.customer = customer;
@@ -48,8 +52,8 @@ public class Seat {
     @Override
     public String toString() {
         if (customer != null) {
-            return "Seat{" + "row=" + row + ", seatNumber=" + seatNumber + '}' + " " + isBooked() + " " + customer.getPhone();
+            return "Seat{" + "row=" + row + ", seatNumber=" + seatNumber + '}' + "seat ID :"+ getId()+ " " + isBooked() + " " + customer.getPhone();
         }
-        return "Seat{" + "row=" + row + ", seatNumber=" + seatNumber + '}' + " " + isBooked();
+        return "Seat{" + "row=" + row + ", seatNumber=" + seatNumber + '}' + "seat ID :"+ getId()+  " " + isBooked();
     }
 }

@@ -26,7 +26,12 @@ public class Program
         var movieById = await client.getMovieById(1);
         Console.WriteLine($"Fetched movie by ID 1: {movieById.Id}");
 
-        var customerByPhone = await client.GetCustomerByPhoneAsync(5550001);
+        var customerByPhone = await client.GetCustomerByPhoneAsync("5550001");
         Console.WriteLine($"Fetched customer by phone 5550001: {customerByPhone.Name}");
+        
+        var seats = await client.GetSeatsByScreeningIdAsync(1);
+        foreach (var seat in seats)
+            Console.WriteLine($"Seat: Row {seat.Row} Number {seat.Number} Booked: {seat.IsBooked}");
+        
     }
 }
