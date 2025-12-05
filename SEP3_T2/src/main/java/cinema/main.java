@@ -1,9 +1,6 @@
 package cinema;
 
-import cinema.model.Customer;
-import cinema.model.Hall;
-import cinema.model.Movie;
-import cinema.model.Screening;
+import cinema.model.*;
 import cinema.persistence.*;
 
 import java.time.LocalDate;
@@ -17,6 +14,7 @@ public class main {
             CustomerDAO dao = CustomerDAOImpl.getInstance();
             HallDAO hdao = HallDAOImpl.getInstance();
             ScreeningDAO screeningDAO = ScreeningDAOImpl.getInstance();
+            SeatDAO seatDAO = SeatDAOImpl.getInstance();
 
             //create a new screening
 //            LocalDate date =  LocalDate.of(1999, 3,31);
@@ -39,7 +37,10 @@ public class main {
             } else {
                 System.out.println("Customer not found.");
             }
-
+            List<Seat> seats = seatDAO.getSeatsByScreening(1);
+            for (Seat seat : seats) {
+                System.out.println(seat.toString());
+            }
 
 
             List<Hall> hall = hdao.getAllHalls();
@@ -56,7 +57,6 @@ public class main {
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
-
 
 
     }

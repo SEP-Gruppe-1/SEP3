@@ -29,7 +29,7 @@ public class CinemaServiceClient
         return await Task.FromResult(customers);
     }
 
-    public async Task<DTOCustomer> GetCustomerByPhoneAsync(int phone)
+    public async Task<DTOCustomer> GetCustomerByPhoneAsync(string phone)
     {
         var response = await _client.GetCustomerByPhoneAsync(new GetCustomerByPhoneRequest { Phone = phone });
         return response.Customer;

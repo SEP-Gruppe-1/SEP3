@@ -12,17 +12,16 @@ import java.util.List;
 public class ScreeningDAOImpl implements ScreeningDAO {
 
     public static ScreeningDAOImpl instance;
-    public static MovieDAO movieInstance;
-    public  static LayoutDAO layoutInstance;
+    public  MovieDAO movieInstance =  MovieDAOImpl.getInstance();
+    public  LayoutDAO layoutInstance =  LayoutDAOImpl.getInstance();
 
 
-    public ScreeningDAOImpl() throws SQLException {
+    private ScreeningDAOImpl() throws SQLException {
         DriverManager.registerDriver(new org.postgresql.Driver());
-        this.movieInstance = new MovieDAOImpl();
-        this.layoutInstance = new LayoutDAOImpl();
+
     }
 
-    public static Connection getConnection() throws SQLException {
+    private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
                 "jdbc:postgresql://localhost:5432/postgres?currentSchema=cinema",
                 "postgres", "123");

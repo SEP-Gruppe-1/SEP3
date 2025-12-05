@@ -40,12 +40,16 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
   }
 
 @Override
-    public void getHalls(GetHallsRequest request, StreamObserver<GetHallsResponse> responseObserver)  {
-        GetHallsResponse response = DTOFactory.createGetHallResponse(hallDAO.getAllHalls());
+    public void getHalls(GetHallsRequest request, StreamObserver<GetHallsResponse> responseObserver) {
+    GetHallsResponse response = null;
+    try {
+        response = DTOFactory.createGetHallResponse(hallDAO.getAllHalls());
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
 
 
-
-        responseObserver.onNext(response);
+    responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
@@ -94,10 +98,15 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase
   }
 
     @Override
-    public void getHallByID(GetHallByIdRequest request, StreamObserver<GetHallByIdResponse> responseObserver) {
+    public void getHallByID(GetHallByIdRequest request, StreamObserver<GetHallByIdResponse> responseObserver)  {
 
-            Hall hall = hallDAO.getHallById(request.getId());
-            DTOHall dtoHall = DTOFactory.createDTOHall(hall);
+        Hall hall = null;
+        try {
+            hall = hallDAO.getHallById(request.getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        DTOHall dtoHall = DTOFactory.createDTOHall(hall);
             GetHallByIdResponse response = GetHallByIdResponse.newBuilder()
                     .setHall(dtoHall).build();
 

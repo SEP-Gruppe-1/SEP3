@@ -13,11 +13,11 @@ public class MovieDAOImpl implements MovieDAO {
     public static MovieDAOImpl instance;
 
 
-    public MovieDAOImpl() throws SQLException {
+    private MovieDAOImpl() throws SQLException {
         DriverManager.registerDriver(new org.postgresql.Driver());
     }
 
-    public static Connection getConnection() throws SQLException {
+    private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
                 "jdbc:postgresql://localhost:5432/postgres?currentSchema=cinema",
                 "postgres", "123");

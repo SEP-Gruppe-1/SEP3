@@ -19,7 +19,7 @@ public class CustomerInDatabaseRepository : ICustomerRepository
     {
         customer.Phone = customers.Any()
             ? customers.Max(c => c.Phone) + 1
-            : 1;
+            : "1";
         customers.Add(customer);
         return Task.FromResult(customer);
     }
@@ -34,12 +34,12 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         return Task.CompletedTask;
     }
 
-    public Task DeleteAsync(int phone, string name, string email)
+    public Task DeleteAsync(string phone, string name, string email)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Customer?> GetSingleAsync(int Phone)
+    public async Task<Customer?> GetSingleAsync(string Phone)
     {
         var customers = await GetCustomersAsync();
         return customers.SingleOrDefault(c => c.Phone == Phone) 
@@ -51,7 +51,7 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         return customers.AsQueryable();
     }
 
-    public async Task VerifyCustomerDoesNotExist(int phone, string email)
+    public async Task VerifyCustomerDoesNotExist(string phone, string email)
     {
         var customers = await GetCustomersAsync();
         var CustomerPhoneExists = customers.Any(c => c.Phone == phone);
@@ -74,7 +74,7 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         customers = await client.GetCustomersAsync();
     }
 
-    public Task DeleteAsync(int phone)
+    public Task DeleteAsync(string phone)
     {
         var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);
         if (customerToRemove == null)

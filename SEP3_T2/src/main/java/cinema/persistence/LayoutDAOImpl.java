@@ -11,11 +11,11 @@ public class LayoutDAOImpl implements LayoutDAO {
 
     public static LayoutDAOImpl instance;
 
-    public LayoutDAOImpl() throws SQLException {
+    private LayoutDAOImpl() throws SQLException {
         DriverManager.registerDriver(new org.postgresql.Driver());
     }
 
-    public static Connection getConnection() throws SQLException {
+    private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
                 "jdbc:postgresql://localhost:5432/postgres?currentSchema=cinema",
                 "postgres", "123");

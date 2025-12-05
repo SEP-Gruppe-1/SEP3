@@ -10,7 +10,7 @@ message DTOCustomer
   string name = 1;
   string password = 2;
   string email = 3;
-  int32 phone = 4;
+  string phone = 4;
 }
 
 message GetCustomersRequest
@@ -24,7 +24,7 @@ message GetCustomersResponse
 
 message GetCustomerByPhoneRequest
 {
-  int32 phone = 1;
+  string phone = 1;
 }
 
 message GetCustomerByPhoneResponse
