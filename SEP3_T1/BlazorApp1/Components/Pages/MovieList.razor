@@ -4,6 +4,7 @@
 @using RepositoryContracts
 @inject IMovieRepository MovieRepo
 @inject NavigationManager Nav
+@rendermode InteractiveServer
 
 <h3>MovieList</h3>
 
@@ -46,9 +47,9 @@ else
                                     </div>
 
                                     <div class="text-end mt-3">
-                                        <button class="btn btn-danger mt-auto"
-                                                @onclick="() => GoToTicket(movie.MovieId)">
-                                            Billetter
+                                        <button class="btn btn-primary movie-details-btn"
+                                                @onclick="@(() => GoToMovieDetails(movie.MovieId))">
+                                            Se detaljer
                                         </button>
                                     </div>
                                 </div>
@@ -74,7 +75,6 @@ else
 
     private string GetPoster(Movie movie)
     {
-        // simpelt eksempel: generér filnavn ud fra titel
         var fileName = movie.MovieTitle
             .ToLower()
             .Replace(" ", "-") + ".png";
@@ -86,9 +86,5 @@ else
     {
         Nav.NavigateTo($"/MovieDetails/{movieId}");
     }
-
-    private void GoToTicket(int movieId)
-    {
-        Nav.NavigateTo($"/Tickets/{movieId}");
-    }
+    
 }

@@ -34,9 +34,6 @@ else
                             <div class="screening-day-label">
                                 @GetDayLabel(day.Key)
                             </div>
-                            <div class="screening-day-date">
-                                @day.Key.ToString("dd/MM")
-                            </div>
                         </div>
                         
                         <div class="screening-time">
@@ -54,9 +51,9 @@ else
 
         </div>
     }
-    else
+    else if (groupedScreenings != null)
     {
-        <p><strong>Ingen Forstilling Fundet</strong></p>
+        <h3 class="no-screenings-text"><strong>Ingen kommende forstillinger</strong></h3>
     }
 }
 
@@ -76,13 +73,13 @@ else
             movie = await MovieRepo.GetSingleAsync(movieId);
 
             var allScreenings = await ScreeningRepo.getAll();
+            var today = DateOnly.FromDateTime(DateTime.Today);
 
             groupedScreenings = allScreenings
-                .Where(s => s.movie.MovieId == movieId)
+                .Where(s => s.movie.MovieId == movieId && s.date >= today)
                 .GroupBy(s => s.date)
                 .OrderBy(g => g.Key)
-                .ToDictionary(
-                    g => g.Key,
+                .ToDictionary(g => g.Key, 
                     g => g.OrderBy(s => s.startTime).ToList());
         }
         finally
@@ -92,7 +89,6 @@ else
     }
     private string GetPoster(Movie movie)
     {
-        // simpelt eksempel: generér filnavn ud fra titel
         var fileName = movie.MovieTitle
             .ToLower()
             .Replace(" ", "-") + ".png";

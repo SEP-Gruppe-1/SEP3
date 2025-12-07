@@ -191,13 +191,45 @@ h1:focus {
 .movie-card {
     background-color: #f5f5f5;
     border: none;
+    position: relative;
+    hight: 100%;
 }
+
+/* ======= Movie-card side ====== */
 
 .movie-poster {
     width: 100%;
     height: 100%;
     max-height: 420px;
     object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3ms ease, box-shadow 0.3ms ease;
+}
+.movie-details-btn {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+}
+
+.movie-description {
+    max-height: 120px;
+    overflow: hidden;
+    position: relative;
+}
+
+.movie-description::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 40px;
+    width: 100%;
+    background: linear-gradient(transparent, #f5f5f5);
+}
+
+.movie-poster:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 @media (max-width: 768px) {
@@ -211,7 +243,7 @@ h1:focus {
 /* Stor plakat øverst */
 .movie-panorama-poster {
     width: 100%;
-    background: #000;              /* sort baggrund omkring plakaten */
+    background: #000;             
     display: flex;
     justify-content: center;
     align-items: center;
@@ -222,15 +254,15 @@ h1:focus {
     max-width: 1350px;
     max-height: 360px;
     overflow: hidden;
-    margin: auto; /* centrerer */
+    margin: auto; 
     border-radius: 8px;
 }
 
 .movie-banner img {
     width: 100%;
     height: 100%;
-    object-fit: cover;   /* vigtig: beskær i stedet for at strække */
-    object-position: center; /* fokus i midten */
+    object-fit: cover;   
+    object-position: center; 
 }
 
 
@@ -244,17 +276,15 @@ h1:focus {
 
 /* Hvid “stribe” med dagene og tiderne */
 .screening-strip {
-    background: #ffffff;
-    padding: 2rem 1rem 2.5rem;
+    margin-top: 1.5rem;
+    padding: 0.5rem 0;
+    overflow-x: auto;
 }
 
 /* Rækken af dage */
 .screening-days {
     display: flex;
-    flex-wrap: nowrap;
     gap: 1.5rem;
-    overflow-x: auto;              /* så man kan scrolle på mobil */
-    padding-bottom: 0.5rem;
 }
 
 /* En enkelt dag-boks */
@@ -265,6 +295,8 @@ h1:focus {
     padding: 0.75rem 1rem 1rem;
     display: flex;
     flex-direction: column;
+    align-item: stretch;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     gap: 0.75rem;
 }
 
@@ -273,15 +305,17 @@ h1:focus {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
 }
 
 .screening-day-label {
+    text-align: center;
     font-weight: 700;
     font-size: 1rem;
 }
 
 .screening-day-date {
+    text-align: center;
     font-size: 0.9rem;
     opacity: 0.8;
 }
@@ -289,17 +323,24 @@ h1:focus {
 /* Tiderne */
 .screening-time {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 0.5rem;
 }
 
 /* Knapper til tiderne */
 .screening-time-btn {
-    min-width: 72px;
-    font-weight: 600;
-    border-radius: 0;
-    padding: 0.35rem 0.8rem;
-    font-size: 0.95rem;
+    width: 100%;
+    background-color: #ba0000;
+    border: none;
+    color: #fff;
+    front-weight: 600;
+    front-size: 1rem;
+    padding: 0.5rem 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.screening-time-btn:hover {
+    background-color: #d10000;
 }
 
 /* Lidt responsiv tuning */
@@ -316,5 +357,13 @@ h1:focus {
         min-width: 150px;
     }
 }
+
+.no-screenings-text {
+    margin-top: 2rem;        
+    text-align: center;      
+    font-size: 2rem;         
+    font-weight: 600;        
+}
+
 
 
