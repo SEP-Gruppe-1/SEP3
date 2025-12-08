@@ -7,9 +7,8 @@ public class Customer {
     private String phone;
     private String role;
 
-    public Customer() {}
 
-    public Customer(String name, String password, String email, String phone, string Role) {
+    public Customer(String name, String password, String email, String phone, String role) {
         this.name = name;
         this.password = password;
         this.email = email;
@@ -53,5 +52,8 @@ public class Customer {
         return role;
     }
 
-    public void setRole(String role) {}
+    public void setRole(String role)
+    {
+        this.role = role;
+    }
 }

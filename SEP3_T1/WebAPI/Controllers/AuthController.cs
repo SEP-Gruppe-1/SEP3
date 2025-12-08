@@ -27,21 +27,16 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginDto login)
     {
         if (ICustomerRepository is CustomerInDatabaseRepository repo)
+        {
             await repo.InitializeAsync();
+        }
 
         var customer = await ICustomerRepository
             .GetByPhoneAndPasswordAsync(login.Phone, login.Password);
 
         if (customer == null)
             return Unauthorized("Invalid phone or password");
-
-        // ✅ LOGGING
-        Console.WriteLine("====== LOGIN DEBUG ======");
-        Console.WriteLine($"Name: {customer.Name}");
-        Console.WriteLine($"Phone: {customer.Phone}");
-        Console.WriteLine($"Role FROM DB: '{customer.Role}'");
-        Console.WriteLine("==========================");
-
+        
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, customer.Name),

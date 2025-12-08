@@ -5,7 +5,9 @@
 @inject TokenAuthenticationStateProvider TokenProvider
 @inject IJSRuntime JsRuntime
 @inject NavigationManager Nav
+@using Microsoft.AspNetCore.Components.Authorization
 
+@inject AuthenticationStateProvider AuthStateProvider
 
 
 <div class="container mt-5">
@@ -43,11 +45,22 @@
     private string jwt = "";
     private string message = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        // ✅ Hvis brugeren allerede er logget ind → send til forsiden
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            Nav.NavigateTo("/", true);
+        }
+    }
+
     private async Task LoginMethodAsync()
     {
         try
         {
-            Console.WriteLine("Jwt:" + jwt);
             jwt = await AuthService.LoginAndReturnToken(phone, password);
             await TokenProvider.SignIn(jwt);
             await JsRuntime.InvokeVoidAsync("localStorage.setItem", "jwt", jwt);
@@ -59,6 +72,4 @@
             message = ex.Message;
         }
     }
-
-
 }

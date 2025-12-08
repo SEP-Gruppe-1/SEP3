@@ -43,7 +43,7 @@ public class CustomerDAOImpl implements CustomerDAO
         if (rs.next())
         {
           return new Customer(rs.getString("name"), rs.getString("password"),
-              rs.getString("email"), rs.getString("phone"), rs.GetString("role");
+              rs.getString("email"), rs.getString("phone"), rs.getString("role"));
         }
       }
     }
@@ -52,7 +52,7 @@ public class CustomerDAOImpl implements CustomerDAO
 
   @Override public Customer getCustomerByPhone(String phone)
   {
-    String sql = "SELECT name, password,role,  email, phone FROM Customer WHERE phone = ?";
+    String sql = "SELECT name, password, role,  email, phone FROM Customer WHERE phone = ?";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql))
     {
@@ -62,7 +62,7 @@ public class CustomerDAOImpl implements CustomerDAO
         if (rs.next())
         {
           return new Customer(rs.getString("name"), rs.getString("password"),
-              rs.getString("email"), rs.getString("phone"), rs.GetString("role");
+              rs.getString("email"), rs.getString("phone"), rs.getString("role"));
         }
       }
     }
@@ -85,7 +85,7 @@ public class CustomerDAOImpl implements CustomerDAO
       {
         customers.add(
             new Customer(rs.getString("name"), rs.getString("password"),
-                rs.getString("email"), rs.getString("phone"), rs.GetString("role"));
+                rs.getString("email"), rs.getString("phone"), rs.getString("role")));
       }
     }
     catch (SQLException e)
@@ -95,35 +95,40 @@ public class CustomerDAOImpl implements CustomerDAO
     return customers;
   }
 
-  @Override
-  public void createCustomer(Customer customer) throws SQLException {
-    String sql = "INSERT INTO Customer (name, password, email, role,  phone) VALUES (?, ?, ?, ?, ?)";
-    try (Connection conn = getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, customer.getName());
-      stmt.setString(2, customer.getPassword());
-      stmt.setString(3, customer.getEmail());
-      stmt.setString(4, customer.getPhone());
-      stmt.setString(5, customer.getRole());
-      stmt.executeUpdate();
-    }
-  }
+    @Override
+    public void createCustomer(Customer customer) throws SQLException {
+        String sql = "INSERT INTO Customer (name, password, email, phone, role) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-  @Override
-  public void updateCustomer(Customer customer) throws SQLException {
-    String sql = "UPDATE Customer SET name = ?, password = ?, phone = ?, role = ? WHERE email = ?";
-    try (Connection conn = getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, customer.getName());
-      stmt.setString(2, customer.getPassword());
-      stmt.setString(3, customer.getPhone());
-      stmt.setString(4, customer.getEmail());
-      stmt.setString(5, customer.getRole());
-      stmt.executeUpdate();
-    }
-  }
+            stmt.setString(1, customer.getName());
+            stmt.setString(2, customer.getPassword());
+            stmt.setString(3, customer.getEmail());
+            stmt.setString(4, customer.getPhone());  // ✅ PHONE
+            stmt.setString(5, customer.getRole());   // ✅ ROLE
 
-  @Override
+            stmt.executeUpdate();
+        }
+    }
+
+
+    @Override
+    public void updateCustomer(Customer customer) throws SQLException {
+        String sql = "UPDATE Customer SET name = ?, password = ?, phone = ?, role = ? WHERE email = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, customer.getName());
+            stmt.setString(2, customer.getPassword());
+            stmt.setString(3, customer.getPhone());
+            stmt.setString(4, customer.getRole());   // ✅ ROLE
+            stmt.setString(5, customer.getEmail());  // ✅ WHERE email
+
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
   public void deleteCustomer(String email) throws SQLException {
     String sql = "DELETE FROM Customer WHERE email = ?";
     try (Connection conn = getConnection();

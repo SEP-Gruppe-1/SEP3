@@ -55,7 +55,7 @@ public class HttpCustomerService : ICustomerService
         public string? Message { get; set; }
     }
     
-    public async Task UpdateCustomerRoleAsync(int phone, string newRole)
+    public async Task UpdateCustomerRoleAsync(string phone, string newRole)
     {
         await jwtHandler.AttachJwtAsync(_httpClient);
 

@@ -33,10 +33,7 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
         var user = new ClaimsPrincipal(identity);
         state = new AuthenticationState(user);
         NotifyAuthenticationStateChanged(Task.FromResult(state));
-
-        Console.WriteLine("IsAuthenticated: " + user.Identity?.IsAuthenticated);
-        Console.WriteLine("IsInRole(Admin): " + user.IsInRole("Admin"));
-        Console.WriteLine("====================================");
+        
 
         return Task.CompletedTask;
     }

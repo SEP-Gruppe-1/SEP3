@@ -92,8 +92,23 @@ public class CustomerInDatabaseRepository : ICustomerRepository
 
     public Task<Customer?> GetByPhoneAndPasswordAsync(string phone, string password)
     {
-        var customer = customers.SingleOrDefault(c => c.Phone == phone && c.Password == password);
+        Console.WriteLine("=== C# REPO DEBUG ===");
+        foreach (var c in customers)
+        {
+            Console.WriteLine($"Repo customer: {c.Phone} | {c.Name} | Role: '{c.Role}'");
+        }
+
+        var customer = customers.SingleOrDefault(c =>
+            c.Phone == phone && c.Password == password);
+
+        if (customer != null)
+            Console.WriteLine($"MATCH FOUND → Role: '{customer.Role}'");
+        else
+            Console.WriteLine("NO MATCH FOUND");
+
+        Console.WriteLine("======================");
 
         return Task.FromResult(customer);
     }
+
 }

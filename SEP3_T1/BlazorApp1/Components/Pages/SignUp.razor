@@ -2,6 +2,9 @@
 @using System.ComponentModel.DataAnnotations
 @using ApiContract
 @using BlazorApp1.Services
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthStateProvider
 
 @inject NavigationManager Nav
 @inject ICustomerService CustomerService
@@ -112,5 +115,17 @@
             isBusy = false;
         }
     }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            Nav.NavigateTo("/", true);
+        }
+    }
+
 
 }

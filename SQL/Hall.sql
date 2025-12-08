@@ -13,6 +13,14 @@ DROP TABLE IF EXISTS movie CASCADE;
 DROP TABLE IF EXISTS seat_layout CASCADE;
 DROP TABLE IF EXISTS customer CASCADE;
 
+SELECT table_schema, table_name
+FROM information_schema.tables
+WHERE table_name ILIKE '%customer%';
+
+SELECT phone, name, role
+FROM cinema.customer;
+
+
 
 
 
@@ -152,11 +160,11 @@ EXECUTE FUNCTION update_seat_layout_stats();
 
 -- Indsæt layout og sæder
 
-ALTER TABLE customer
-    ADD COLUMN role VARCHAR(50) DEFAULT 'Customer'
-        CHECK (role IN ('Customer', 'Employee', 'Admin'));
 
 BEGIN;
+
+insert into customer(name, password, email, phone, role)
+values('Admin', 'Admin123!', 'Admin@admin.com','12345678', 'Admin');
 
 WITH small AS (
     INSERT INTO seat_layout(name) VALUES ('SmallHall') RETURNING layout_id

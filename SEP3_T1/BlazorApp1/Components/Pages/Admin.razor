@@ -34,7 +34,6 @@ else
                 <td>
                     <select value="@c.Role" 
                             @onchange="e => OnRoleChanged(c, e.Value!.ToString())">
-
                         <option>Customer</option>
                         <option>Employee</option>
                         <option>Admin</option>
@@ -66,7 +65,7 @@ else
         customers = await CustomerService.GetCustomers();
     }
 
-    private async Task UpdateRole(int phone, string newRole)
+    private async Task UpdateRole(string phone, string newRole)
     {
         try
         {

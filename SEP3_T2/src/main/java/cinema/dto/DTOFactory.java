@@ -19,7 +19,7 @@ public class DTOFactory {
 
         return DTOCustomer.newBuilder().setName(customer.getName())
                 .setPassword(customer.getPassword()).setEmail(customer.getEmail())
-                .setPhone(customer.getPhone()).build();
+                .setPhone(customer.getPhone()).setRole(customer.getRole()).build();
     }
 
   public static Customer createCustomer(DTOCustomer dtoCustomer)
@@ -45,15 +45,26 @@ public class DTOFactory {
 
     public static GetCustomersResponse createGetCustomersResponse(
             List<Customer> customers) {
+
         ArrayList<DTOCustomer> dtoCustomers = new ArrayList<>();
+
         for (Customer c : customers) {
-            dtoCustomers.add(DTOCustomer.newBuilder().setName(c.getName())
-                    .setPassword(c.getPassword()).setEmail(c.getEmail())
-                    .setPhone(c.getPhone()).build());
+            dtoCustomers.add(
+                    DTOCustomer.newBuilder()
+                            .setName(c.getName())
+                            .setPassword(c.getPassword())
+                            .setEmail(c.getEmail())
+                            .setPhone(c.getPhone())
+                            .setRole(c.getRole())   // ✅ DEN AFGØRENDE LINJE
+                            .build()
+            );
         }
-        return GetCustomersResponse.newBuilder().addAllCustomers(dtoCustomers)
+
+        return GetCustomersResponse.newBuilder()
+                .addAllCustomers(dtoCustomers)
                 .build();
     }
+
 
     //---------- Hall ----------\\
 

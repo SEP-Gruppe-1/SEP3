@@ -36,11 +36,18 @@
         </div>
         
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="login">
-                Login
-            </NavLink>
-        </div>
+        <AuthorizeView>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="login">Login</NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="signup">Signup</NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="customer">
@@ -54,11 +61,7 @@
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="signup">
-                Signup
-            </NavLink>
-        </div>
+     
         
         <AuthorizeView Roles="Admin">
             <div class="nav-item px-3">
