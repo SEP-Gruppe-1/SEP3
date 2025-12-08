@@ -5,35 +5,48 @@
 
 
 <h3>Order - Vælg sæder</h3>
+<h3>MovieList</h3>
 
-<div class="hall-container">
-    <div class="screen">SKÆRM</div>
+@if (movies == null)
+{
+    <p>Henter Film...</p>
+}
+else if (!movies.Any())
+{
+    <p>Ingen film fundet.</p>
+}
 
-    <div class="hall">
+else
+{
+    <div class="hall-container">
+        <div class="screen">SKÆRM</div>
+
+        <div class="hall">
 
 
-           
-        }
+
+            }
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color available"></div>
+                <span>Ledig</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color selected"></div>
+                <span>Valgt</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color booked"></div>
+                <span>Booket</span>
+            </div>
+        </div>
     </div>
-
-    <div class="legend">
-        <div class="legend-item">
-            <div class="legend-color available"></div>
-            <span>Ledig</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color selected"></div>
-            <span>Valgt</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-color booked"></div>
-            <span>Booket</span>
-        </div>
-    </div>
-</div>
+}
 
 @code {
-
+    private IEnumerable<Movie?> movies;
     private readonly List<Seat> selectedSeats = new();
 
     private void ToggleSeat(Seat seat)
