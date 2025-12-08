@@ -18,6 +18,18 @@ builder.Services.AddSingleton(new CinemaServiceClient("http://localhost:9090"));
 builder.Services.AddScoped<ICustomerRepository, CustomerInDatabaseRepository>();
 builder.Services.AddScoped<IHallRepository, HallInDatabaseRepository>();
 
+
+builder.Services.AddAuthorization(options =>
+{
+
+    options.AddPolicy("EmployeeOrAdmin", policy =>
+        policy.RequireRole("Employee", "Admin"));
+    
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole("Admin"));
+});
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -26,12 +38,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["JwtIssuer"],
-        ValidAudience = builder.Configuration["JwtAudience"],
+
+        ValidIssuer = "YourIssuer", 
+        ValidAudience = "YourAudience", 
         IssuerSigningKey =
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretThatIsMinimum32CharactersLong"))
+            new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes("SuperSecretThatIsMinimum32CharactersLong"))
     };
-});
+
+    });
+
 
 
 var app = builder.Build();
@@ -50,5 +66,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();

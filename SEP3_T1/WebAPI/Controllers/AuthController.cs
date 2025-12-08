@@ -15,13 +15,14 @@ namespace WebAPI.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    
+
     private readonly ICustomerRepository ICustomerRepository;
-    
+
     public AuthController(ICustomerRepository customerRepository)
     {
         ICustomerRepository = customerRepository;
     }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto login)
     {
@@ -34,29 +35,36 @@ public class AuthController : ControllerBase
         if (customer == null)
             return Unauthorized("Invalid phone or password");
 
-        // JWT generation …
-    
-
-        
+        // ✅ LOGGING
+        Console.WriteLine("====== LOGIN DEBUG ======");
+        Console.WriteLine($"Name: {customer.Name}");
+        Console.WriteLine($"Phone: {customer.Phone}");
+        Console.WriteLine($"Role FROM DB: '{customer.Role}'");
+        Console.WriteLine("==========================");
 
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, customer.Name),
-            new Claim("phone", customer.Phone.ToString())
+            new Claim("phone", customer.Phone.ToString()),
+            new Claim(ClaimTypes.Role, customer.Role ?? "")
         };
-        
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretThatIsMinimum32CharactersLong"));
+
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes("SuperSecretThatIsMinimum32CharactersLong"));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        var token = new JwtSecurityToken(
+            issuer: "YourIssuer",
+            audience: "YourAudience",
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(30),
+            signingCredentials: creds);
 
-      var token = new JwtSecurityToken(
-          issuer: "YourIssuer",
-          audience: "YourAudience",
-          claims: claims,
-          expires: DateTime.Now.AddMinutes(30),
-          signingCredentials: creds);
-      
-      return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+        Console.WriteLine("JWT GENERATED: " + jwt);
+
+        return Ok(new { token = jwt });
     }
-   
 }
+

@@ -97,7 +97,7 @@ public class CustomerDAOImpl implements CustomerDAO
 
   @Override
   public void createCustomer(Customer customer) throws SQLException {
-    String sql = "INSERT INTO Customer (name, password, email, role,  phone) VALUES (?, ?, ?, ?)";
+    String sql = "INSERT INTO Customer (name, password, email, role,  phone) VALUES (?, ?, ?, ?, ?)";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
       stmt.setString(1, customer.getName());

@@ -13,15 +13,35 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
 
     public Task SignIn(string jwt)
     {
+        Console.WriteLine("=========== SIGNIN DEBUG ===========");
+        Console.WriteLine("RAW JWT:");
+        Console.WriteLine(jwt);
+
         var claims = ParseClaimsFromJwt(jwt);
-        var identity = new ClaimsIdentity(claims, "jwt", nameType: "name", roleType: "role");
+
+        foreach (var claim in claims)
+        {
+            Console.WriteLine($"CLAIM => Type: {claim.Type}, Value: {claim.Value}");
+        }
+
+        var identity = new ClaimsIdentity(
+            claims,
+            "jwt",
+            ClaimTypes.Name,
+            ClaimTypes.Role);
+
         var user = new ClaimsPrincipal(identity);
-        Console.WriteLine("SignIn called with: " + jwt);
         state = new AuthenticationState(user);
         NotifyAuthenticationStateChanged(Task.FromResult(state));
+
+        Console.WriteLine("IsAuthenticated: " + user.Identity?.IsAuthenticated);
+        Console.WriteLine("IsInRole(Admin): " + user.IsInRole("Admin"));
+        Console.WriteLine("====================================");
+
         return Task.CompletedTask;
-        
     }
+
+    
     
     public Task SignOut()
     {

@@ -3,6 +3,7 @@ CREATE SCHEMA IF NOT EXISTS cinema;
 SET search_path TO cinema;
 
 -- Kunde-tabellen
+
 CREATE TABLE IF NOT EXISTS Customer (
                                         phone varchar(15) PRIMARY KEY,
                                         name varchar(100),
@@ -13,7 +14,9 @@ CREATE TABLE IF NOT EXISTS Customer (
                                             password ~ '[^a-zA-Z0-9]' AND
                                             LENGTH(password) >= 8
                                             ),
-                                        email varchar(100) UNIQUE NOT NULL CHECK (email LIKE '%@%.%')
+                                        email varchar(100) UNIQUE NOT NULL CHECK (email LIKE '%@%.%'),
+                                        role VARCHAR(50) NOT NULL DEFAULT 'Customer'
+                                            CHECK (role IN ('Customer', 'Employee', 'Admin'))
 );
 
 -- Layout til sæder
@@ -89,6 +92,11 @@ DROP INDEX IF EXISTS uq_seat_screen_row_num;
 ALTER TABLE seat ADD CONSTRAINT uq_seat_hall_row_num UNIQUE (hall_id, row_letter, seat_number);
 
 -- Indsæt layout og sæder
+
+ALTER TABLE customer
+    ADD COLUMN role VARCHAR(50) DEFAULT 'Customer'
+        CHECK (role IN ('Customer', 'Employee', 'Admin'));
+
 BEGIN;
 
 WITH small AS (
@@ -174,8 +182,15 @@ FROM b
          JOIN seat s ON s.hall_id = (SELECT hall_id FROM hall WHERE hall_number = 1)
 WHERE (s.row_letter, s.seat_number) IN ( ('A',1), ('A',2) );
 
-ALTER TABLE Customer
-    ADD COLUMN role VARCHAR(50) NOT NULL DEFAULT 'customer'
-        CHECK (role IN ('customer', 'employee', 'admin'));
+insert into Customer(name, password, email, phone, role)
+values('Martin Andersen', 'Martin1991!', '342731@via.dk', '28510391', 'Admin');
+
+UPDATE customer
+SET role = 'Admin'
+WHERE phone = '28510391';
+
+
+
+
 
 COMMIT;

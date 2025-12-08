@@ -8,6 +8,8 @@ public interface ICustomerService
     Task<List<CustomerDto>> GetCustomers();
     Task<CustomerDto?> GetByPhoneAsync();
     Task SaveCustomerAsync(SaveCustomerDto customer);
+    Task UpdateCustomerRoleAsync(int phone, string newRole);
+
     
     
     

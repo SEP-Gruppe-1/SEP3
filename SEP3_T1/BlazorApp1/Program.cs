@@ -3,14 +3,23 @@ using BlazorApp1.Services;
 using gRPCRepositories;
 using Microsoft.AspNetCore.Components.Authorization;
 using RepositoryContracts;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";   // ✅ din rigtige login-side
+        options.AccessDeniedPath = "/login"; // ✅ fallback ved manglende rolle
+    });
+
+
+builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped<TokenAuthenticationStateProvider>();
@@ -18,6 +27,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
     sp.GetRequiredService<TokenAuthenticationStateProvider>());
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<JwtHttpClientHandler>();
 
 builder.Services.AddScoped(sp => new HttpClient
 {
@@ -40,10 +50,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+// ✅ MANGLER LIGE NU – SKAL MED:
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-    
 
 app.Run();

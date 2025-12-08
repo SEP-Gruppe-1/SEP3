@@ -1,0 +1,89 @@
+﻿@page "/admin"
+@using ApiContract
+@using BlazorApp1.Services
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+@inject ICustomerService CustomerService
+
+<h3>Admin – Brugerstyring</h3>
+
+@if (customers == null)
+{
+    <p>Loader kunder...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Navn</th>
+            <th>Telefon</th>
+            <th>Email</th>
+            <th>Rolle</th>
+            <th>Ændr</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var c in customers)
+        {
+            <tr>
+                <td>@c.Name</td>
+                <td>@c.Phone</td>
+                <td>@c.Email</td>
+                <td>
+                    <select value="@c.Role" 
+                            @onchange="e => OnRoleChanged(c, e.Value!.ToString())">
+
+                        <option>Customer</option>
+                        <option>Employee</option>
+                        <option>Admin</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-primary"
+                            @onclick="() => UpdateRole(c.Phone, c.Role)">
+                        Gem
+                    </button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-info">@message</div>
+}
+
+@code {
+    private List<CustomerDto>? customers;
+    private string message = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await CustomerService.GetCustomers();
+    }
+
+    private async Task UpdateRole(int phone, string newRole)
+    {
+        try
+        {
+            await CustomerService.UpdateCustomerRoleAsync(phone, newRole);
+            message = "Rolle opdateret!";
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+    }
+    
+    private void OnRoleChanged(CustomerDto c, string newRole)
+    {
+        var index = customers.IndexOf(c);
+
+        customers[index] = c with { Role = newRole };
+    }
+
+}

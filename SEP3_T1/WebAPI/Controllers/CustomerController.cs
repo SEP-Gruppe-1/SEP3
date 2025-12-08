@@ -2,6 +2,7 @@
 using ApiContract;
 using Entities;
 using gRPCRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 
@@ -86,6 +87,19 @@ public class CustomerController : ControllerBase
         return Created($"/api/customer/{dto.Phone}", dto);
         
     }
-    
+
+    [Authorize(Policy = "AdminOnly")]
+    [HttpPut("role")]
+    public async Task<IActionResult> UpdateCustomerRole([FromBody] UpdateCustomerRoleDto dto)
+    {
+        var customer = await customerRepository.GetSingleAsync(dto.Phone);
+        if (customer == null)
+            return NotFound();
+
+        customer.Role = dto.NewRole;
+        await customerRepository.UpdateAsync(customer);
+
+        return Ok();
+    }
 
 }
