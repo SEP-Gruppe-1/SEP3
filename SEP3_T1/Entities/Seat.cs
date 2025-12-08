@@ -9,7 +9,7 @@ public class Seat
     public Customer Customer { get; set; }
     public decimal Price { get; set; } = 100m;
 
-    public int id {get ; set; }
+    public int id { get; set; }
 
     public override string ToString()
     {

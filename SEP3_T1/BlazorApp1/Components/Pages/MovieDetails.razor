@@ -9,9 +9,9 @@
 
 @if (isLoading)
 {
-    <P>Loading Movie...</P>
+    <P><strong>Loading Movie...</strong></P>
 }
-else if(movie == null)
+else if (movie == null)
 {
     <p>Film ikke fundet</p>
 }
@@ -19,9 +19,9 @@ else
 {
     <!-- Poster -->
     <div class="movie-banner">
-        <img src="@GetPoster(movie)" alt="@movie.MovieTitle"  />
+        <img src="@GetPoster(movie)" alt="@movie.MovieTitle"/>
     </div>
-    
+
     <!-- Screening og Tidspunkt -->
     @if (groupedScreenings?.Any() == true)
     {
@@ -35,7 +35,7 @@ else
                                 @GetDayLabel(day.Key)
                             </div>
                         </div>
-                        
+
                         <div class="screening-time">
                             @foreach (var s in day.Value)
                             {
@@ -61,8 +61,8 @@ else
     [Parameter] public int movieId { get; set; }
 
     private Movie? movie;
-    private bool isLoading = true; 
-    
+    private bool isLoading = true;
+
     private Dictionary<DateOnly, List<Screening>>? groupedScreenings;
 
     protected override async Task OnInitializedAsync()
@@ -79,7 +79,7 @@ else
                 .Where(s => s.movie.MovieId == movieId && s.date >= today)
                 .GroupBy(s => s.date)
                 .OrderBy(g => g.Key)
-                .ToDictionary(g => g.Key, 
+                .ToDictionary(g => g.Key,
                     g => g.OrderBy(s => s.startTime).ToList());
         }
         finally
@@ -87,6 +87,7 @@ else
             isLoading = false;
         }
     }
+
     private string GetPoster(Movie movie)
     {
         var fileName = movie.MovieTitle
@@ -99,8 +100,8 @@ else
     private string GetDayLabel(DateOnly date)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
-        if(date == today) return "I dag";
-        if(date == today.AddDays(1)) return "I morgen";
+        if (date == today) return "I dag";
+        if (date == today.AddDays(1)) return "I morgen";
         return date.ToString("ddd d/M");
     }
 
@@ -108,4 +109,5 @@ else
     {
         Nav.NavigateTo($"/Order/{screeningId}");
     }
+
 }

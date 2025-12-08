@@ -7,7 +7,7 @@ public class LayoutInDatabaseRepository : ILayoutRepository
 {
     private readonly CinemaServiceClient _client;
     private List<Layout> layouts;
-    
+
     public LayoutInDatabaseRepository(CinemaServiceClient _client)
     {
         this._client = _client;

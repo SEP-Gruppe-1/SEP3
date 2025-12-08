@@ -9,43 +9,39 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
 {
     private AuthenticationState state = new(new ClaimsPrincipal(new ClaimsIdentity()));
 
-    public override Task<AuthenticationState> GetAuthenticationStateAsync() => Task.FromResult(state);
+    public override Task<AuthenticationState> GetAuthenticationStateAsync()
+    {
+        return Task.FromResult(state);
+    }
 
     public Task SignIn(string jwt)
     {
         var claims = ParseClaimsFromJwt(jwt);
-        var identity = new ClaimsIdentity(claims, "jwt", nameType: "name", roleType: "role");
+        var identity = new ClaimsIdentity(claims, "jwt", "name", "role");
         var user = new ClaimsPrincipal(identity);
         Console.WriteLine("SignIn called with: " + jwt);
         state = new AuthenticationState(user);
         NotifyAuthenticationStateChanged(Task.FromResult(state));
         return Task.CompletedTask;
-        
     }
-    
+
     public Task SignOut()
     {
         state = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         NotifyAuthenticationStateChanged(Task.FromResult(state));
         return Task.CompletedTask;
     }
-    
+
     private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
     {
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(jwt);
         return token.Claims;
     }
-    
+
     public async Task LoadJwtFromStorage(IJSRuntime js)
     {
         var saved = await js.InvokeAsync<string>("localStorage.getItem", "jwt");
-        if (!string.IsNullOrEmpty(saved))
-        {
-            await SignIn(saved);
-        }
+        if (!string.IsNullOrEmpty(saved)) await SignIn(saved);
     }
-
-
-  
 }

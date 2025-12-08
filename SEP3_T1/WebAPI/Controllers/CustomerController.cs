@@ -38,7 +38,7 @@ public class CustomerController : ControllerBase
         var customers = customerRepository.GetAll().ToList();
         return Ok(customers);
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<CustomerDto>> AddCustomer([FromBody] CustomerCreateDto request)
     {

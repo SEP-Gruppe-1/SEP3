@@ -1,65 +1,190 @@
-﻿@page "/Order"
+﻿@page "/order/{screeningId:int}/"
 @using Entities
+@using RepositoryContracts
+@inject IScreeningRepository ScreeningRepo
+@inject NavigationManager Nav
 
-@inject IJSRuntime JSRuntime
-
-
-<h3>Order - Vælg sæder</h3>
-<h3>MovieList</h3>
-
-@if (movies == null)
+@if (isLoading)
 {
-    <p>Henter Film...</p>
+    <p><strong>Loading...</strong></p>
 }
-else if (!movies.Any())
+else if (screening == null)
 {
-    <p>Ingen film fundet.</p>
+    <p><strong>Filmvisning ikke fundet</strong></p>
 }
-
 else
 {
-    <div class="hall-container">
-        <div class="screen">SKÆRM</div>
+    <!--  Film Poster og info  -->
+    <div class="order-header">
+        <div class="container py-4">
+            <div class="order-header-inner">
+                <!-- Poster -->
+                <img src="@GetPoster(screening.movie)" alt="@screening.movie.MovieTitle"
+                     class="img-fluid rounded shadow-sm order-poster"/>
+                <!-- Info -->
+                <div class="col-md-9 col-lg-10 text-light">
+                    <h2 class="mb-3">@screening.movie.MovieTitle</h2>
 
-        <div class="hall">
+                    <p class="mb-1">
+                        <strong>
+                            @screening.date.ToString("d. MMMM yyyy") kl. @screening.startTime.ToString("HH':'mm")
+                        </strong>
+                    </p>
 
+                    <p class="mb-1">
+                        <strong>Sal: @screening.hallId</strong>
+                    </p>
 
+                    <p class="mb-1">
+                        <strong>
+                            Genre: @screening.movie.Genre
+                        </strong>
+                    </p>
 
-            }
-        </div>
-
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color available"></div>
-                <span>Ledig</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color selected"></div>
-                <span>Valgt</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color booked"></div>
-                <span>Booket</span>
+                    <p class="mb-1">
+                        Varighed: @screening.movie.DurationMinutes min
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-}
 
-@code {
-    private IEnumerable<Movie?> movies;
-    private readonly List<Seat> selectedSeats = new();
 
-    private void ToggleSeat(Seat seat)
-    {
-        if (selectedSeats.Contains(seat))
+    <!-- Sal/sæder -->
+    <div class="hall-container">
+        <div class="screen">Lærred</div>
+
+        <div class="hall">
+            @foreach (var rowGroup in seat
+                          .GroupBy(s => s.Number)
+                          .OrderBy(g => g.Key))
+            {
+                <div class="seat-row">
+                    @foreach (var s in rowGroup.OrderBy(s => s.Row))
+                    {
+                        <button class="@GetSeatCss(s)" disabled="@s.IsBooked"
+                                @onclick="() => ToggleSeat(s)">@s.Row @s.Number</button>
+                        //<button class="seat">@s.Row @s.Number</button>
+                    }
+                </div>
+            }
+        </div>
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-color available"></span> Ledig
+            </div>
+            <div class="legend-item">
+                <span class="legend-color selected"></span> Valgt
+            </div>
+            <div class="legend-item">
+                <span class="legend-color booked"></span> Optaget
+            </div>
+        </div>
+        <!-- vælg sæder -->
+        @if (selectedSeats.Any())
         {
-            selectedSeats.Remove(seat);
+            <div class="selected-info">
+                <strong>Valgt sæder: </strong>
+                @string.Join(", ", selectedSeats.Select(s => $"{s.Row}{s.Number}"))
+            </div>
         }
-        else
+
+    </div>
+    
+    <!--Info om valgte sæder + pris -->
+    
+    <div class="selection-info">
+        <h5>Valgte sæder</h5>
+        <p>
+            @if (!selectedSeats.Any())
+            {
+                <span>Ingen sæder valgt</span>
+            }
+            else
+            {
+                <span>@string.Join(", ", selectedSeats.Select(s =>$"{s.Row}{s.Number}"))</span>
+            }
+        </p>
+        <p>
+            <strong>Pris: </strong>
+            @TotalPrice.ToString("0.00") DKK
+        </p>
+        <button class="btn btn-success"
+                disabled="@(!selectedSeats.Any())"
+                @onclick="ConfirmSelection">Bekræft valg</button>
+    </div>
+
+    @code
+    {
+        [Parameter] public int screeningId { get; set; }
+
+        private bool isLoading = true;
+        private Screening? screening;
+
+        private List<Seat> seat;
+        private readonly List<Seat> selectedSeats = new();
+        
+        private HashSet<int> selectedSeatIds = new();
+        private const decimal TicketPrice = 110m;
+        
+        private decimal TotalPrice => selectedSeats.Count * TicketPrice;
+
+        protected override async Task OnInitializedAsync()
         {
-            selectedSeats.Add(seat);
+            isLoading = true;
+            try
+            {
+                screening = await ScreeningRepo.getSingleAsync(screeningId);
+                seat = screening.hall.Seats;
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+
+        private void ToggleSeat(Seat s)
+        {
+            if (s.IsBooked) return;
+
+            if (selectedSeats.Contains(s))
+                selectedSeats.Remove(s);
+            else
+                selectedSeats.Add(s);
+        }
+
+        private string GetSeatCss(Seat s)
+        {
+            var classes = new List<string> { "seat" };
+            if (s.IsBooked)
+            {
+                classes.Add("booked");
+            }
+            else
+            {
+                classes.Add("available");
+                if (selectedSeats.Contains(s))
+                    classes.Add("selected");
+            }
+
+            return string.Join(" ", classes);
+        }
+
+        private string GetPoster(Movie movie)
+        {
+            var fileName = movie.MovieTitle
+                .ToLower()
+                .Replace(" ", "-") + ".png";
+
+            return $"images/posters/{fileName}";
+        }
+
+        private Task ConfirmSelection()
+        {
+            //TODO: Koble booking til en kunde og gemme i database
+            Console.WriteLine($"Booker sæder: {string.Join(", ", selectedSeats.Select(s => $"{s.Row}{s.Number}"))}. Pris: {TotalPrice} DKK");
+            return Task.CompletedTask;
         }
     }
-
-
 }

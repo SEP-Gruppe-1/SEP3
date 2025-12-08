@@ -24,7 +24,9 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         return Task.FromResult(customer);
     }
 
-    public Task UpdateAsync(Customer customer) // Tjek hele metoden, det må kunne laves smartere end at fjerne hele customer og tilføje igen
+    public Task
+        UpdateAsync(
+            Customer customer) // Tjek hele metoden, det må kunne laves smartere end at fjerne hele customer og tilføje igen
     {
         var existingCustomer = customers.SingleOrDefault(c => c.Phone == customer.Phone);
         if (existingCustomer == null)
@@ -69,6 +71,13 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         customers.Add(savedCustomer);
     }
 
+    public Task<Customer?> GetByPhoneAndPasswordAsync(string phone, string password)
+    {
+        var customer = customers.SingleOrDefault(c => c.Phone == phone && c.Password == password);
+
+        return Task.FromResult(customer);
+    }
+
     public async Task InitializeAsync()
     {
         customers = await client.GetCustomersAsync();
@@ -88,12 +97,5 @@ public class CustomerInDatabaseRepository : ICustomerRepository
     {
         var customerAsJson = await client.GetCustomersAsync();
         return customerAsJson;
-    }
-
-    public Task<Customer?> GetByPhoneAndPasswordAsync(string phone, string password)
-    {
-        var customer = customers.SingleOrDefault(c => c.Phone == phone && c.Password == password);
-
-        return Task.FromResult(customer);
     }
 }

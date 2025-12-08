@@ -1,6 +1,7 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@using BlazorApp1.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager Nav
-@inject BlazorApp1.Services.TokenAuthenticationStateProvider TokenProvider
+@inject TokenAuthenticationStateProvider TokenProvider
 @inject IJSRuntime Js
 
 <div class="top-row ps-3 navbar navbar-dark">
@@ -25,7 +26,7 @@
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler')?.click()">
     <nav class="nav flex-column">
@@ -34,7 +35,7 @@
                 Home
             </NavLink>
         </div>
-        
+
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="login">
@@ -47,7 +48,7 @@
                 Customer
             </NavLink>
         </div>
-        
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="movies">
                 <span class="bi bi-film-nav-menu" aria-hidden="true"></span> Movie List
@@ -59,16 +60,18 @@
                 Signup
             </NavLink>
         </div>
-        
-        
+
+
     </nav>
 </div>
 
 @code {
+
     private async Task Logout()
     {
         await Js.InvokeVoidAsync("localStorage.removeItem", "jwt");
         await TokenProvider.SignOut();
         Nav.NavigateTo("/login", true);
     }
+
 }
