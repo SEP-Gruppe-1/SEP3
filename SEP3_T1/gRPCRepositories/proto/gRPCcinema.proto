@@ -3,12 +3,14 @@ option java_multiple_files = true;
 
 package grpccinema;
 
+
+//---------- Customer ----------\\
 message DTOCustomer
 {
   string name = 1;
   string password = 2;
   string email = 3;
-  int32 phone = 4;
+  string phone = 4;
 }
 
 message GetCustomersRequest
@@ -22,7 +24,7 @@ message GetCustomersResponse
 
 message GetCustomerByPhoneRequest
 {
-  int32 phone = 1;
+  string phone = 1;
 }
 
 message GetCustomerByPhoneResponse
@@ -37,7 +39,7 @@ message SaveCustomerRequest {
 message SaveCustomerResponse {
   DTOCustomer customer = 1;
 }
-
+//---------- Hall ----------\\
 message DTOHall{
   int32 id = 1;
   int32 number = 2;
@@ -48,7 +50,7 @@ message DTOHall{
 message GetHallsRequest{}
 
 message GetHallsResponse{
- repeated DTOHall halls = 1;
+  repeated DTOHall halls = 1;
 }
 
 message GetHallByIdRequest{
@@ -58,6 +60,97 @@ message GetHallByIdRequest{
 message GetHallByIdResponse{
   DTOHall hall = 1;
 }
+
+//---------- Movie ----------\\
+
+message DTOMovie{
+  string title = 1;
+  int32 playtime = 2;
+  string genre = 3;
+  string releaseDate = 4;
+  int32 id = 5;
+}
+
+message GetMovieByIdRequest{
+  int32 id = 1;
+}
+message GetMovieByIdResponse{
+  DTOMovie movie = 1;
+}
+
+message GetAllMoviesRequest{}
+
+message GetAllMoviesResponse{
+  repeated DTOMovie movies = 1;
+}
+
+
+//---------- Screening ----------\\
+message DTOScreening{
+  int32 id = 1;
+  DTOMovie movie= 2;
+  string startTime = 3;
+  string date = 4;
+  int32 hallId = 5;
+  int32 availableSeats = 6;
+  DTOHall hall = 7;
+}
+
+message GetAllScreeningsRequest{}
+
+message GetAllScreeningsResponse{
+  repeated DTOScreening screenings = 1;
+}
+
+message GetScreeningByIdRequest{
+  int32 id = 1;
+}
+
+message GetScreeningByIdResponse{
+  DTOScreening screening = 1;
+}
+
+
+
+//---------- Layout ----------\\
+
+message DTOLayout{
+  string maxLetter = 1;
+  int32 maxSeatInt = 2;
+  int32 id = 3;
+}
+
+message GetAllLayoutsRequest{
+
+}
+message GetAllLayoutsResponse{
+  repeated DTOLayout Layouts = 1;
+}
+
+//---------- Layout ----------\\
+
+message DTOSeat{
+  string letter = 1;
+  int32 number =2;
+  int32 id = 3;
+  bool booked = 4;
+  DTOCustomer customer = 5;
+}
+
+message GetAllSeatsRequest{}
+
+message GetAllSeatsResponse{
+  repeated DTOSeat seats = 1;
+}
+
+message GetSeatsByScreeningRequest {
+  int32 screening_id = 1;
+}
+
+message GetSeatsByScreeningResponse {
+  repeated DTOSeat seats = 1;
+}
+
 service CinemaService
 {
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
@@ -65,4 +158,11 @@ service CinemaService
   rpc SaveCustomer(SaveCustomerRequest) returns (SaveCustomerResponse);
   rpc GetHalls (GetHallsRequest) returns (GetHallsResponse);
   rpc GetHallByID (GetHallByIdRequest) returns (GetHallByIdResponse);
+  rpc GetAllScreenings (GetAllScreeningsRequest) returns (GetAllScreeningsResponse);
+  rpc GetMovieByID (GetMovieByIdRequest) returns (GetMovieByIdResponse);
+  rpc GetAllMovies (GetAllMoviesRequest) returns (GetAllMoviesResponse);
+  rpc GetScreeningByID (GetScreeningByIdRequest) returns (GetScreeningByIdResponse);
+  rpc GetAllLayouts (GetAllLayoutsRequest) returns (GetAllLayoutsResponse);
+  rpc GetAllSeats (GetAllSeatsRequest) returns (GetAllSeatsResponse);
+  rpc GetSeatsByScreening(GetSeatsByScreeningRequest) returns (GetSeatsByScreeningResponse);
 }

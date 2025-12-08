@@ -43,26 +43,26 @@ public class CustomerDAOImpl implements CustomerDAO
         if (rs.next())
         {
           return new Customer(rs.getString("name"), rs.getString("password"),
-              rs.getString("email"), rs.getInt("phone"));
+              rs.getString("email"), rs.getString("phone"));
         }
       }
     }
     return null;
   }
 
-  @Override public Customer getCustomerByPhone(int phone)
+  @Override public Customer getCustomerByPhone(String phone)
   {
     String sql = "SELECT name, password, email, phone FROM Customer WHERE phone = ?";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql))
     {
-      stmt.setInt(1, phone);
+      stmt.setString(1, phone);
       try (ResultSet rs = stmt.executeQuery())
       {
         if (rs.next())
         {
           return new Customer(rs.getString("name"), rs.getString("password"),
-              rs.getString("email"), rs.getInt("phone"));
+              rs.getString("email"), rs.getString("phone"));
         }
       }
     }
@@ -85,7 +85,7 @@ public class CustomerDAOImpl implements CustomerDAO
       {
         customers.add(
             new Customer(rs.getString("name"), rs.getString("password"),
-                rs.getString("email"), rs.getInt("phone")));
+                rs.getString("email"), rs.getString("phone")));
       }
     }
     catch (SQLException e)
@@ -103,7 +103,7 @@ public class CustomerDAOImpl implements CustomerDAO
       stmt.setString(1, customer.getName());
       stmt.setString(2, customer.getPassword());
       stmt.setString(3, customer.getEmail());
-      stmt.setInt(4, customer.getPhone());
+      stmt.setString(4, customer.getPhone());
       stmt.executeUpdate();
     }
   }
@@ -115,7 +115,7 @@ public class CustomerDAOImpl implements CustomerDAO
         PreparedStatement stmt = conn.prepareStatement(sql)) {
       stmt.setString(1, customer.getName());
       stmt.setString(2, customer.getPassword());
-      stmt.setInt(3, customer.getPhone());
+      stmt.setString(3, customer.getPhone());
       stmt.setString(4, customer.getEmail());
       stmt.executeUpdate();
     }

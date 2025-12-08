@@ -4,11 +4,11 @@ public class Customer {
     private String name;
     private String password;
     private String email;
-    private int phone;
+    private String phone;
 
     public Customer() {}
 
-    public Customer(String name, String password, String email, int phone) {
+    public Customer(String name, String password, String email, String phone) {
         this.name = name;
         this.password = password;
         this.email = email;
@@ -39,11 +39,11 @@ public class Customer {
         this.email = email;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 }

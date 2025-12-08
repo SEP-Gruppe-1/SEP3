@@ -6,10 +6,10 @@ public interface ICustomerRepository
 {
     Task<Customer> AddAsync(Customer customer);
     Task UpdateAsync(Customer customer);
-    Task DeleteAsync(int phone, string name, string email);
-    Task<Customer?> GetSingleAsync(int phone);
+    Task DeleteAsync(string phone, string name, string email);
+    Task<Customer?> GetSingleAsync(String phone);
     IQueryable<Customer> GetAll();
-    Task VerifyCustomerDoesNotExist(int phone, string email);
+    Task VerifyCustomerDoesNotExist(string phone, string email);
 
     Task SaveCustomer(Customer customer);
     Task<Customer?> GetByPhoneAndPasswordAsync(int phone, string password);

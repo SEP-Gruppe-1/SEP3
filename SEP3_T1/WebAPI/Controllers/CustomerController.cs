@@ -1,10 +1,9 @@
-﻿using Grpc.Core;
-using ApiContract;
+﻿using ApiContract;
 using Entities;
+using Grpc.Core;
 using gRPCRepositories;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
-
 
 [ApiController]
 [Route("api/[controller]")]
@@ -18,7 +17,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("{phone:int}")]
-    public async Task<ActionResult<CustomerDto>> GetSingle(int phone)
+    public async Task<ActionResult<CustomerDto>> GetSingle(string phone)
     {
         try
         {
@@ -31,7 +30,6 @@ public class CustomerController : ControllerBase
         }
     }
 
-
     [HttpGet]
     public async Task<IActionResult> GetAllCustomers()
     {
@@ -40,7 +38,7 @@ public class CustomerController : ControllerBase
         var customers = customerRepository.GetAll().ToList();
         return Ok(customers);
     }
-
+    
     [HttpPost]
     public async Task<ActionResult<CustomerDto>> AddCustomer([FromBody] CustomerCreateDto request)
     {
@@ -54,18 +52,16 @@ public class CustomerController : ControllerBase
         try
         {
             await customerRepository.VerifyCustomerDoesNotExist(request.Phone, request.Email);
-            await customerRepository.SaveCustomer(customer);
         }
         catch (InvalidOperationException ex)
         {
             return Conflict(new
             {
-
                 message = ex.Message
             });
         }
         catch (RpcException ex) when (ex.Status.Detail != null &&
-                                       ex.Status.Detail.Contains("customer_email_key"))
+                                      ex.Status.Detail.Contains("customer_email_key"))
         {
             // Simpelt fix for email-duplicate – ligesom med phone
             return Conflict(new
@@ -73,7 +69,7 @@ public class CustomerController : ControllerBase
                 message = $"Email: {request.Email} already exists."
             });
         }
-        
+
         await customerRepository.SaveCustomer(customer);
         SaveCustomerDto dto = new(
             request.Name,
@@ -82,8 +78,5 @@ public class CustomerController : ControllerBase
             request.Password
         );
         return Created($"/api/customer/{dto.Phone}", dto);
-        
     }
-    
-
 }
