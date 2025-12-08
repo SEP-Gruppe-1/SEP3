@@ -24,15 +24,23 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         return Task.FromResult(customer);
     }
 
-    public Task UpdateAsync(Customer customer) // Tjek hele metoden, det må kunne laves smartere end at fjerne hele customer og tilføje igen
+    public async Task UpdateAsync(Customer customer)
     {
+        // ✅ Tving genindlæsning fra Java/DB før opdatering
+        await InitializeAsync();
+
         var existingCustomer = customers.SingleOrDefault(c => c.Phone == customer.Phone);
+
         if (existingCustomer == null)
             throw new InvalidOperationException($"Customer with phone nr: {customer.Phone} not found.");
+
         customers.Remove(existingCustomer);
         customers.Add(customer);
-        return Task.CompletedTask;
+
+        // ✅ Gem også i Java/DB
+        await client.SaveCustomerAsync(customer);
     }
+
 
     public Task DeleteAsync(string phone, string name, string email)
     {

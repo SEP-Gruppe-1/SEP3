@@ -14,8 +14,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/login";   // ✅ din rigtige login-side
-        options.AccessDeniedPath = "/login"; // ✅ fallback ved manglende rolle
+        options.LoginPath = "/";   
+        options.AccessDeniedPath = "/"; 
     });
 
 
@@ -51,8 +51,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-// ✅ MANGLER LIGE NU – SKAL MED:
 app.UseAuthentication();
 app.UseAuthorization();
 
