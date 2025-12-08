@@ -90,7 +90,7 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         return customerAsJson;
     }
 
-    public Task<Customer?> GetByPhoneAndPasswordAsync(int phone, string password)
+    public Task<Customer?> GetByPhoneAndPasswordAsync(string phone, string password)
     {
         var customer = customers.SingleOrDefault(c => c.Phone == phone && c.Password == password);
 

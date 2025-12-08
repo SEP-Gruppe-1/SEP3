@@ -1,4 +1,7 @@
+using System.Text;
 using gRPCRepositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using RepositoryContract;
 using RepositoryContracts;
 
