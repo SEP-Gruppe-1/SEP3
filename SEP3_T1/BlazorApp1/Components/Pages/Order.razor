@@ -1,6 +1,5 @@
 ﻿@page "/Order"
 @using Entities
-@using InMemoryRepositories
 
 @inject IJSRuntime JSRuntime
 
@@ -11,7 +10,7 @@
     <div class="screen">SKÆRM</div>
 
     <div class="hall">
-       
+
 
            
         }
@@ -34,8 +33,8 @@
 </div>
 
 @code {
-   
-    private List<Seat> selectedSeats = new List<Seat>();
+
+    private readonly List<Seat> selectedSeats = new();
 
     private void ToggleSeat(Seat seat)
     {
@@ -49,5 +48,5 @@
         }
     }
 
-    
+
 }

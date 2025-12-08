@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface HallDAO {
-    Hall getHallById(int id) ;
-    List<Hall> getAllHalls() ;
+    Hall getHallById(int id) throws SQLException;
+    List<Hall> getAllHalls() throws SQLException;
 
 }

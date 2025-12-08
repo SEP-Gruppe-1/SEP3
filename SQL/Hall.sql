@@ -2,6 +2,21 @@
 CREATE SCHEMA IF NOT EXISTS cinema;
 SET search_path TO cinema;
 
+
+DROP TABLE IF EXISTS bookingseat CASCADE;
+DROP TABLE IF EXISTS booking CASCADE;
+DROP TABLE IF EXISTS seat CASCADE;
+DROP TABLE IF EXISTS layout_seat CASCADE;
+DROP TABLE IF EXISTS screening CASCADE;
+DROP TABLE IF EXISTS hall CASCADE;
+DROP TABLE IF EXISTS movie CASCADE;
+DROP TABLE IF EXISTS seat_layout CASCADE;
+DROP TABLE IF EXISTS customer CASCADE;
+
+
+
+
+
 -- Kunde-tabellen
 
 CREATE TABLE IF NOT EXISTS Customer (
@@ -47,7 +62,8 @@ CREATE TABLE IF NOT EXISTS Screening (
                                          screening_id serial PRIMARY KEY,
                                          movie_id integer NOT NULL REFERENCES movie(movie_id),
                                          hall_id integer NOT NULL REFERENCES hall(hall_id),
-                                         screening_time timestamp NOT NULL,
+                                         screening_date DATE NOT NULL,
+                                         start_time TIME NOT NULL,
                                          available_seats smallint CHECK (available_seats >= 0)
 );
 
@@ -87,9 +103,52 @@ CREATE TABLE IF NOT EXISTS BookingSeat (
 -- Drop gammel constraint hvis nødvendigt
 ALTER TABLE seat DROP CONSTRAINT IF EXISTS uq_seat_screen_row_num;
 DROP INDEX IF EXISTS uq_seat_screen_row_num;
-
+ALTER TABLE seat DROP CONSTRAINT IF EXISTS uq_seat_hall_row_num;
+DROP INDEX IF EXISTS uq_seat_hall_row_num;
 -- Tilføj ny constraint
 ALTER TABLE seat ADD CONSTRAINT uq_seat_hall_row_num UNIQUE (hall_id, row_letter, seat_number);
+
+-- Seat_Layout opdateret tabel
+ALTER TABLE seat_layout
+    ADD COLUMN max_row_letter char(1),
+    ADD COLUMN max_seat_number smallint;
+
+-- opdatering indsat
+UPDATE seat_layout sl
+SET
+    max_row_letter = sub.max_row_letter,
+    max_seat_number = sub.max_seat_number
+FROM (
+         SELECT
+             layout_id,
+             MAX(row_letter) AS max_row_letter,
+             MAX(seat_number) AS max_seat_number
+         FROM layout_seat
+         GROUP BY layout_id
+     ) AS sub
+WHERE sl.layout_id = sub.layout_id;
+
+
+
+-- automatisk opdaterering af Seat_layout
+CREATE OR REPLACE FUNCTION update_seat_layout_stats()
+    RETURNS trigger AS $$
+BEGIN
+    UPDATE seat_layout
+    SET
+        max_row_letter = (SELECT MAX(row_letter) FROM layout_seat WHERE layout_id = NEW.layout_id),
+        max_seat_number = (SELECT MAX(seat_number) FROM layout_seat WHERE layout_id = NEW.layout_id)
+    WHERE layout_id = NEW.layout_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+-- trigger til opdatering
+CREATE TRIGGER trg_update_seat_layout
+    AFTER INSERT OR UPDATE OR DELETE ON layout_seat
+    FOR EACH ROW
+EXECUTE FUNCTION update_seat_layout_stats();
+
 
 -- Indsæt layout og sæder
 
@@ -144,18 +203,20 @@ VALUES
     ('Spirited Away', 125, 'Animation', '2001-07-20');
 
 -- Opret forestillinger
-INSERT INTO Screening(movie_id, hall_id, screening_time, available_seats)
+INSERT INTO Screening(movie_id, hall_id, screening_date, start_time, available_seats)
 VALUES
     (
         (SELECT movie_id FROM movie WHERE title = 'The Matrix'),
         (SELECT hall_id FROM hall WHERE hall_number = 1),
-        TIMESTAMP '2025-10-25 19:30:00',
+        date '2025-10-25',
+        time '19:30:00',
         (SELECT COUNT(*) FROM seat WHERE hall_id = (SELECT hall_id FROM hall WHERE hall_number = 1))
     ),
     (
         (SELECT movie_id FROM movie WHERE title = 'Spirited Away'),
         (SELECT hall_id FROM hall WHERE hall_number = 2),
-        TIMESTAMP '2025-10-25 17:00:00',
+        date '2025-10-25',
+        time '17:00:00',
         (SELECT COUNT(*) FROM seat WHERE hall_id = (SELECT hall_id FROM hall WHERE hall_number = 2))
     );
 

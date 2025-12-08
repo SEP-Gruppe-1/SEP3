@@ -49,6 +49,7 @@ public class HttpCustomerService : ICustomerService
         if (!response.IsSuccessStatusCode)
             throw new Exception($"Error adding Customer: {responseContent}");
     }
+
     public class ConflictResponse
     {
         public string? Message { get; set; }
