@@ -51,38 +51,84 @@ else
     </table>
 }
 
-@if (!string.IsNullOrEmpty(message))
+@if (showPopup)
 {
-    <div class="alert alert-info">@message</div>
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Rolle opdateret</h5>
+                </div>
+                <div class="modal-body">
+                    <p>@popupMessage</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" @onclick="ClosePopup">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- mørk baggrund -->
+    <div class="modal-backdrop fade show"></div>
 }
 
 @code {
     private List<CustomerDto>? customers;
-    private string message = "";
+
+    // ✅ Gem oprindelige roller så vi kan sammenligne
+    private Dictionary<string, string> originalRoles = new();
+
+    // ✅ Popup-state
+    private bool showPopup = false;
+    private string popupMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
         customers = await CustomerService.GetCustomers();
+
+        // ✅ Gem oprindelige roller
+        originalRoles = customers.ToDictionary(c => c.Phone, c => c.Role);
     }
 
     private async Task UpdateRole(string phone, string newRole)
     {
         try
         {
+            var oldRole = originalRoles[phone];
+
+            // ✅ 1) Hvis rollen er den samme → ingen API-kald
+            if (oldRole == newRole)
+            {
+                popupMessage = $"Ingen ændring – rollen er stadig '{oldRole}'.";
+                showPopup = true;
+                return;
+            }
+
+            // ✅ 2) Kald backend for rigtig opdatering
             await CustomerService.UpdateCustomerRoleAsync(phone, newRole);
-            message = "Rolle opdateret!";
+
+            // ✅ 3) Opdater local state
+            originalRoles[phone] = newRole;
+
+            popupMessage = $"Rolle ændret \n\nFra: {oldRole}\nTil: {newRole}";
+            showPopup = true;
         }
         catch (Exception ex)
         {
-            message = ex.Message;
+            popupMessage = $"Fejl under opdatering:\n{ex.Message}";
+            showPopup = true;
         }
     }
-    
+
     private void OnRoleChanged(CustomerDto c, string newRole)
     {
         var index = customers.IndexOf(c);
-
         customers[index] = c with { Role = newRole };
     }
 
+    private void ClosePopup()
+    {
+        showPopup = false;
+    }
 }

@@ -13,16 +13,8 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
 
     public Task SignIn(string jwt)
     {
-        Console.WriteLine("=========== SIGNIN DEBUG ===========");
-        Console.WriteLine("RAW JWT:");
-        Console.WriteLine(jwt);
 
         var claims = ParseClaimsFromJwt(jwt);
-
-        foreach (var claim in claims)
-        {
-            Console.WriteLine($"CLAIM => Type: {claim.Type}, Value: {claim.Value}");
-        }
 
         var identity = new ClaimsIdentity(
             claims,

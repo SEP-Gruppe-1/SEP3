@@ -11,12 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/";   
-        options.AccessDeniedPath = "/"; 
-    });
+builder.Services.AddAuthentication();
 
 
 builder.Services.AddAuthorization();
