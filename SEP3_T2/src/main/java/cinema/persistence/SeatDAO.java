@@ -9,6 +9,6 @@ public interface SeatDAO {
 
     List<Seat> getSeatsByScreening(int screeningId) throws SQLException;
     List<Seat> getAllSeats();
-
+    void bookSeat(int screeningId, String Phone, List<Integer> seatIds) throws SQLException;
 
 }
