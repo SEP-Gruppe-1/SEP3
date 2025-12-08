@@ -38,7 +38,7 @@
 </div>
 
 @code {
-    private int? phone;
+    private string? phone;
     private string password = "";
     private string jwt = "";
     private string message = "";
@@ -48,7 +48,7 @@
         try
         {
             Console.WriteLine("Jwt:" + jwt);
-            jwt = await AuthService.LoginAndReturnToken(phone!.Value, password);
+            jwt = await AuthService.LoginAndReturnToken(phone, password);
             await TokenProvider.SignIn(jwt);
             await JsRuntime.InvokeVoidAsync("localStorage.setItem", "jwt", jwt);
 

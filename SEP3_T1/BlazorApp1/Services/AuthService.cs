@@ -12,13 +12,13 @@ public class AuthService
         };
     }
 
-    public async Task<string> LoginAndReturnToken(int? phone, string password)
+    public async Task<string> LoginAndReturnToken(string? phone, string password)
     {
        
         
         var response = await http.PostAsJsonAsync("api/Auth/login", new
         {
-            Phone = phone.Value, 
+            Phone = phone, 
             Password = password
         });
         if (!response.IsSuccessStatusCode)

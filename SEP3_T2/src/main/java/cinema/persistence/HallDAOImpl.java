@@ -11,67 +11,69 @@ public class HallDAOImpl implements HallDAO {
 
 
     public static HallDAOImpl instance;
+    public LayoutDAO layoutDAO = LayoutDAOImpl.getInstance();
+    public SeatDAO seatDAO = SeatDAOImpl.getInstance();
 
-    public HallDAOImpl() throws SQLException {
+
+    private HallDAOImpl() throws SQLException {
         DriverManager.registerDriver(new org.postgresql.Driver());
+        LayoutDAO layoutDAO = LayoutDAOImpl.getInstance();
+
     }
 
-    public static Connection getConnection() throws SQLException {
+    private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
                 "jdbc:postgresql://localhost:5432/postgres?currentSchema=cinema",
                 "postgres", "123");
     }
 
     public static HallDAOImpl getInstance() throws SQLException {
-        if (instance == null)
-        {
+        if (instance == null) {
             instance = new HallDAOImpl();
         }
         return instance;
     }
 
     @Override
-    public Hall getHallById(int id)  {
+    public Hall getHallById(int id) throws SQLException {
+
+        layoutDAO.getAllLayouts();
+
+        seatDAO.getAllSeats();
         String sql = "select * from hall where hall_id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql))
-        {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            try(ResultSet rs = stmt.executeQuery();) {
+            try (ResultSet rs = stmt.executeQuery()) {
 
-                if (rs.next())
-                {
-                    return new Hall(rs.getInt("hall_id"), rs.getInt("Hall_Number"),
-                            rs.getInt("Layout_id"));
+                if (rs.next()) {
+                    return Hall.getInstance(rs.getInt("hall_id"));
                 }
             }
 
 
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             System.out.println(e.toString());
         }
         return null;
     }
 
     @Override
-    public List<Hall> getAllHalls()  {
-        List<Hall> halls= new ArrayList<>();
+    public List<Hall> getAllHalls() throws SQLException {
+
+        layoutDAO.getAllLayouts();
+
+        seatDAO.getAllSeats();
+        List<Hall> halls = new ArrayList<>();
         String sql = "SELECT hall_id, hall_number, layout_id FROM Hall";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery())
-        {
-            while (rs.next())
-            {
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
                 halls.add(
-                        new Hall(rs.getInt("hall_id"), rs.getInt("Hall_number"),
-                                rs.getInt("layout_id")));
+                        Hall.getInstance(rs.getInt("hall_id")));
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             System.out.println(e.toString());
         }
         return halls;

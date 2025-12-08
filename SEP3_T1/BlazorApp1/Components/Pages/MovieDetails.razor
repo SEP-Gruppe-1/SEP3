@@ -1,0 +1,111 @@
+﻿@page "/MovieDetails/{movieId:int}/"
+@using Entities
+@using RepositoryContracts
+@inject IScreeningRepository ScreeningRepo
+@inject IMovieRepository MovieRepo
+@inject NavigationManager Nav
+
+<h3>Movie Details</h3>
+
+@if (isLoading)
+{
+    <P>Loading Movie...</P>
+}
+else if(movie == null)
+{
+    <p>Film ikke fundet</p>
+}
+else
+{
+    <!-- Poster -->
+    <div class="movie-banner">
+        <img src="@GetPoster(movie)" alt="@movie.MovieTitle"  />
+    </div>
+    
+    <!-- Screening og Tidspunkt -->
+    @if (groupedScreenings?.Any() == true)
+    {
+        <div class="screening-strip">
+            <div class="screening-days">
+                @foreach (var day in groupedScreenings)
+                {
+                    <div class="screening-day">
+                        <div class="screening-day-header">
+                            <div class="screening-day-label">
+                                @GetDayLabel(day.Key)
+                            </div>
+                        </div>
+                        
+                        <div class="screening-time">
+                            @foreach (var s in day.Value)
+                            {
+                                <button class="btn btn-danger screening-time-btn"
+                                        @onclick="@(() => GoToOrder(s.screeningId))">
+                                    @s.startTime.ToString("HH':'mm")
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    }
+    else if (groupedScreenings != null)
+    {
+        <h3 class="no-screenings-text"><strong>Ingen kommende forstillinger</strong></h3>
+    }
+}
+
+@code {
+    [Parameter] public int movieId { get; set; }
+
+    private Movie? movie;
+    private bool isLoading = true; 
+    
+    private Dictionary<DateOnly, List<Screening>>? groupedScreenings;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        try
+        {
+            movie = await MovieRepo.GetSingleAsync(movieId);
+
+            var allScreenings = await ScreeningRepo.getAll();
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            groupedScreenings = allScreenings
+                .Where(s => s.movie.MovieId == movieId && s.date >= today)
+                .GroupBy(s => s.date)
+                .OrderBy(g => g.Key)
+                .ToDictionary(g => g.Key, 
+                    g => g.OrderBy(s => s.startTime).ToList());
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+    private string GetPoster(Movie movie)
+    {
+        var fileName = movie.MovieTitle
+            .ToLower()
+            .Replace(" ", "-") + ".png";
+
+        return $"images/banner/{fileName}";
+    }
+
+    private string GetDayLabel(DateOnly date)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        if(date == today) return "I dag";
+        if(date == today.AddDays(1)) return "I morgen";
+        return date.ToString("ddd d/M");
+    }
+
+    private void GoToOrder(int screeningId)
+    {
+        Nav.NavigateTo($"/Order/{screeningId}");
+    }
+}

@@ -6,9 +6,10 @@ public class Seat
     public int Number { get; set; }
     public bool IsSelected { get; set; }
     public bool IsBooked { get; set; } // Ny property for bookede sæder
+    public Customer Customer { get; set; }
     public decimal Price { get; set; } = 100m;
 
-    public string Id => $"{Row}{Number}";
+    public int id {get ; set; }
 
     public override string ToString()
     {

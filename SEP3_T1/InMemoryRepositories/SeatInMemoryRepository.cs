@@ -3,7 +3,7 @@ using RepositoryContracts;
 
 namespace InMemoryRepositories;
 
-public class SeatInMemoryRepository : ISeatRepository
+public class SeatInMemoryRepository //:  ISeatRepository
 {
     private readonly Seat Seats = new();
 

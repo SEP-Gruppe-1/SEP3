@@ -92,7 +92,7 @@
         {
             var customerDto = new SaveCustomerDto
             (
-                Phone: int.Parse(newCustomer.Phone!),
+                Phone: newCustomer.Phone!,
                 Name: newCustomer.Name!,
                 Email: newCustomer.Email!,
                 Password: newCustomer.Password!
@@ -101,7 +101,6 @@
             await CustomerService.SaveCustomerAsync(customerDto);
 
             Nav.NavigateTo("/customer");
-
         }
         catch (Exception ex)
         {

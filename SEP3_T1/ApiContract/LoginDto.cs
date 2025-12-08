@@ -1,3 +1,3 @@
 ﻿namespace ApiContract;
 
-public record LoginDto(int Phone, string Password);
+public record LoginDto(string Phone, string Password);
