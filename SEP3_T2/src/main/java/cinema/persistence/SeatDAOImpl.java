@@ -99,5 +99,44 @@ public class SeatDAOImpl implements SeatDAO {
         return null;
     }
 
+    @Override
+    public void bookSeat(int screeningId, String phone, List<Integer> seatIds) throws SQLException {
+        String insertBookingSQL =
+                "INSERT INTO Booking (customer_phone, screening_id, seats_booked) " +
+                        "VALUES (?, ?, ?) RETURNING booking_id";
+
+        String insertSeatSQL =
+                "INSERT INTO BookingSeat (booking_id, seat_id) VALUES (?, ?)";
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+
+            int bookingId;
+
+            // Create booking row and get its ID
+            try (PreparedStatement stmt = conn.prepareStatement(insertBookingSQL)) {
+                stmt.setString(1, phone);
+                stmt.setInt(2, screeningId);
+                stmt.setInt(3, seatIds.size());
+
+                ResultSet rs = stmt.executeQuery();
+                rs.next(); // guaranteed because RETURNING always returns something
+                bookingId = rs.getInt("booking_id");  // correct column name
+            }
+
+            // Insert seat rows
+            try (PreparedStatement seatStmt = conn.prepareStatement(insertSeatSQL)) {
+                for (int seatId : seatIds) {
+                    seatStmt.setInt(1, bookingId);
+                    seatStmt.setInt(2, seatId);
+                    seatStmt.addBatch();
+                }
+                seatStmt.executeBatch();
+            }
+
+            conn.commit();
+        }
+    }
+
 
 }

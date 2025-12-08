@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Grpccinema;
 using RepositoryContracts;
 
 namespace gRPCRepositories;
@@ -52,5 +53,11 @@ public class ScreeningInRepository : IScreeningRepository
         
         
         return screenings;
+    }
+
+ 
+    public Task BookSeatsAsync(int screeningId, List<int> seatIds, string phoneNumber)
+    {
+        return _client.BookSeatsAsync(screeningId, seatIds, phoneNumber);
     }
 }

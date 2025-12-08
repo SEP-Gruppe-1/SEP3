@@ -38,4 +38,17 @@ public class ScreeningController : ControllerBase
             return NotFound();
         }
     }
+
+    [HttpPost("{screeningId:int}/Book")]
+    public async Task<IActionResult> BookSeats(int screeningId, [FromBody] BookSeatsRequest request)
+    {
+        await screeningRepository.BookSeatsAsync(
+            screeningId,
+            request.SeatIds,
+            request.PhoneNumber
+        );
+
+        return Ok(new { message = "Seats booked successfully" });
+    }
+    
 }

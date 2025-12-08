@@ -4,6 +4,7 @@ import cinema.dto.DTOFactory;
 import cinema.model.*;
 import cinema.persistence.*;
 import grpccinema.*;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 import java.sql.SQLException;
@@ -189,6 +190,34 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
                 addAllSeats(dtoSeats).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
+
+    }
+
+    @Override
+    public void bookSeats(BookSeatsRequest request, StreamObserver<BookSeatsResponse> responseObserver) {
+
+        int screeningId = request.getScreeningId();
+        String customerPhone = request.getCustomerPhone();
+        List<Integer> seatIds = request.getSeatIdsList();
+
+        try {
+            seatDAO.bookSeat(screeningId, customerPhone, seatIds);
+
+            // Tom response-body
+            BookSeatsResponse response = BookSeatsResponse.newBuilder().build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Booking failed: " + e.getMessage())
+                            .asRuntimeException()
+            );
+        }
 
     }
 }

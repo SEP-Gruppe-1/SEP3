@@ -241,5 +241,19 @@ public class CinemaServiceClient
         }
         return await Task.FromResult(seats);
     }
+   
+   
+    public async Task BookSeatsAsync(int screeningId, List<int> seatIds, string phoneNumber)
+    {
+        var request = new BookSeatsRequest
+        {
+            ScreeningId = screeningId,
+            CustomerPhone = phoneNumber
+        };
+
+        request.SeatIds.AddRange(seatIds);
+
+        await _client.BookSeatsAsync(request);
+    }
     
 }
