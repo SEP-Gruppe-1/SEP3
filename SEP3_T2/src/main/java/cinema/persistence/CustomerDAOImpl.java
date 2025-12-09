@@ -114,7 +114,7 @@ public class CustomerDAOImpl implements CustomerDAO
 
     @Override
     public void updateCustomer(Customer customer) throws SQLException {
-        String sql = "UPDATE Customer SET name = ?, password = ?, phone = ?, role = ? WHERE email = ?";
+        String sql = "UPDATE Customer SET name = ?, password = ?, phone = ?, role = ? WHERE phone = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -128,13 +128,17 @@ public class CustomerDAOImpl implements CustomerDAO
         }
     }
 
+
     @Override
-  public void deleteCustomer(String email) throws SQLException {
-    String sql = "DELETE FROM Customer WHERE email = ?";
-    try (Connection conn = getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, email);
-      stmt.executeUpdate();
+    public void deleteCustomerByPhone(String phone) throws SQLException {
+        String sql = "DELETE FROM cinema.customer WHERE phone = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, phone);
+            stmt.executeUpdate();
+        }
     }
-  }
+
 }
