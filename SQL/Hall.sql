@@ -13,18 +13,6 @@ DROP TABLE IF EXISTS movie CASCADE;
 DROP TABLE IF EXISTS seat_layout CASCADE;
 DROP TABLE IF EXISTS customer CASCADE;
 
-SELECT table_schema, table_name
-FROM information_schema.tables
-WHERE table_name ILIKE '%customer%';
-
-SELECT phone, name, role
-FROM cinema.customer;
-
-
-
-
-
-
 -- Kunde-tabellen
 
 CREATE TABLE IF NOT EXISTS Customer (
