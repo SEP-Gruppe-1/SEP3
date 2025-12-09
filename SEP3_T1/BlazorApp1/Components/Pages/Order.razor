@@ -22,7 +22,7 @@ else
                 <img src="@GetPoster(screening.movie)" alt="@screening.movie.MovieTitle"
                      class="img-fluid rounded shadow-sm order-poster"/>
                 <!-- Info -->
-                <div class="col-md-9 col-lg-10 text-light">
+                <div>
                     <h2 class="mb-3">@screening.movie.MovieTitle</h2>
 
                     <p class="mb-1">
@@ -48,7 +48,18 @@ else
             </div>
         </div>
     </div>
-
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item">
+            <span class="legend-color available"></span> Ledig
+        </div>
+        <div class="legend-item">
+            <span class="legend-color selected"></span> Valgt
+        </div>
+        <div class="legend-item">
+            <span class="legend-color booked"></span> Optaget
+        </div>
+    </div>
 
     <!-- Sal/sæder -->
     <div class="hall-container">
@@ -69,18 +80,7 @@ else
                 </div>
             }
         </div>
-        <!-- Legend -->
-        <div class="legend">
-            <div class="legend-item">
-                <span class="legend-color available"></span> Ledig
-            </div>
-            <div class="legend-item">
-                <span class="legend-color selected"></span> Valgt
-            </div>
-            <div class="legend-item">
-                <span class="legend-color booked"></span> Optaget
-            </div>
-        </div>
+        
         <!-- vælg sæder -->
         @if (selectedSeats.Any())
         {
@@ -95,7 +95,6 @@ else
     <!--Info om valgte sæder + pris -->
     
     <div class="selection-info">
-        <h5>Valgte sæder</h5>
         <p>
             @if (!selectedSeats.Any())
             {

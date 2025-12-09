@@ -148,6 +148,9 @@ order-header-text {
 
 .selection-info {
     background-color: #f8f9fa;
+    position: fixed;
+    right: 40px;
+    bottom: 20px;
     padding: 15px;
     border-radius: 8px;
     margin: 20px auto;
