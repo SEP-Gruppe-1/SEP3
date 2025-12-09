@@ -48,8 +48,7 @@
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-
-        // ✅ Hvis brugeren allerede er logget ind → send til forsiden
+        
         if (user.Identity?.IsAuthenticated == true)
         {
             Nav.NavigateTo("/", true);
