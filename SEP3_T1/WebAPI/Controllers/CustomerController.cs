@@ -17,7 +17,7 @@ public class CustomerController : ControllerBase
         this.customerRepository = customerRepository;
     }
 
-    [HttpGet("{phone:int}")]
+    [HttpGet("{phone}")]
     public async Task<ActionResult<CustomerDto>> GetSingle(string phone)
     {
         try
@@ -98,7 +98,22 @@ public class CustomerController : ControllerBase
 
         return Ok();
     }
-    
+
+    [HttpDelete("{phone}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteCustomer(string phone)
+    {
+        try
+        {
+            await customerRepository.DeleteAsync(phone);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+       
+    }
     
 
 }

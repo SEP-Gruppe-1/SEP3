@@ -97,6 +97,47 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
             );
         }
     }
+    @Override
+    public void deleteCustomer(DeleteCustomerRequest request,
+                               StreamObserver<DeleteCustomerResponse> responseObserver) {
+        try {
+            String phone = request.getPhone();
+
+            System.out.println("Deleting customer with phone: " + phone);
+
+            Customer existing = customerDAO.getCustomerByPhone(phone);
+
+            if (existing == null) {
+                responseObserver.onError(
+                        Status.NOT_FOUND
+                                .withDescription("Customer not found with phone: " + phone)
+                                .asRuntimeException()
+                );
+                return;
+            }
+
+            customerDAO.deleteCustomerByPhone(phone);
+
+            DeleteCustomerResponse response = DeleteCustomerResponse.newBuilder()
+                    .setPhone(phone)
+                    .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Could not delete customer: " + e.getMessage())
+                            .asRuntimeException()
+            );
+        }
+    }
+
+
+
+
 
     @Override
     public void getHallByID(GetHallByIdRequest request, StreamObserver<GetHallByIdResponse> responseObserver) {

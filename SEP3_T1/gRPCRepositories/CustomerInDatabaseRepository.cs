@@ -40,13 +40,7 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         // ✅ Gem også i Java/DB
         await client.SaveCustomerAsync(customer);
     }
-
-
-    public Task DeleteAsync(string phone, string name, string email)
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public async Task<Customer?> GetSingleAsync(string Phone)
     {
         var customers = await GetCustomersAsync();
@@ -82,14 +76,21 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         customers = await client.GetCustomersAsync();
     }
 
-    public Task DeleteAsync(string phone)
+    public async Task DeleteAsync(string phone)
     {
+       
+        customers = await client.GetCustomersAsync();
+
         var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);
+
         if (customerToRemove == null)
-            throw new InvalidOperationException($"Customer with phone nr: ,{phone} not found.");
+            throw new InvalidOperationException($"Customer with phone nr: {phone} not found.");
+
+        await client.DeleteCustomerAsync(phone);
+        
         customers.Remove(customerToRemove);
-        return Task.CompletedTask;
     }
+
 
 
     private async Task<List<Customer>> GetCustomersAsync()

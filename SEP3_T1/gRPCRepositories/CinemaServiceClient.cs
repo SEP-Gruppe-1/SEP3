@@ -6,17 +6,17 @@ namespace gRPCRepositories;
 
 public class CinemaServiceClient
 {
-    private readonly CinemaService.CinemaServiceClient _client;
+    private readonly CinemaService.CinemaServiceClient client;
 
     public CinemaServiceClient(string serverAddress)
     {
         var channel = GrpcChannel.ForAddress(serverAddress);
-        _client = new CinemaService.CinemaServiceClient(channel);
+        client = new CinemaService.CinemaServiceClient(channel);
     }
 
     public async Task<List<Customer>> GetCustomersAsync()
     {
-        var response = await _client.GetCustomersAsync(new GetCustomersRequest());
+        var response = await client.GetCustomersAsync(new GetCustomersRequest());
         var customers = new List<Customer>();
         foreach (var dtoCustomer in response.Customers)
             customers.Add(new Customer
@@ -33,7 +33,7 @@ public class CinemaServiceClient
 
     public async Task<DTOCustomer> GetCustomerByPhoneAsync(string phone)
     {
-        var response = await _client.GetCustomerByPhoneAsync(new GetCustomerByPhoneRequest { Phone = phone });
+        var response = await client.GetCustomerByPhoneAsync(new GetCustomerByPhoneRequest { Phone = phone });
         return response.Customer;
     }
 
@@ -51,9 +51,9 @@ public class CinemaServiceClient
 
         var request = new SaveCustomerRequest { Customer = dto };
 
-        var response = await _client.SaveCustomerAsync(request);
+        var response = await client.SaveCustomerAsync(request);
 
-        // map DTO back to your Customer entity
+        
         return new Customer
         {
             Name = response.Customer.Name,
@@ -63,11 +63,22 @@ public class CinemaServiceClient
             Role = response.Customer.Role
         };
     }
+    
+    public async Task DeleteCustomerAsync(string phone)
+    {
+        var request = new DeleteCustomerRequest
+        {
+            Phone = phone
+        };
+
+        await client.DeleteCustomerAsync(request);
+    }
+
 
     public async Task<List<Hall>> GetHallsAsync()
     {
 
-        var response = await _client.GetHallsAsync(new GetHallsRequest());
+        var response = await client.GetHallsAsync(new GetHallsRequest());
         Console.WriteLine("gRPC returned hall count: " + response.Halls.Count);
 
         var halls = new List<Hall>();
@@ -89,7 +100,7 @@ public class CinemaServiceClient
     {
        
         
-        var response = await _client.GetHallByIDAsync(new GetHallByIdRequest { Id = id });
+        var response = await client.GetHallByIDAsync(new GetHallByIdRequest { Id = id });
         var dto = response.Hall;
 
      
@@ -108,7 +119,7 @@ public class CinemaServiceClient
     {
         
         await GetLayoutsAsync();
-        var response = await _client.GetAllScreeningsAsync(new GetAllScreeningsRequest());
+        var response = await client.GetAllScreeningsAsync(new GetAllScreeningsRequest());
         var screenings = new List<Screening>();
 
         foreach (var dtoScreening in response.Screenings)
@@ -169,7 +180,7 @@ public class CinemaServiceClient
     }
     public async Task<List<Movie>> GetMoviesAsync()
     {
-        var response = await _client.GetAllMoviesAsync(new GetAllMoviesRequest());
+        var response = await client.GetAllMoviesAsync(new GetAllMoviesRequest());
         var movies = new List<Movie>();
         foreach (var dtoMovie in response.Movies)
             movies.Add(new Movie
@@ -185,14 +196,14 @@ public class CinemaServiceClient
 
     public async Task<DTOMovie> getMovieById(int id)
     {
-        var response = await _client.GetMovieByIDAsync(new GetMovieByIdRequest { Id = id });
+        var response = await client.GetMovieByIDAsync(new GetMovieByIdRequest { Id = id });
         return response.Movie;
     }
     
     
     public async Task<List<Layout>> GetLayoutsAsync()
     {
-        var response = await _client.GetAllLayoutsAsync(new GetAllLayoutsRequest());
+        var response = await client.GetAllLayoutsAsync(new GetAllLayoutsRequest());
         var layouts = new List<Layout>();
         foreach (var dtoLayout in response.Layouts)
         {
@@ -209,7 +220,7 @@ public class CinemaServiceClient
     
    public async Task<List<Seat>> GetSeatsAsync()
     {
-        var response = await _client.GetAllSeatsAsync(new GetAllSeatsRequest());
+        var response = await client.GetAllSeatsAsync(new GetAllSeatsRequest());
         var seats = new List<Seat>();
         foreach (var dtoSeat in response.Seats)
         {
@@ -228,7 +239,7 @@ public class CinemaServiceClient
    
    public async Task<List<Seat>> GetSeatsByScreeningIdAsync(int screeningId)
     {
-        var response = await _client.GetSeatsByScreeningAsync(new GetSeatsByScreeningRequest { ScreeningId = screeningId });
+        var response = await client.GetSeatsByScreeningAsync(new GetSeatsByScreeningRequest { ScreeningId = screeningId });
         var seats = new List<Seat>();
         foreach (var dtoSeat in response.Seats)
         {

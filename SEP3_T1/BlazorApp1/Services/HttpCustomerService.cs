@@ -6,19 +6,19 @@ namespace BlazorApp1.Services;
 
 public class HttpCustomerService : ICustomerService
 {
-    public readonly HttpClient _httpClient;
+    public readonly HttpClient httpClient;
     private readonly JwtHttpClientHandler jwtHandler;
 
     public HttpCustomerService(HttpClient httpClient, JwtHttpClientHandler jwtHandler )
     {
-        _httpClient = httpClient;
+        this.httpClient = httpClient;
         this.jwtHandler = jwtHandler;
     }
 
     public async Task<List<CustomerDto>> GetCustomers()
     {
-        await jwtHandler.AttachJwtAsync(_httpClient);
-        var response = await _httpClient.GetAsync("api/Customer");
+        await jwtHandler.AttachJwtAsync(httpClient);
+        var response = await httpClient.GetAsync("api/Customer");
         var responseContent = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode) throw new Exception($"Error getting Customer: {responseContent}");
 
@@ -35,8 +35,8 @@ public class HttpCustomerService : ICustomerService
 
     public async Task SaveCustomerAsync(SaveCustomerDto customer)
     {
-        await jwtHandler.AttachJwtAsync(_httpClient);
-        var response = await _httpClient.PostAsJsonAsync("api/Customer", customer);
+        await jwtHandler.AttachJwtAsync(httpClient);
+        var response = await httpClient.PostAsJsonAsync("api/Customer", customer);
 
         if (response.StatusCode == HttpStatusCode.Conflict)
         {
@@ -57,9 +57,9 @@ public class HttpCustomerService : ICustomerService
     
     public async Task UpdateCustomerRoleAsync(string phone, string newRole)
     {
-        await jwtHandler.AttachJwtAsync(_httpClient);
+        await jwtHandler.AttachJwtAsync(httpClient);
 
-        var response = await _httpClient.PutAsJsonAsync(
+        var response = await httpClient.PutAsJsonAsync(
             "api/customer/role",
             new
             {
@@ -73,5 +73,19 @@ public class HttpCustomerService : ICustomerService
             throw new Exception(msg);
         }
     }
+
+    public async Task DeleteCustomerAsync(string phone)
+    {
+        await jwtHandler.AttachJwtAsync(httpClient); 
+
+        var response = await httpClient.DeleteAsync($"api/customer/{phone}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var msg = await response.Content.ReadAsStringAsync();
+            throw new Exception(msg);
+        }
+    }
+
 
 }
