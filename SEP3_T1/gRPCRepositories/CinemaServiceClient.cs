@@ -75,6 +75,17 @@ public class CinemaServiceClient
 
         await client.DeleteCustomerAsync(request);
     }
+    
+    public async Task<bool> VerifyCustomerPasswordAsync(string phone, string password)
+    {
+        var request = new VerifyCustomerPasswordRequest
+        {
+            Phone = phone,
+            Password = password
+        };
+        var response = await client.VerifyCustomerPasswordAsync(request);
+        return response.IsValid;
+    }
 
 
     public async Task<List<Hall>> GetHallsAsync()

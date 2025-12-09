@@ -18,13 +18,7 @@ DROP TABLE IF EXISTS customer CASCADE;
 CREATE TABLE IF NOT EXISTS Customer (
                                         phone varchar(15) PRIMARY KEY,
                                         name varchar(100),
-                                        password varchar(50) NOT NULL CHECK (
-                                            password ~ '[A-Z]' AND
-                                            password ~ '[a-z]' AND
-                                            password ~ '[0-9]' AND
-                                            password ~ '[^a-zA-Z0-9]' AND
-                                            LENGTH(password) >= 8
-                                            ),
+                                        password varchar(100) NOT NULL,
                                         email varchar(100) UNIQUE NOT NULL CHECK (email LIKE '%@%.%'),
                                         role VARCHAR(50) NOT NULL DEFAULT 'Customer'
                                             CHECK (role IN ('Customer', 'Employee', 'Admin'))
