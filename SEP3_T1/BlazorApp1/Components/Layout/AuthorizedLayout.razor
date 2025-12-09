@@ -1,7 +1,7 @@
-﻿@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Authorization
-@attribute [Authorize]
+﻿@attribute [Authorize]
 @layout MainLayout
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
 
 <AuthorizeView>
@@ -9,6 +9,6 @@
         @Body
     </Authorized>
     <NotAuthorized>
-        <NotAuthorizedPage />
+        <NotAuthorizedPage/>
     </NotAuthorized>
 </AuthorizeView>

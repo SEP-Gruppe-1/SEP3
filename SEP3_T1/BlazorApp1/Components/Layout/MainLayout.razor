@@ -1,5 +1,5 @@
-﻿@using BlazorApp1.Services
-@rendermode InteractiveServer
+﻿@rendermode InteractiveServer
+@using BlazorApp1.Services
 @inherits LayoutComponentBase
 @inject TokenAuthenticationStateProvider TokenProvider
 @inject IJSRuntime JS
@@ -21,7 +21,7 @@
 </div>
 
 @code {
-    private bool loaded = false;
+    private bool loaded;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -32,4 +32,5 @@
             StateHasChanged();
         }
     }
+
 }

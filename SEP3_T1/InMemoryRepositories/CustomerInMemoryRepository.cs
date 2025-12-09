@@ -1,6 +1,4 @@
-﻿using Entities;
-
-namespace InMemoryRepositories;
+﻿namespace InMemoryRepositories;
 
 public class CustomerInMemoryRepository //: ICustomerRepository
 {

@@ -3,12 +3,6 @@
 public class Hall
 {
     public static readonly Dictionary<int, Hall> instance = new();
-    public int Number { get; set; }
-    public int LayoutId { get; set; }
-    public int Capacity { get; set; }
-    public List<Seat> Seats { get; set; } = new();
-    public Layout Layout { get; set; }
-    public int Id { get; set; }
 
     private Hall(int id)
     {
@@ -22,6 +16,13 @@ public class Hall
         InitializeLayoutAndSeats();
     }
 
+    public int Number { get; set; }
+    public int LayoutId { get; set; }
+    public int Capacity { get; set; }
+    public List<Seat> Seats { get; set; } = new();
+    public Layout Layout { get; set; }
+    public int Id { get; set; }
+
     public void InitializeLayoutAndSeats()
     {
         Layout = Layout.GetInstance(LayoutId);
@@ -29,14 +30,11 @@ public class Hall
         if (Layout == null)
             throw new Exception($"Layout {LayoutId} not loaded before Hall {Id}!");
 
-        int rows = Layout.maxLetter - 'A' + 1;
-        int seatsPerRow = Layout.maxSeatInt;
+        var rows = Layout.maxLetter - 'A' + 1;
+        var seatsPerRow = Layout.maxSeatInt;
 
         Capacity = rows * seatsPerRow;
-        
     }
-
-    
 
 
     public static Hall GetInstance(int id)

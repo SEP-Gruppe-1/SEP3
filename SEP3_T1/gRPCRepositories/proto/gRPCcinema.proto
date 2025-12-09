@@ -152,6 +152,14 @@ message GetSeatsByScreeningResponse {
   repeated DTOSeat seats = 1;
 }
 
+message BookSeatsRequest {
+  int32 screeningId = 1;
+  string customerPhone = 2;
+  repeated int32 seatIds = 3;
+}
+message BookSeatsResponse{}
+
+
 service CinemaService
 {
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
@@ -166,4 +174,5 @@ service CinemaService
   rpc GetAllLayouts (GetAllLayoutsRequest) returns (GetAllLayoutsResponse);
   rpc GetAllSeats (GetAllSeatsRequest) returns (GetAllSeatsResponse);
   rpc GetSeatsByScreening(GetSeatsByScreeningRequest) returns (GetSeatsByScreeningResponse);
+  rpc BookSeats(BookSeatsRequest) returns (BookSeatsResponse);
 }

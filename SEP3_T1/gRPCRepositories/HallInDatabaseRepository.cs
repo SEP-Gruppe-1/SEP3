@@ -14,7 +14,6 @@ public class HallInDatabaseRepository : IHallRepository
         halls = new List<Hall>();
     }
 
-
     public List<Seat> GetSelectedSeats()
     {
         throw new NotImplementedException();
@@ -35,17 +34,51 @@ public class HallInDatabaseRepository : IHallRepository
         throw new NotImplementedException();
     }
 
-    public Task<Hall> getHallbyidAsync(int id)
+    public async Task<Hall> getHallbyidAsync(int id)
     {
+        if (!halls.Any())
+            await Initialize();
+
         var hall = halls.SingleOrDefault(h => h.Id == id);
         if (hall == null)
             throw new InvalidOperationException($"Hall with id nr: {id} not found.");
-        return Task.FromResult(hall);
+        return hall;
+
+        // var hall = halls.SingleOrDefault(h => h.Id == id);
+        // if (hall == null)
+        //     throw new InvalidOperationException($"Hall with id nr: {id} not found.");
+        // return Task.FromResult(hall);
     }
 
     public IQueryable<Hall> GetAll()
     {
         return halls.AsQueryable();
+    }
+
+
+    public List<Seat> GetSelectedSeats(int hallId)
+    {
+        var hall = halls.Single(h => h.Id == hallId);
+        return hall.Seats.Where(s => s.IsBooked).ToList();
+    }
+
+    public List<Seat> GetAvailableSeats(int hallId)
+    {
+        var hall = halls.Single(h => h.Id == hallId);
+        return hall.Seats.Where(s => !s.IsBooked).ToList();
+    }
+
+    public string GetBookedSeatsDisplay(int hallId)
+    {
+        var hall = halls.Single(h => h.Id == hallId);
+        return string.Join(", ", hall.Seats.Where(s => s.IsBooked)
+            .Select(s => $"{s.Row}{s.Number}"));
+    }
+
+    public Seat GetSeat(int hallId, char row, int number)
+    {
+        var hall = halls.Single(h => h.Id == hallId);
+        return hall.Seats.Single(s => s.Row == row && s.Number == number);
     }
 
     public async Task Initialize()

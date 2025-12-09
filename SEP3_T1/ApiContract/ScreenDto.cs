@@ -11,3 +11,8 @@ public record ScreenDto(
     TimeOnly StartTime,
     DateOnly Date,
     int AvailableSeats);
+    
+public record BookSeatsRequest(
+    List<int> SeatIds,
+    string PhoneNumber);
+    
