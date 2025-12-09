@@ -165,6 +165,7 @@ message BookSeatsRequest {
   string customerPhone = 2;
   repeated int32 seatIds = 3;
 }
+
 message BookSeatsResponse{}
 
 

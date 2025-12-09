@@ -1,6 +1,8 @@
-﻿using Entities;
+﻿using ApiContract;
+using Entities;
 using Grpc.Net.Client;
 using Grpccinema;
+using BookSeatsRequest = Grpccinema.BookSeatsRequest;
 
 namespace gRPCRepositories;
 
@@ -256,7 +258,6 @@ public class CinemaServiceClient
         return await Task.FromResult(seats);
     }
    
-   
     public async Task BookSeatsAsync(int screeningId, List<int> seatIds, string phoneNumber)
     {
         var request = new BookSeatsRequest
@@ -267,7 +268,8 @@ public class CinemaServiceClient
 
         request.SeatIds.AddRange(seatIds);
 
-        await _client.BookSeatsAsync(request);
+        await client.BookSeatsAsync(request);
     }
-    
+
+   
 }
