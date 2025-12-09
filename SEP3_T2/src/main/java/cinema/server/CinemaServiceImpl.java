@@ -6,6 +6,7 @@ import cinema.persistence.*;
 import grpccinema.*;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -133,6 +134,23 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
                             .asRuntimeException()
             );
         }
+    }
+
+    @Override
+    public void verifyCustomerPassword(VerifyCustomerPasswordRequest request,
+                                       StreamObserver<VerifyCustomerPasswordResponse> responseObserver) {
+        String phone = request.getPhone();
+        String password = request.getPassword();
+
+        Customer customer = customerDAO.getCustomerByPhone(phone);
+        boolean isValid = customer != null && BCrypt.checkpw(password, customer.getPassword());
+
+        VerifyCustomerPasswordResponse response = VerifyCustomerPasswordResponse.newBuilder()
+                .setIsValid(isValid)
+                .build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
 

@@ -48,6 +48,16 @@ message DeleteCustomerRequest {
 message DeleteCustomerResponse {
   string phone = 1;
 }
+
+message VerifyCustomerPasswordRequest {
+  string phone = 1;
+  string password = 2;
+}
+
+message VerifyCustomerPasswordResponse {
+  bool isValid = 1;
+}
+
 //---------- Hall ----------\\
 message DTOHall{
   int32 id = 1;
@@ -185,4 +195,5 @@ service CinemaService
   rpc GetAllSeats (GetAllSeatsRequest) returns (GetAllSeatsResponse);
   rpc GetSeatsByScreening(GetSeatsByScreeningRequest) returns (GetSeatsByScreeningResponse);
   rpc BookSeats(BookSeatsRequest) returns (BookSeatsResponse);
+  rpc VerifyCustomerPassword(VerifyCustomerPasswordRequest) returns (VerifyCustomerPasswordResponse);
 }

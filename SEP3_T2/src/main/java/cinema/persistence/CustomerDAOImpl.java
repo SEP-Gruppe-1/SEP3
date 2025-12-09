@@ -53,7 +53,7 @@ public class CustomerDAOImpl implements CustomerDAO
 
   @Override public Customer getCustomerByPhone(String phone)
   {
-    String sql = "SELECT name, role,  email, phone FROM Customer WHERE phone = ?";
+    String sql = "SELECT name, password, email, phone, role FROM Customer WHERE phone = ?";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql))
     {
@@ -62,7 +62,7 @@ public class CustomerDAOImpl implements CustomerDAO
       {
         if (rs.next())
         {
-          return new Customer(rs.getString("name"),
+          return new Customer(rs.getString("name"), rs.getString("password"),
               rs.getString("email"), rs.getString("phone"), rs.getString("role"));
         }
       }
@@ -77,7 +77,7 @@ public class CustomerDAOImpl implements CustomerDAO
   @Override public List<Customer> getAllCustomers()
   {
     List<Customer> customers = new ArrayList<>();
-    String sql = "SELECT name, email, role, phone FROM Customer";
+    String sql = "SELECT name, password, email, phone, role FROM Customer";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery())
@@ -85,7 +85,7 @@ public class CustomerDAOImpl implements CustomerDAO
       while (rs.next())
       {
         customers.add(
-            new Customer(rs.getString("name"),
+            new Customer(rs.getString("name"), rs.getString("password"),
                 rs.getString("email"), rs.getString("phone"), rs.getString("role")));
       }
     }

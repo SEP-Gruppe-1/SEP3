@@ -18,15 +18,6 @@ public class Customer
     this.role = role;
   }
 
-  public Customer(String name, String email, String phone, String role)
-  {
-    this.name = name;
-    this.password = "encrypted";
-    this.email = email;
-    this.phone = phone;
-    this.role = role;
-  }
-
   public String getName()
   {
     return name;

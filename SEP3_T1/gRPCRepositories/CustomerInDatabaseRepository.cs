@@ -99,13 +99,11 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         return customerAsJson;
     }
 
-    public Task<Customer?> GetByPhoneAndPasswordAsync(string phone, string password)
+    public async Task<Customer?> GetByPhoneAndPasswordAsync(string phone, string password)
     {
-        var customer = customers.SingleOrDefault(c =>
-            c.Phone == phone && c.Password == password);
-        
-
-        return Task.FromResult(customer);
+        var isValid = await client.VerifyCustomerPasswordAsync(phone, password);
+        if (!isValid) return null;
+        return customers.SingleOrDefault(c => c.Phone == phone);
     }
 
 }
