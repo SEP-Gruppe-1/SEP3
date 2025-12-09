@@ -2,6 +2,8 @@
 @using ApiContract
 @using BlazorApp1.Services
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
 @attribute [Authorize(Roles = "Admin")]
 
 @inject ICustomerService CustomerService
@@ -22,6 +24,8 @@ else
             <th>Email</th>
             <th>Rolle</th>
             <th>Ændr</th>
+            <th>Slet</th>
+
         </tr>
         </thead>
         <tbody>
@@ -32,23 +36,44 @@ else
                 <td>@c.Phone</td>
                 <td>@c.Email</td>
                 <td>
-                    <select value="@c.Role" 
+                    <select value="@c.Role"
                             @onchange="e => OnRoleChanged(c, e.Value!.ToString())">
                         <option>Customer</option>
                         <option>Employee</option>
                         <option>Admin</option>
                     </select>
                 </td>
+
                 <td>
                     <button class="btn btn-sm btn-primary"
                             @onclick="() => UpdateRole(c.Phone, c.Role)">
                         Gem
                     </button>
                 </td>
+
+            
+                <td>
+                    @if (c.Email == loggedInAdminEmail)
+                    {
+                        <button class="btn btn-sm btn-secondary" disabled>
+                            Kan ikke slette dig selv
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-sm btn-danger"
+                                @onclick="() => AskDelete(c)">
+                            Slet
+                        </button>
+                    }
+                </td>
             </tr>
         }
+
+        
         </tbody>
     </table>
+    
 }
 
 @if (showPopup)
@@ -68,26 +93,70 @@ else
             </div>
         </div>
     </div>
+    
+    
+    @if (showDeletePopup && userToDelete != null)
+    {
+        <div class="modal fade show d-block" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">Bekræft sletning</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Er du sikker på, at du vil slette brugeren:
+                            <strong>@userToDelete.Name</strong>
+                            (<strong>@userToDelete.Phone</strong>)?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" @onclick="CancelDelete">
+                            Annuller
+                        </button>
+                        <button class="btn btn-danger" @onclick="ConfirmDelete">
+                            Slet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- mørk baggrund -->
+        <div class="modal-backdrop fade show"></div>
+        
+        
+    }
+    
+    
+
+  
     <div class="modal-backdrop fade show"></div>
 }
+
+
 
 @code {
     private List<CustomerDto>? customers;
 
-    // ✅ Gem oprindelige roller så vi kan sammenligne
+    private CustomerDto? userToDelete;
+    private bool showDeletePopup = false;
+
+    private string? loggedInAdminEmail;
+
     private Dictionary<string, string> originalRoles = new();
 
-    // ✅ Popup-state
     private bool showPopup = false;
     private string popupMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
-        customers = await CustomerService.GetCustomers();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-        // ✅ Gem oprindelige roller
+        loggedInAdminEmail = user.Claims
+            .FirstOrDefault(c => c.Type.Contains("email"))?.Value;
+
+        customers = await CustomerService.GetCustomers();
         originalRoles = customers.ToDictionary(c => c.Phone, c => c.Role);
     }
 
@@ -97,7 +166,6 @@ else
         {
             var oldRole = originalRoles[phone];
 
-            // ✅ 1) Hvis rollen er den samme → ingen API-kald
             if (oldRole == newRole)
             {
                 popupMessage = $"Ingen ændring – rollen er stadig '{oldRole}'.";
@@ -105,10 +173,8 @@ else
                 return;
             }
 
-            // ✅ 2) Kald backend for rigtig opdatering
             await CustomerService.UpdateCustomerRoleAsync(phone, newRole);
 
-            // ✅ 3) Opdater local state
             originalRoles[phone] = newRole;
 
             popupMessage = $"Rolle ændret \n\nFra: {oldRole}\nTil: {newRole}";
@@ -123,12 +189,56 @@ else
 
     private void OnRoleChanged(CustomerDto c, string newRole)
     {
-        var index = customers.IndexOf(c);
+        var index = customers!.IndexOf(c);
         customers[index] = c with { Role = newRole };
     }
 
     private void ClosePopup()
     {
         showPopup = false;
+    }
+
+   
+
+    private void AskDelete(CustomerDto customer)
+    {
+        userToDelete = customer;
+        showDeletePopup = true;
+    }
+
+    private void CancelDelete()
+    {
+        userToDelete = null;
+        showDeletePopup = false;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (userToDelete!.Email == loggedInAdminEmail)
+        {
+            popupMessage = "Du kan ikke slette din egen konto.";
+            showPopup = true;
+            return;
+        }
+
+        try
+        {
+            await CustomerService.DeleteCustomerAsync(userToDelete.Phone);
+
+            customers!.Remove(userToDelete);
+
+            popupMessage = $"Brugeren '{userToDelete.Name}' er slettet ✅";
+            showPopup = true;
+        }
+        catch (Exception ex)
+        {
+            popupMessage = $"Fejl ved sletning:\n{ex.Message}";
+            showPopup = true;
+        }
+        finally
+        {
+            showDeletePopup = false;
+            userToDelete = null;
+        }
     }
 }

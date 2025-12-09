@@ -40,6 +40,14 @@ message SaveCustomerRequest {
 message SaveCustomerResponse {
   DTOCustomer customer = 1;
 }
+
+message DeleteCustomerRequest {
+  string phone = 1;
+}
+
+message DeleteCustomerResponse {
+  string phone = 1;
+}
 //---------- Hall ----------\\
 message DTOHall{
   int32 id = 1;
@@ -157,6 +165,7 @@ service CinemaService
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
   rpc GetCustomerByPhone (GetCustomerByPhoneRequest) returns (GetCustomerByPhoneResponse);
   rpc SaveCustomer(SaveCustomerRequest) returns (SaveCustomerResponse);
+  rpc DeleteCustomer(DeleteCustomerRequest) returns (DeleteCustomerResponse);
   rpc GetHalls (GetHallsRequest) returns (GetHallsResponse);
   rpc GetHallByID (GetHallByIdRequest) returns (GetHallByIdResponse);
   rpc GetAllScreenings (GetAllScreeningsRequest) returns (GetAllScreeningsResponse);
