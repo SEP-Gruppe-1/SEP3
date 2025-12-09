@@ -1,4 +1,5 @@
 ﻿using ApiContract;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 
@@ -41,13 +42,38 @@ public class ScreeningController : ControllerBase
     [HttpPost("{screeningId:int}/Book")]
     public async Task<IActionResult> BookSeats(int screeningId, [FromBody] BookSeatsRequest request)
     {
-        await screeningRepository.BookSeatsAsync(
-            screeningId,
-            request.SeatIds,
-            request.PhoneNumber
-        );
 
-        return Ok(new { message = "Seats booked successfully" });
+        try
+        {
+
+
+            await screeningRepository.BookSeatsAsync(
+                screeningId,
+                request.SeatIds,
+                request.PhoneNumber
+            );
+
+            return Ok(new { message = "Seats booked successfully" });
+        }
+        catch (RpcException ex)
+        {
+            if (ex.StatusCode == Grpc.Core.StatusCode.Internal &&
+                ex.Status.Detail.Contains("Seats already booked"))
+            {
+                return BadRequest(new
+                {
+                    error = "One or more seats are already booked.",
+                    details = ex.Status.Detail
+                });
+            }
+
+            // fallback -> ukendt serverfejl
+            return StatusCode(500, new
+            {
+                error = "Unexpected server error.",
+                details = ex.Status.Detail
+            });
+        }
     }
     
 }
