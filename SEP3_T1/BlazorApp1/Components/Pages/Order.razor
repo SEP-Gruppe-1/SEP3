@@ -1,8 +1,19 @@
 ﻿@page "/order/{screeningId:int}/"
+@using System.Security.Claims
+@using BlazorApp1.Components.Layout
 @using Entities
+@using Microsoft.AspNetCore.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+@inject BlazorApp1.Services.TokenAuthenticationStateProvider TokenProvider
+@inject IJSRuntime Js
 @using RepositoryContracts
 @inject IScreeningRepository ScreeningRepo
 @inject NavigationManager Nav
+@layout AuthorizedLayout
+
+
+
 
 @if (isLoading)
 {
@@ -14,6 +25,8 @@ else if (screening == null)
 }
 else
 {
+    
+   
     <!--  Film Poster og info  -->
     <div class="order-header">
         <div class="container py-4">
@@ -67,8 +80,8 @@ else
 
         <div class="hall">
             @foreach (var rowGroup in seat
-                          .GroupBy(s => s.Number)
-                          .OrderBy(g => g.Key))
+                              .GroupBy(s => s.Number)
+                              .OrderBy(g => g.Key))
             {
                 <div class="seat-row">
                     @foreach (var s in rowGroup.OrderBy(s => s.Row))
@@ -80,7 +93,7 @@ else
                 </div>
             }
         </div>
-        
+
         <!-- vælg sæder -->
         @if (selectedSeats.Any())
         {
@@ -91,9 +104,9 @@ else
         }
 
     </div>
-    
+
     <!--Info om valgte sæder + pris -->
-    
+
     <div class="selection-info">
         <p>
             @if (!selectedSeats.Any())
@@ -102,7 +115,7 @@ else
             }
             else
             {
-                <span>@string.Join(", ", selectedSeats.Select(s =>$"{s.Row}{s.Number}"))</span>
+                <span>@string.Join(", ", selectedSeats.Select(s => $"{s.Row}{s.Number}"))</span>
             }
         </p>
         <p>
@@ -111,7 +124,8 @@ else
         </p>
         <button class="btn btn-success"
                 disabled="@(!selectedSeats.Any())"
-                @onclick="ConfirmSelection">Bekræft valg</button>
+                @onclick="ConfirmSelection">Bekræft valg
+        </button>
     </div>
 
     @code
@@ -123,19 +137,27 @@ else
 
         private List<Seat> seat;
         private readonly List<Seat> selectedSeats = new();
+
+        private readonly List<Seat> myBookedSeats = new();
         
+        
+
         private HashSet<int> selectedSeatIds = new();
         private const decimal TicketPrice = 110m;
-        
+
         private decimal TotalPrice => selectedSeats.Count * TicketPrice;
 
         protected override async Task OnInitializedAsync()
         {
+            
+       
+        
             isLoading = true;
             try
             {
                 screening = await ScreeningRepo.getSingleAsync(screeningId);
                 seat = screening.hall.Seats;
+                mySeats();
             }
             finally
             {
@@ -156,6 +178,11 @@ else
         private string GetSeatCss(Seat s)
         {
             var classes = new List<string> { "seat" };
+            if (myBookedSeats.Any(x => x.id == s.id))
+            {
+                classes.Add("mybooked");
+                return string.Join(" ", classes);
+            }
             if (s.IsBooked)
             {
                 classes.Add("booked");
@@ -184,6 +211,36 @@ else
             //TODO: Koble booking til en kunde og gemme i database
             Console.WriteLine($"Booker sæder: {string.Join(", ", selectedSeats.Select(s => $"{s.Row}{s.Number}"))}. Pris: {TotalPrice} DKK");
             return Task.CompletedTask;
+        }
+
+        private async void mySeats()
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            // Hent phone-claim
+            var phone = user.FindFirst("phone")?.Value;
+            foreach (var seat in seat)
+            {
+                if (seat.IsBooked)
+                {
+                    if (seat.Customer.Phone == phone)
+                    {
+                        myBookedSeats.Add(seat);
+                    }
+                    
+                }
+            }
+            
+            {
+            }
+        }
+
+        private async Task Logout()
+        {
+            await Js.InvokeVoidAsync("localStorage.removeItem", "jwt");
+            await TokenProvider.SignOut();
+            Nav.NavigateTo("/login", true);
         }
     }
 }

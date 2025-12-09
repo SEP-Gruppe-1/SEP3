@@ -40,7 +40,7 @@ public class AuthController : ControllerBase
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, customer.Name),
-            new Claim("phone", customer.Phone.ToString()),
+            new Claim("phone" , customer.Phone),
             new Claim(ClaimTypes.Role, customer.Role ?? "")
         };
 

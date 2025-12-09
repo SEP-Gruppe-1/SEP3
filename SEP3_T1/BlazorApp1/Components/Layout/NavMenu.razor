@@ -11,6 +11,7 @@
             <Authorized Context="auth">
                 <span class="text-light me-3">
                     @auth.User.Identity?.Name
+                    @auth.User.FindFirst("phone")?.Value
                 </span>
                 <button class="btn btn-outline-light btn-sm" @onclick="Logout">
                     Logout

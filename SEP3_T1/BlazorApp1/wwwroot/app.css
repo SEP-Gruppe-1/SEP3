@@ -420,3 +420,9 @@ order-header-text {
     font-size: 2rem;
     font-weight: 600;
 }
+
+.seat.mybooked {
+    background-color: #ff9800; /* orange */
+    color: #fff;
+    border: 2px solid #e65100; /* mørkere orange kant */
+}
