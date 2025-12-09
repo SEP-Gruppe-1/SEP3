@@ -101,6 +101,12 @@ public class SeatDAOImpl implements SeatDAO {
 
     @Override
     public void bookSeat(int screeningId, String phone, List<Integer> seatIds) throws SQLException {
+        String checkSeatsSQL =
+                "SELECT bs.seat_id " +
+                        "FROM BookingSeat bs " +
+                        "JOIN Booking b ON bs.booking_id = b.booking_id " +
+                        "WHERE b.screening_id = ? AND bs.seat_id = ANY (?)";
+
         String insertBookingSQL =
                 "INSERT INTO Booking (customer_phone, screening_id, seats_booked) " +
                         "VALUES (?, ?, ?) RETURNING booking_id";
@@ -111,20 +117,37 @@ public class SeatDAOImpl implements SeatDAO {
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
-            int bookingId;
+            // 1️⃣ Check if seats are already booked
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSeatsSQL)) {
+                checkStmt.setInt(1, screeningId);
+                checkStmt.setArray(2, conn.createArrayOf("INTEGER", seatIds.toArray()));
 
-            // Create booking row and get its ID
+                ResultSet rs = checkStmt.executeQuery();
+                List<Integer> alreadyBooked = new ArrayList<>();
+
+                while (rs.next()) {
+                    alreadyBooked.add(rs.getInt("seat_id"));
+                }
+
+                if (!alreadyBooked.isEmpty()) {
+                    conn.rollback();
+                    throw new SQLException("Seats already booked: " + alreadyBooked);
+                }
+            }
+
+            // 2️⃣ Insert booking row
+            int bookingId;
             try (PreparedStatement stmt = conn.prepareStatement(insertBookingSQL)) {
                 stmt.setString(1, phone);
                 stmt.setInt(2, screeningId);
                 stmt.setInt(3, seatIds.size());
 
                 ResultSet rs = stmt.executeQuery();
-                rs.next(); // guaranteed because RETURNING always returns something
-                bookingId = rs.getInt("booking_id");  // correct column name
+                rs.next();
+                bookingId = rs.getInt("booking_id");
             }
 
-            // Insert seat rows
+            // 3️⃣ Insert seats
             try (PreparedStatement seatStmt = conn.prepareStatement(insertSeatSQL)) {
                 for (int seatId : seatIds) {
                     seatStmt.setInt(1, bookingId);
@@ -137,6 +160,7 @@ public class SeatDAOImpl implements SeatDAO {
             conn.commit();
         }
     }
+
 
 
 }
