@@ -67,6 +67,7 @@ else
                         </button>
                     }
                 </td>
+
             </tr>
         }
 
@@ -95,43 +96,48 @@ else
     </div>
     
     
-    @if (showDeletePopup && userToDelete != null)
-    {
-        <div class="modal fade show d-block" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title">Bekræft sletning</h5>
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                            Er du sikker på, at du vil slette brugeren:
-                            <strong>@userToDelete.Name</strong>
-                            (<strong>@userToDelete.Phone</strong>)?
-                        </p>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" @onclick="CancelDelete">
-                            Annuller
-                        </button>
-                        <button class="btn btn-danger" @onclick="ConfirmDelete">
-                            Slet
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-backdrop fade show"></div>
+    <div class="modal-backdrop fade show"></div>
         
         
     }
     
-    
+@if (showDeletePopup && userToDelete != null)
+{
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Bekræft sletning</h5>
+                </div>
 
-  
+                <div class="modal-body">
+                    <p>
+                        Er du sikker på, at du vil slette:
+                        <strong>@userToDelete.Name</strong>
+                        (<strong>@userToDelete.Phone</strong>)?
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">
+                        Annuller
+                    </button>
+
+                    <button class="btn btn-danger" @onclick="ConfirmDelete">
+                        Slet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-backdrop fade show"></div>
 }
+ 
+
+  
+    
+
 
 
 
@@ -227,7 +233,7 @@ else
 
             customers!.Remove(userToDelete);
 
-            popupMessage = $"Brugeren '{userToDelete.Name}' er slettet ✅";
+            popupMessage = $"Brugeren '{userToDelete.Name}' er slettet ";
             showPopup = true;
         }
         catch (Exception ex)
