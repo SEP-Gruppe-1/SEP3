@@ -1,6 +1,7 @@
 package cinema.persistence;
 
 import cinema.model.Customer;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class CustomerDAOImpl implements CustomerDAO
 
   @Override public Customer getCustomerByPhone(String phone)
   {
-    String sql = "SELECT name, password, role,  email, phone FROM Customer WHERE phone = ?";
+    String sql = "SELECT name, password, email, phone, role FROM Customer WHERE phone = ?";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql))
     {
@@ -76,7 +77,7 @@ public class CustomerDAOImpl implements CustomerDAO
   @Override public List<Customer> getAllCustomers()
   {
     List<Customer> customers = new ArrayList<>();
-    String sql = "SELECT name, password, email, role, phone FROM Customer";
+    String sql = "SELECT name, password, email, phone, role FROM Customer";
     try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery())
@@ -98,11 +99,13 @@ public class CustomerDAOImpl implements CustomerDAO
     @Override
     public void createCustomer(Customer customer) throws SQLException {
         String sql = "INSERT INTO Customer (name, password, email, phone, role) VALUES (?, ?, ?, ?, ?)";
+        String hashedPassword = BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt());
+
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, customer.getName());
-            stmt.setString(2, customer.getPassword());
+            stmt.setString(2, hashedPassword);
             stmt.setString(3, customer.getEmail());
             stmt.setString(4, customer.getPhone());  // ✅ PHONE
             stmt.setString(5, customer.getRole());   // ✅ ROLE
@@ -115,11 +118,13 @@ public class CustomerDAOImpl implements CustomerDAO
     @Override
     public void updateCustomer(Customer customer) throws SQLException {
         String sql = "UPDATE Customer SET name = ?, password = ?, phone = ?, role = ? WHERE phone = ?";
+        String hashedPassword = BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt());
+
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, customer.getName());
-            stmt.setString(2, customer.getPassword());
+            stmt.setString(2, hashedPassword);
             stmt.setString(3, customer.getPhone());
             stmt.setString(4, customer.getRole());   // ✅ ROLE
             stmt.setString(5, customer.getEmail());  // ✅ WHERE email
