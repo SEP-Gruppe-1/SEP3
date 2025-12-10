@@ -1,8 +1,16 @@
 ﻿@page "/order/{screeningId:int}/"
+@using System.Security.Claims
+@using BlazorApp1.Components.Layout
 @using Entities
+@using Microsoft.AspNetCore.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+@inject BlazorApp1.Services.TokenAuthenticationStateProvider TokenProvider
+@inject IJSRuntime Js
 @using RepositoryContracts
 @inject IScreeningRepository ScreeningRepo
 @inject NavigationManager Nav
+@layout AuthorizedLayout
 
 @if (isLoading)
 {
@@ -111,7 +119,9 @@ else
         </p>
         <button class="btn btn-success"
                 disabled="@(!selectedSeats.Any())"
-                @onclick="ConfirmSelection">Bekræft valg</button>
+                @onclick="ConfirmSelection">
+            Bekræft valg
+        </button>
     </div>
 
     @code
@@ -126,6 +136,9 @@ else
         
         private HashSet<int> selectedSeatIds = new();
         private const decimal TicketPrice = 110m;
+        
+        private string? errorMessage;
+        private string? successMessage;
         
         private decimal TotalPrice => selectedSeats.Count * TicketPrice;
 
@@ -179,11 +192,42 @@ else
             return $"images/posters/{fileName}";
         }
 
-        private Task ConfirmSelection()
+        private async Task ConfirmSelection()
         {
-            //TODO: Koble booking til en kunde og gemme i database
-            Console.WriteLine($"Booker sæder: {string.Join(", ", selectedSeats.Select(s => $"{s.Row}{s.Number}"))}. Pris: {TotalPrice} DKK");
-            return Task.CompletedTask;
+            if (!selectedSeats.Any())
+            {
+                errorMessage = "Ingen sæder valgt.";
+                return;
+            }
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var phone = user.FindFirst("Phone")?.Value;
+            if (phone == null)
+            {
+                errorMessage = "Du skal være logget ind for at booke sæder.";
+                return;
+            }
+
+            try
+            {
+                var seatIdsToBook = selectedSeats.Select(s => s.id).ToList();
+                
+                await ScreeningRepo.BookSeatsAsync(screeningId, seatIdsToBook, phone);
+
+                foreach (var s in selectedSeats)
+                {
+                    s.IsBooked = true;
+                }
+
+                selectedSeats.Clear();
+
+                successMessage = "Sæderne er blevet booket succesfuldt.";
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Fejl ved booking af sæder: {ex.Message}";
+            }
         }
     }
 }
