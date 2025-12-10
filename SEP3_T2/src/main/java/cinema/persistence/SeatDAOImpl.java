@@ -161,6 +161,10 @@ public class SeatDAOImpl implements SeatDAO {
         }
     }
 
+    @Override
+    public void unBookSeat(int screeningId, String Phone) throws SQLException {
+
+    }
 
 
 }
