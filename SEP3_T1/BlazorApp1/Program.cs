@@ -14,6 +14,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddAuthentication();
 
 
+
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 

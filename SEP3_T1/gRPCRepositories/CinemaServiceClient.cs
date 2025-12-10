@@ -6,6 +6,10 @@ using BookSeatsRequest = Grpccinema.BookSeatsRequest;
 
 namespace gRPCRepositories;
 
+/// <summary>
+/// Client for Cinema gRPC Service
+/// </summary>
+
 public class CinemaServiceClient
 {
     private readonly CinemaService.CinemaServiceClient client;
@@ -15,6 +19,11 @@ public class CinemaServiceClient
         var channel = GrpcChannel.ForAddress(serverAddress);
         client = new CinemaService.CinemaServiceClient(channel);
     }
+    
+    /// <summary>
+    /// Gets all customers from the gRPC service
+    /// </summary>
+    /// <returns></returns>
 
     public async Task<List<Customer>> GetCustomersAsync()
     {
@@ -32,6 +41,12 @@ public class CinemaServiceClient
 
         return await Task.FromResult(customers);
     }
+    
+    /// <summary>
+    /// Gets a customer by phone number from the gRPC service
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <returns></returns>
 
     public async Task<DTOCustomer> GetCustomerByPhoneAsync(string phone)
     {
@@ -39,7 +54,11 @@ public class CinemaServiceClient
         return response.Customer;
     }
 
-
+/// <summary>
+/// Saves a customer via the gRPC service
+/// </summary>
+/// <param name="customer"></param>
+/// <returns></returns>
     public async Task<Customer> SaveCustomerAsync(Customer customer)
     {
         var dto = new DTOCustomer
@@ -65,7 +84,10 @@ public class CinemaServiceClient
             Role = response.Customer.Role
         };
     }
-    
+    /// <summary>
+    /// Deletes a customer by phone number via the gRPC service
+    /// </summary>
+    /// <param name="phone"></param>
     public async Task DeleteCustomerAsync(string phone)
     {
         var request = new DeleteCustomerRequest
@@ -75,7 +97,12 @@ public class CinemaServiceClient
 
         await client.DeleteCustomerAsync(request);
     }
-    
+    /// <summary>
+    /// Verifies a customer's password via the gRPC service
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <param name="password"></param>
+    /// <returns></returns>
     public async Task<bool> VerifyCustomerPasswordAsync(string phone, string password)
     {
         var request = new VerifyCustomerPasswordRequest
@@ -87,7 +114,10 @@ public class CinemaServiceClient
         return response.IsValid;
     }
 
-
+    /// <summary>
+    /// Gets all halls from the gRPC service
+    /// </summary>
+    /// <returns></returns>
     public async Task<List<Hall>> GetHallsAsync()
     {
 
@@ -108,6 +138,12 @@ public class CinemaServiceClient
 
         return await Task.FromResult(halls);
     }
+    
+    /// <summary>
+    /// Gets a hall by ID from the gRPC service
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
 
     public async Task<Hall> GetHallByIdAsync(int id)
     {
@@ -127,7 +163,11 @@ public class CinemaServiceClient
 
         return hall;
     }
-
+    /// <summary>
+    /// Gets all screenings from the gRPC service
+    /// Screenings require layouts to be loaded first
+    /// </summary>
+    /// <returns></returns>
     public async Task<List<Screening>> GetScreeningsAsync()
     {
         
@@ -156,6 +196,12 @@ public class CinemaServiceClient
 
         return await Task.FromResult(screenings);
     }
+    
+    /// <summary>
+    /// Converts a DTOMovie to a Movie entity
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
 
     private Movie ConvertToMovie(DTOMovie dto)
     {
@@ -169,6 +215,11 @@ public class CinemaServiceClient
         };
     }
     
+    /// <summary>
+    /// Converts a DTOHall to a Hall entity
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     private Hall ConvertToHall(DTOHall dto)
     {
         var hall = Hall.GetInstance(dto.Id);
@@ -178,7 +229,11 @@ public class CinemaServiceClient
         return hall;
     }
 
-    
+    /// <summary>
+    /// Converts a DTOCustomer to a Customer entity
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     private Customer ConvertToCustomer(DTOCustomer dto)
     {
         if (dto == null)
@@ -191,6 +246,11 @@ public class CinemaServiceClient
             Email = dto.Email
         };
     }
+    
+    /// <summary>
+    /// gets all movies from the gRPC service
+    /// </summary>
+    /// <returns></returns>
     public async Task<List<Movie>> GetMoviesAsync()
     {
         var response = await client.GetAllMoviesAsync(new GetAllMoviesRequest());
@@ -206,6 +266,12 @@ public class CinemaServiceClient
             });
         return await Task.FromResult(movies);
     }
+    
+    /// <summary>
+    /// gets a movie by ID from the gRPC service
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
 
     public async Task<DTOMovie> getMovieById(int id)
     {
@@ -213,7 +279,10 @@ public class CinemaServiceClient
         return response.Movie;
     }
     
-    
+    /// <summary>
+    /// Gets all layouts from the gRPC service
+    /// </summary>
+    /// <returns></returns>
     public async Task<List<Layout>> GetLayoutsAsync()
     {
         var response = await client.GetAllLayoutsAsync(new GetAllLayoutsRequest());
@@ -230,6 +299,11 @@ public class CinemaServiceClient
         }
         return await Task.FromResult(layouts);
     }
+    
+    /// <summary>
+    /// Gets all seats from the gRPC service
+    /// </summary>
+    /// <returns></returns>
     
    public async Task<List<Seat>> GetSeatsAsync()
     {
@@ -249,7 +323,11 @@ public class CinemaServiceClient
         }
         return await Task.FromResult(seats);
     }
-   
+   /// <summary>
+   /// Gets seats by screening ID from the gRPC service
+   /// </summary>
+   /// <param name="screeningId"></param>
+   /// <returns></returns>
    public async Task<List<Seat>> GetSeatsByScreeningIdAsync(int screeningId)
     {
         var response = await client.GetSeatsByScreeningAsync(new GetSeatsByScreeningRequest { ScreeningId = screeningId });
@@ -268,6 +346,12 @@ public class CinemaServiceClient
         }
         return await Task.FromResult(seats);
     }
+   /// <summary>
+   /// Books seats for a screening via the gRPC service
+   /// </summary>
+   /// <param name="screeningId"></param>
+   /// <param name="seatIds"></param>
+   /// <param name="phoneNumber"></param>
    
     public async Task BookSeatsAsync(int screeningId, List<int> seatIds, string phoneNumber)
     {

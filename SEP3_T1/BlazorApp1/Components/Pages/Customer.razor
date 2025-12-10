@@ -1,45 +1,122 @@
-﻿@page "/Customer"
+﻿@page "/customer"
 @using ApiContract
 @using BlazorApp1.Components.Layout
 @using BlazorApp1.Services
-@using RepositoryContracts
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @layout AuthorizedLayout
-@inject ICustomerRepository CustomerRepository
+
 @inject ICustomerService CustomerService
+@inject AuthenticationStateProvider AuthProvider
 
+<h3>Min konto</h3>
 
-<PageTitle>Customer List</PageTitle>
-
-<h3>Customer List</h3>
-
-@if (customers == null)
+@if (bookings == null)
 {
-    <p>Loading...</p>
+    <p>Indlæser dine bestillinger...</p>
 }
-else if (!customers.Any())
+else if (!bookings.Any())
 {
-    <p>No customers found.</p>
+    <p>Du har ingen aktuelle bestillinger.</p>
 }
 else
 {
-    <ul>
-        @foreach (var customer in customers)
+    <h4>Dine aktuelle bestillinger</h4>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Film</th>
+            <th>Dato</th>
+            <th>Tid</th>
+            <th>Sæder</th>
+            <th>Handling</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var b in bookings)
         {
-            //<li>@Entities.Customer.getName - Phone: @Entities.Customer.Phone</li>
-            <li>Name: @customer.Name - Phone Number: @customer.Phone</li>
+            <tr>
+                <td>@b.MovieTitle</td>
+                <td>@b.Date</td>
+                <td>@b.Time</td>
+                <td>@string.Join(", ", b.Seats)</td>
+                <td>
+                    <button class="btn btn-sm btn-warning me-2"
+                            @onclick="() => EditBooking(b.BookingId)">
+                        Ret
+                    </button>
+
+                    <button class="btn btn-sm btn-danger"
+                            @onclick="() => AskDelete(b)">
+                        Slet
+                    </button>
+                </td>
+            </tr>
         }
-    </ul>
+        </tbody>
+    </table>
 }
-<div>
-    <button class="btn btn-success" type="Delete" FormName="DeleteCustomer">Delete Customer</button>
-</div>
+
+@if (showDeletePopup && selectedBooking != null)
+{
+    <div class="modal fade show d-block">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Bekræft sletning</h5>
+                </div>
+                <div class="modal-body">
+                    Er du sikker på, at du vil slette din bestilling på
+                    <b>@selectedBooking.MovieTitle</b>?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">Annuller</button>
+                    <button class="btn btn-danger" @onclick="ConfirmDelete">Slet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop fade show"></div>
+}
 
 @code {
-    private List<CustomerDto>? customers;
+    private List<CustomerBookingDto>? bookings;
+    private bool showDeletePopup;
+    private CustomerBookingDto? selectedBooking;
 
     protected override async Task OnInitializedAsync()
     {
-        customers = await CustomerService.GetCustomers();
+        var auth = await AuthProvider.GetAuthenticationStateAsync();
+        var phone = auth.User.Claims.First(c => c.Type == "phone").Value;
+
+        //bookings = await CustomerService.GetMyBookingsAsync(phone);
     }
 
+    private void AskDelete(CustomerBookingDto booking)
+    {
+        selectedBooking = booking;
+        showDeletePopup = true;
+    }
+
+    private void CancelDelete()
+    {
+        selectedBooking = null;
+        showDeletePopup = false;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        //await CustomerService.DeleteBookingAsync(selectedBooking!.BookingId);
+        bookings!.Remove(selectedBooking);
+        selectedBooking = null;
+        showDeletePopup = false;
+    }
+
+    private void EditBooking(int bookingId)
+    {
+       // NavigationManager.NavigateTo($"/{bookingId}");
+    }
 }
+

@@ -1,5 +1,8 @@
 ﻿namespace Entities;
 
+/// <summary>
+/// Customer entity
+/// </summary>
 public class Customer
 {
     public string Name { get; set; }

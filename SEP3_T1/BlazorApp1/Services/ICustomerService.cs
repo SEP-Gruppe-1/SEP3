@@ -3,6 +3,10 @@ using ApiContract;
 
 namespace BlazorApp1.Services;
 
+/// <summary>
+/// Interface for Customer Service
+/// </summary>
+
 public interface ICustomerService
 {
     Task<List<CustomerDto>> GetCustomers();

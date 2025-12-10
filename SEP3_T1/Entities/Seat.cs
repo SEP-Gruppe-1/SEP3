@@ -1,5 +1,8 @@
 ﻿namespace Entities;
-
+/// <summary>
+/// Seat entity
+/// Stores information about a seat in a cinema hall.
+/// </summary>
 public class Seat
 {
     public char Row { get; set; }

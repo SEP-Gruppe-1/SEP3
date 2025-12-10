@@ -5,12 +5,23 @@ using Microsoft.JSInterop;
 
 namespace BlazorApp1.Services;
 
+
+/// <summary>
+/// Token Authentication State Provider
+/// </summary>
 public class TokenAuthenticationStateProvider : AuthenticationStateProvider
 {
     private AuthenticationState state = new(new ClaimsPrincipal(new ClaimsIdentity()));
-
+/// <summary>
+/// Get Authentication State Asynchronously
+/// </summary>
+/// <returns></returns>
     public override Task<AuthenticationState> GetAuthenticationStateAsync() => Task.FromResult(state);
-
+/// <summary>
+/// Sign In with JWT
+/// </summary>
+/// <param name="jwt"></param>
+/// <returns></returns>
     public Task SignIn(string jwt)
     {
 
@@ -30,7 +41,10 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
         return Task.CompletedTask;
     }
 
-    
+    /// <summary>
+    /// Sign Out
+    /// </summary>
+    /// <returns></returns>
     
     public Task SignOut()
     {
@@ -45,6 +59,11 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
         var token = handler.ReadJwtToken(jwt);
         return token.Claims;
     }
+    
+    /// <summary>
+    /// Load JWT from Storage
+    /// </summary>
+    /// <param name="js"></param>
     
     public async Task LoadJwtFromStorage(IJSRuntime js)
     {
