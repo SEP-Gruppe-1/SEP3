@@ -67,7 +67,7 @@ public class ScreeningController : ControllerBase
                 });
             }
 
-            // fallback -> ukendt serverfejl
+           
             return StatusCode(500, new
             {
                 error = "Unexpected server error.",

@@ -12,9 +12,6 @@
 @inject NavigationManager Nav
 @layout AuthorizedLayout
 
-
-
-
 @if (isLoading)
 {
     <p><strong>Loading...</strong></p>
@@ -25,8 +22,6 @@ else if (screening == null)
 }
 else
 {
-    
-   
     <!--  Film Poster og info  -->
     <div class="order-header">
         <div class="container py-4">
@@ -80,8 +75,8 @@ else
 
         <div class="hall">
             @foreach (var rowGroup in seat
-                              .GroupBy(s => s.Number)
-                              .OrderBy(g => g.Key))
+                          .GroupBy(s => s.Number)
+                          .OrderBy(g => g.Key))
             {
                 <div class="seat-row">
                     @foreach (var s in rowGroup.OrderBy(s => s.Row))
@@ -93,7 +88,7 @@ else
                 </div>
             }
         </div>
-
+        
         <!-- vælg sæder -->
         @if (selectedSeats.Any())
         {
@@ -104,9 +99,9 @@ else
         }
 
     </div>
-
+    
     <!--Info om valgte sæder + pris -->
-
+    
     <div class="selection-info">
         <p>
             @if (!selectedSeats.Any())
@@ -115,7 +110,7 @@ else
             }
             else
             {
-                <span>@string.Join(", ", selectedSeats.Select(s => $"{s.Row}{s.Number}"))</span>
+                <span>@string.Join(", ", selectedSeats.Select(s =>$"{s.Row}{s.Number}"))</span>
             }
         </p>
         <p>
@@ -124,7 +119,8 @@ else
         </p>
         <button class="btn btn-success"
                 disabled="@(!selectedSeats.Any())"
-                @onclick="ConfirmSelection">Bekræft valg
+                @onclick="ConfirmSelection">
+            Bekræft valg
         </button>
     </div>
 
@@ -140,18 +136,16 @@ else
 
         private readonly List<Seat> myBookedSeats = new();
         
-        
-
         private HashSet<int> selectedSeatIds = new();
         private const decimal TicketPrice = 110m;
-
+        
+        private string? errorMessage;
+        private string? successMessage;
+        
         private decimal TotalPrice => selectedSeats.Count * TicketPrice;
 
         protected override async Task OnInitializedAsync()
         {
-            
-       
-        
             isLoading = true;
             try
             {
@@ -206,11 +200,42 @@ else
             return $"images/posters/{fileName}";
         }
 
-        private Task ConfirmSelection()
+        private async Task ConfirmSelection()
         {
-            //TODO: Koble booking til en kunde og gemme i database
-            Console.WriteLine($"Booker sæder: {string.Join(", ", selectedSeats.Select(s => $"{s.Row}{s.Number}"))}. Pris: {TotalPrice} DKK");
-            return Task.CompletedTask;
+            if (!selectedSeats.Any())
+            {
+                errorMessage = "Ingen sæder valgt.";
+                return;
+            }
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var phone = user.FindFirst("Phone")?.Value;
+            if (phone == null)
+            {
+                errorMessage = "Du skal være logget ind for at booke sæder.";
+                return;
+            }
+
+            try
+            {
+                var seatIdsToBook = selectedSeats.Select(s => s.id).ToList();
+                
+                await ScreeningRepo.BookSeatsAsync(screeningId, seatIdsToBook, phone);
+
+                foreach (var s in selectedSeats)
+                {
+                    s.IsBooked = true;
+                }
+
+                selectedSeats.Clear();
+
+                successMessage = "Sæderne er blevet booket succesfuldt.";
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Fejl ved booking af sæder: {ex.Message}";
+            }
         }
 
         private async void mySeats()

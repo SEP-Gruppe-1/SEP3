@@ -26,7 +26,7 @@ public class CustomerInDatabaseRepository : ICustomerRepository
 
     public async Task UpdateAsync(Customer customer)
     {
-        // ✅ Tving genindlæsning fra Java/DB før opdatering
+       
         await InitializeAsync();
 
         var existingCustomer = customers.SingleOrDefault(c => c.Phone == customer.Phone);
