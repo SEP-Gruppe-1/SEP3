@@ -93,8 +93,8 @@
         [Required(ErrorMessage = "Adgangskode er påkrævet")]
         [MinLength(8, ErrorMessage = "Adgangskode skal være længere end 8 karaktere lang")]
         [MaxLength(100, ErrorMessage = "Adgangskode skal være mindre end 100 karaktere lang")]
-        [RegularExpression(@"^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[!@#$%^&*()_+-=[]{};':"",.<>/?]).+$",
-            ErrorMessage = "Password must contain uppercase, lowercase, number, and special character")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%^&*?])[A-Za-z\d!#$%^&*?]{8,}$",
+            ErrorMessage = "Adgangskode skal indeholde mindst et stort bogstav, et lille bogstav, et tal og en speciel karakter")]
         public string? Password { get; set; }
 
         [Required(ErrorMessage = "Bekræft din adgangskode igen")]

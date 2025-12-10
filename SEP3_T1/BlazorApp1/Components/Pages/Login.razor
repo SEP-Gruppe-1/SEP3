@@ -63,7 +63,7 @@
             await TokenProvider.SignIn(jwt);
             await JsRuntime.InvokeVoidAsync("localStorage.setItem", "jwt", jwt);
 
-            Nav.NavigateTo("/");
+            Nav.NavigateTo("/movies");
         }
         catch (Exception ex)
         {
