@@ -238,9 +238,5 @@ UPDATE customer
 SET role = 'Admin'
 WHERE phone = '28510391';
 
-delete from customer
-    where phone = '28510391';
-
-
 
 COMMIT;
