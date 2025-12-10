@@ -5,7 +5,7 @@ public class Seat
     public char Row { get; set; }
     public int Number { get; set; }
     public bool IsSelected { get; set; }
-    public bool IsBooked { get; set; } // Ny property for bookede sæder
+    public bool IsBooked { get; set; }
     public Customer Customer { get; set; }
     public decimal Price { get; set; } = 100m;
 
