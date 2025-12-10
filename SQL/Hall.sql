@@ -232,16 +232,11 @@ SELECT b.booking_id, s.seat_id
 FROM b
          JOIN seat s ON s.hall_id = (SELECT hall_id FROM hall WHERE hall_number = 1)
 WHERE (s.row_letter, s.seat_number) IN ( ('A',1), ('A',2) );
-
-insert into Customer(name, password, email, phone, role)
-values('Martin Andersen', 'Martin1991!', '342731@via.dk', '28510391', 'Admin');
+;
 
 UPDATE customer
 SET role = 'Admin'
 WHERE phone = '28510391';
-
-
-
 
 
 COMMIT;
