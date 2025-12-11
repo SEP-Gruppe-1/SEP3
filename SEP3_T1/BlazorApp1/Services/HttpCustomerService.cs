@@ -9,7 +9,7 @@ public class HttpCustomerService : ICustomerService
     public readonly HttpClient httpClient;
     private readonly JwtHttpClientHandler jwtHandler;
 
-    public HttpCustomerService(HttpClient httpClient, JwtHttpClientHandler jwtHandler )
+    public HttpCustomerService(HttpClient httpClient, JwtHttpClientHandler jwtHandler)
     {
         this.httpClient = httpClient;
         this.jwtHandler = jwtHandler;
@@ -50,11 +50,6 @@ public class HttpCustomerService : ICustomerService
             throw new Exception($"Error adding Customer: {responseContent}");
     }
 
-    public class ConflictResponse
-    {
-        public string? Message { get; set; }
-    }
-    
     public async Task UpdateCustomerRoleAsync(string phone, string newRole)
     {
         await jwtHandler.AttachJwtAsync(httpClient);
@@ -76,7 +71,7 @@ public class HttpCustomerService : ICustomerService
 
     public async Task DeleteCustomerAsync(string phone)
     {
-        await jwtHandler.AttachJwtAsync(httpClient); 
+        await jwtHandler.AttachJwtAsync(httpClient);
 
         var response = await httpClient.DeleteAsync($"api/customer/{phone}");
 
@@ -87,5 +82,8 @@ public class HttpCustomerService : ICustomerService
         }
     }
 
-
+    public class ConflictResponse
+    {
+        public string? Message { get; set; }
+    }
 }

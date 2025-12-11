@@ -60,7 +60,6 @@ public class CustomerController : ControllerBase
         {
             return Conflict(new
             {
-
                 message = ex.Message
             });
         }
@@ -112,8 +111,5 @@ public class CustomerController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
-       
     }
-    
-
 }

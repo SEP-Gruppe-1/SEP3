@@ -1,5 +1,4 @@
-﻿using ApiContract;
-using Entities;
+﻿using Entities;
 using Grpc.Net.Client;
 using Grpccinema;
 using BookSeatsRequest = Grpccinema.BookSeatsRequest;
@@ -55,7 +54,7 @@ public class CinemaServiceClient
 
         var response = await client.SaveCustomerAsync(request);
 
-        
+
         return new Customer
         {
             Name = response.Customer.Name,
@@ -65,7 +64,7 @@ public class CinemaServiceClient
             Role = response.Customer.Role
         };
     }
-    
+
     public async Task DeleteCustomerAsync(string phone)
     {
         var request = new DeleteCustomerRequest
@@ -75,7 +74,7 @@ public class CinemaServiceClient
 
         await client.DeleteCustomerAsync(request);
     }
-    
+
     public async Task<bool> VerifyCustomerPasswordAsync(string phone, string password)
     {
         var request = new VerifyCustomerPasswordRequest
@@ -90,7 +89,6 @@ public class CinemaServiceClient
 
     public async Task<List<Hall>> GetHallsAsync()
     {
-
         var response = await client.GetHallsAsync(new GetHallsRequest());
         Console.WriteLine("gRPC returned hall count: " + response.Halls.Count);
 
@@ -111,16 +109,13 @@ public class CinemaServiceClient
 
     public async Task<Hall> GetHallByIdAsync(int id)
     {
-       
-        
         var response = await client.GetHallByIDAsync(new GetHallByIdRequest { Id = id });
         var dto = response.Hall;
 
-     
+
         var hall = Hall.GetInstance(id);
-        
-       
-        
+
+
         hall.Number = dto.Number;
         hall.LayoutId = dto.Layout;
         hall.Id = dto.Id;
@@ -130,7 +125,6 @@ public class CinemaServiceClient
 
     public async Task<List<Screening>> GetScreeningsAsync()
     {
-        
         await GetLayoutsAsync();
         var response = await client.GetAllScreeningsAsync(new GetAllScreeningsRequest());
         var screenings = new List<Screening>();
@@ -139,7 +133,7 @@ public class CinemaServiceClient
         {
             var dtoMovie = await getMovieById(dtoScreening.Movie.Id);
             var movie = ConvertToMovie(dtoMovie);
-           
+
             var timeOnly = TimeOnly.Parse(dtoScreening.StartTime);
             var dateOnly = DateOnly.Parse(dtoScreening.Date);
             screenings.Add(new Screening
@@ -168,7 +162,7 @@ public class CinemaServiceClient
             ReleaseDate = dto.ReleaseDate
         };
     }
-    
+
     private Hall ConvertToHall(DTOHall dto)
     {
         var hall = Hall.GetInstance(dto.Id);
@@ -178,12 +172,12 @@ public class CinemaServiceClient
         return hall;
     }
 
-    
+
     private Customer ConvertToCustomer(DTOCustomer dto)
     {
         if (dto == null)
             return null;
-        
+
         return new Customer
         {
             Phone = dto.Phone,
@@ -191,6 +185,7 @@ public class CinemaServiceClient
             Email = dto.Email
         };
     }
+
     public async Task<List<Movie>> GetMoviesAsync()
     {
         var response = await client.GetAllMoviesAsync(new GetAllMoviesRequest());
@@ -212,8 +207,8 @@ public class CinemaServiceClient
         var response = await client.GetMovieByIDAsync(new GetMovieByIdRequest { Id = id });
         return response.Movie;
     }
-    
-    
+
+
     public async Task<List<Layout>> GetLayoutsAsync()
     {
         var response = await client.GetAllLayoutsAsync(new GetAllLayoutsRequest());
@@ -221,17 +216,18 @@ public class CinemaServiceClient
         foreach (var dtoLayout in response.Layouts)
         {
             var layout = Layout.Create(dtoLayout.Id, dtoLayout.MaxLetter[0], dtoLayout.MaxSeatInt);
-         
-         
+
+
             layout.maxLetter = dtoLayout.MaxLetter[0];
             layout.maxSeatInt = dtoLayout.MaxSeatInt;
-            layout.id= dtoLayout.Id;
+            layout.id = dtoLayout.Id;
             layouts.Add(layout);
         }
+
         return await Task.FromResult(layouts);
     }
-    
-   public async Task<List<Seat>> GetSeatsAsync()
+
+    public async Task<List<Seat>> GetSeatsAsync()
     {
         var response = await client.GetAllSeatsAsync(new GetAllSeatsRequest());
         var seats = new List<Seat>();
@@ -247,12 +243,14 @@ public class CinemaServiceClient
             };
             seats.Add(seat);
         }
+
         return await Task.FromResult(seats);
     }
-   
-   public async Task<List<Seat>> GetSeatsByScreeningIdAsync(int screeningId)
+
+    public async Task<List<Seat>> GetSeatsByScreeningIdAsync(int screeningId)
     {
-        var response = await client.GetSeatsByScreeningAsync(new GetSeatsByScreeningRequest { ScreeningId = screeningId });
+        var response =
+            await client.GetSeatsByScreeningAsync(new GetSeatsByScreeningRequest { ScreeningId = screeningId });
         var seats = new List<Seat>();
         foreach (var dtoSeat in response.Seats)
         {
@@ -262,13 +260,14 @@ public class CinemaServiceClient
                 Row = dtoSeat.Letter[0],
                 Number = dtoSeat.Number,
                 IsBooked = dtoSeat.Booked,
-                Customer = dtoSeat.Customer != null ? ConvertToCustomer(dtoSeat.Customer) : null 
+                Customer = dtoSeat.Customer != null ? ConvertToCustomer(dtoSeat.Customer) : null
             };
             seats.Add(seat);
         }
+
         return await Task.FromResult(seats);
     }
-   
+
     public async Task BookSeatsAsync(int screeningId, List<int> seatIds, string phoneNumber)
     {
         var request = new BookSeatsRequest
@@ -281,6 +280,4 @@ public class CinemaServiceClient
 
         await client.BookSeatsAsync(request);
     }
-
-   
 }

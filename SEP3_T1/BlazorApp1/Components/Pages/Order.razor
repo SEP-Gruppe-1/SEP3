@@ -1,13 +1,12 @@
 ﻿@page "/order/{screeningId:int}/"
-@using System.Security.Claims
 @using BlazorApp1.Components.Layout
+@using BlazorApp1.Services
 @using Entities
-@using Microsoft.AspNetCore.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @using Microsoft.AspNetCore.Components.Authorization
-@inject BlazorApp1.Services.TokenAuthenticationStateProvider TokenProvider
-@inject IJSRuntime Js
 @using RepositoryContracts
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject TokenAuthenticationStateProvider TokenProvider
+@inject IJSRuntime Js
 @inject IScreeningRepository ScreeningRepo
 @inject NavigationManager Nav
 @layout AuthorizedLayout
@@ -75,8 +74,8 @@ else
 
         <div class="hall">
             @foreach (var rowGroup in seat
-                          .GroupBy(s => s.Number)
-                          .OrderBy(g => g.Key))
+                              .GroupBy(s => s.Number)
+                              .OrderBy(g => g.Key))
             {
                 <div class="seat-row">
                     @foreach (var s in rowGroup.OrderBy(s => s.Row))
@@ -88,7 +87,7 @@ else
                 </div>
             }
         </div>
-        
+
         <!-- vælg sæder -->
         @if (selectedSeats.Any())
         {
@@ -99,9 +98,9 @@ else
         }
 
     </div>
-    
+
     <!--Info om valgte sæder + pris -->
-    
+
     <div class="selection-info">
         <p>
             @if (!selectedSeats.Any())
@@ -110,7 +109,7 @@ else
             }
             else
             {
-                <span>@string.Join(", ", selectedSeats.Select(s =>$"{s.Row}{s.Number}"))</span>
+                <span>@string.Join(", ", selectedSeats.Select(s => $"{s.Row}{s.Number}"))</span>
             }
         </p>
         <p>
@@ -135,13 +134,13 @@ else
         private readonly List<Seat> selectedSeats = new();
 
         private readonly List<Seat> myBookedSeats = new();
-        
+
         private HashSet<int> selectedSeatIds = new();
         private const decimal TicketPrice = 110m;
-        
+
         private string? errorMessage;
         private string? successMessage;
-        
+
         private decimal TotalPrice => selectedSeats.Count * TicketPrice;
 
         protected override async Task OnInitializedAsync()
@@ -177,6 +176,7 @@ else
                 classes.Add("mybooked");
                 return string.Join(" ", classes);
             }
+
             if (s.IsBooked)
             {
                 classes.Add("booked");
@@ -220,7 +220,7 @@ else
             try
             {
                 var seatIdsToBook = selectedSeats.Select(s => s.id).ToList();
-                
+
                 await ScreeningRepo.BookSeatsAsync(screeningId, seatIdsToBook, phone);
 
                 foreach (var s in selectedSeats)
@@ -253,10 +253,9 @@ else
                     {
                         myBookedSeats.Add(seat);
                     }
-                    
                 }
             }
-            
+
             {
             }
         }

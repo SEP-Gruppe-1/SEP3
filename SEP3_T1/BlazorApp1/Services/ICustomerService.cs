@@ -1,5 +1,4 @@
-﻿using System.Net;
-using ApiContract;
+﻿using ApiContract;
 
 namespace BlazorApp1.Services;
 
@@ -10,8 +9,4 @@ public interface ICustomerService
     Task SaveCustomerAsync(SaveCustomerDto customer);
     Task UpdateCustomerRoleAsync(string phone, string newRole);
     Task DeleteCustomerAsync(string phone);
-
-    
-    
-    
 }

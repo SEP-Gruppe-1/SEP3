@@ -26,7 +26,6 @@ public class CustomerInDatabaseRepository : ICustomerRepository
 
     public async Task UpdateAsync(Customer customer)
     {
-       
         await InitializeAsync();
 
         var existingCustomer = customers.SingleOrDefault(c => c.Phone == customer.Phone);
@@ -40,7 +39,7 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         // ✅ Gem også i Java/DB
         await client.SaveCustomerAsync(customer);
     }
-    
+
     public async Task<Customer?> GetSingleAsync(string Phone)
     {
         var customers = await GetCustomersAsync();
@@ -71,14 +70,8 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         customers.Add(savedCustomer);
     }
 
-    public async Task InitializeAsync()
-    {
-        customers = await client.GetCustomersAsync();
-    }
-
     public async Task DeleteAsync(string phone)
     {
-       
         customers = await client.GetCustomersAsync();
 
         var customerToRemove = customers.SingleOrDefault(c => c.Phone == phone);
@@ -87,16 +80,8 @@ public class CustomerInDatabaseRepository : ICustomerRepository
             throw new InvalidOperationException($"Customer with phone nr: {phone} not found.");
 
         await client.DeleteCustomerAsync(phone);
-        
+
         customers.Remove(customerToRemove);
-    }
-
-
-
-    private async Task<List<Customer>> GetCustomersAsync()
-    {
-        var customerAsJson = await client.GetCustomersAsync();
-        return customerAsJson;
     }
 
     public async Task<Customer?> GetByPhoneAndPasswordAsync(string phone, string password)
@@ -106,4 +91,15 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         return customers.SingleOrDefault(c => c.Phone == phone);
     }
 
+    public async Task InitializeAsync()
+    {
+        customers = await client.GetCustomersAsync();
+    }
+
+
+    private async Task<List<Customer>> GetCustomersAsync()
+    {
+        var customerAsJson = await client.GetCustomersAsync();
+        return customerAsJson;
+    }
 }

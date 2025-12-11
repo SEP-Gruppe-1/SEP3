@@ -15,9 +15,7 @@ public class JwtHttpClientHandler
         var token = await js.InvokeAsync<string>("localStorage.getItem", "jwt");
 
         if (!string.IsNullOrWhiteSpace(token))
-        {
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
-        }
     }
 }

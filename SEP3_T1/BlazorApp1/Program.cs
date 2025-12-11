@@ -3,8 +3,6 @@ using BlazorApp1.Services;
 using gRPCRepositories;
 using Microsoft.AspNetCore.Components.Authorization;
 using RepositoryContracts;
-using Microsoft.AspNetCore.Authentication.Cookies;
-
 
 var builder = WebApplication.CreateBuilder(args);
 

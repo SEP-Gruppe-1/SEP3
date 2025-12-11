@@ -1,0 +1,169 @@
+﻿@* @page "/add-movie" *@
+@* @using System.ComponentModel.DataAnnotations *@
+@* @using Entities *@
+@* @using RepositoryContracts *@
+@* @inject IMovieRepository MovieRepo *@
+@* @inject NavigationManager Nav *@
+@* *@
+@* <h3>Tilføj film</h3> *@
+@* *@
+@* @if (isSaving) *@
+@* { *@
+@*     <p><strong>Gemmer film...</strong></p> *@
+@* } *@
+@* else *@
+@* { *@
+@*     <EditForm Model="movieModel" OnValidSubmit="HandleValidSubmit"> *@
+@*         <DataAnnotationsValidator /> *@
+@*         <ValidationSummary /> *@
+@* *@
+@*         <!-- Movie Title --> *@
+@*         <div class="mb-3"> *@
+@*             <label class="form-label"><strong>Titel:</strong></label> *@
+@*             <InputText class="form-control" @bind-Value="movieModel.MovieTitle" /> *@
+@*             <ValidationMessage For="@(() => movieModel.MovieTitle)" /> *@
+@*         </div> *@
+@* *@
+@*         <!-- Movie Genre --> *@
+@*         <div class="mb-3"> *@
+@*             <label class="form-label"><strong>Genre:</strong></label> *@
+@*             <InputText class="form-control" @bind-Value="movieModel.Genre" /> *@
+@*             <ValidationMessage For="@(() => movieModel.Genre)" /> *@
+@*         </div> *@
+@* *@
+@*         <!-- Movie Duration --> *@
+@*         <div class="mb-3"> *@
+@*             <label class="form-label"><strong>Spilletid (min):</strong></label> *@
+@*             <InputNumber class="form-control" @bind-Value="movieModel.DurationInMinutes" /> *@
+@*             <ValidationMessage For="@(() => movieModel.DurationInMinutes)" /> *@
+@*         </div> *@
+@* *@
+@*         <!-- Movie Release Date --> *@
+@*         <div class="mb-3"> *@
+@*             <label class="form-label"><strong>Udgivelsesdato:</strong></label> *@
+@*             <InputDate class="form-control" @bind-Value="movieModel.ReleaseDate" /> *@
+@*             <ValidationMessage For="@(() => movieModel.ReleaseDate)" /> *@
+@*         </div> *@
+@* *@
+@*         <!-- Movie Description --> *@
+@*         <div class="mb-3"> *@
+@*             <label class="form-label"><strong>Beskrivelse:</strong></label> *@
+@*             <InputTextArea class="form-control" rows="4" @bind-Value="movieModel.Description" /> *@
+@*         </div> *@
+@* *@
+@*         <!-- Movie Poster Upload --> *@
+@*         <div class="mb-3"> *@
+@*             <label class="form-label"><strong>Poster:</strong></label> *@
+@*             <InputFile OnChange="OnPosterSelected" /> *@
+@*             @if (posterFileName is not null) *@
+@*             { *@
+@*                 <div class="form-text"><strong>Valgt: @posterFileName</strong></div> *@
+@*             } *@
+@*         </div> *@
+@* *@
+@*         <!-- Movie Banner Upload --> *@
+@*         <div class="mb-3"> *@
+@*             <label class="form-label"><strong>Banner:</strong></label> *@
+@*             <InputFile OnChange="OnBannerSelected" /> *@
+@*             @if (bannerFileName is not null) *@
+@*             { *@
+@*                 <div class="form-text"><strong>Valgt: @bannerFileName</strong></div> *@
+@*             } *@
+@*         </div> *@
+@* *@
+@*         <button type="submit" class="btn btn-primary">Gem film</button> *@
+@*     </EditForm> *@
+@* *@
+@*     @if (!string.IsNullOrEmpty(errorMessage)) *@
+@*     { *@
+@*         <div class="alert alert-danger mt-3">@errorMessage</div> *@
+@*     } *@
+@*     @if (!string.IsNullOrEmpty(successMessage)) *@
+@*     { *@
+@*         <div class="alert alert-success mt-3">@successMessage</div> *@
+@*     } *@
+@* } *@
+@* *@
+@* @code { *@
+@*     private MovieCreateModel movieModel = new(); *@
+@*     private IBrowserFile? posterFile; *@
+@*     private IBrowserFile? bannerFile; *@
+@*     private string? posterFileName; *@
+@*     private string? bannerFileName; *@
+@*     private string? errorMessage; *@
+@*     private string? successMessage; *@
+@*     private bool isSaving; *@
+@* *@
+@*     private void OnPosterSelected(InputFileChangeEventArgs e) *@
+@*     { *@
+@*         posterFile = e.File; *@
+@*         posterFileName = posterFile.Name; *@
+@*     } *@
+@* *@
+@*     private void OnBannerSelected(InputFileChangeEventArgs e) *@
+@*     { *@
+@*         bannerFile = e.File; *@
+@*         bannerFileName = bannerFile.Name; *@
+@*     } *@
+@* *@
+@*     private async Task HandleValidSubmit() *@
+@*     { *@
+@*         errorMessage = successMessage = null; *@
+@*         isSaving = true; *@
+@* *@
+@*         try *@
+@*         { *@
+@*             byte[]? posterBytes = null; *@
+@*             byte[]? bannerBytes = null; *@
+@* *@
+@*             if (posterFile is not null) *@
+@*             { *@
+@*                 using var ms = new MemoryStream(); *@
+@*                 await posterFile.OpenReadStream(5 * 1024 * 1536).CopyToAsync(ms);  *@
+@*                 posterBytes = ms.ToArray(); *@
+@*             } *@
+@* *@
+@*             if (bannerFile is not null) *@
+@*             { *@
+@*                 using var ms = new MemoryStream(); *@
+@*                 await bannerFile.OpenReadStream(5 * 1350 * 360).CopyToAsync(ms); *@
+@*                 bannerBytes = ms.ToArray(); *@
+@*             } *@
+@* *@
+@*             var movie = new Movie *@
+@*             { *@
+@*                 MovieTitle = movieModel.MovieTitle!, *@
+@*                 Genre = movieModel.Genre!, *@
+@*                 DurationMinutes = movieModel.DurationInMinutes, *@
+@*                 ReleaseDate = movieModel.ReleaseDate.ToString(), *@
+@*                 Description = movieModel.Description, *@
+@*                 Poster = posterBytes, *@
+@*                 Banner = bannerBytes *@
+@*             }; *@
+@* *@
+@*             await MovieRepo.AddAsync(movie);    *@
+@* *@
+@*             successMessage = "Filmen er gemt."; *@
+@*              *@
+@*         } *@
+@*         catch (Exception ex) *@
+@*         { *@
+@*             errorMessage = $"Kunne ikke gemme filmen: {ex.Message}"; *@
+@*         } *@
+@*         finally *@
+@*         { *@
+@*             isSaving = false; *@
+@*         } *@
+@*     } *@
+@* *@
+@*     public class MovieCreateModel *@
+@*     { *@
+@*         [Required] public string? MovieTitle { get; set; } *@
+@*         [Required] public string? Genre { get; set; } *@
+@*         [Required, Range(1, 500)] *@
+@*         public int DurationInMinutes { get; set; } = 90; *@
+@*         [Required] *@
+@*         public DateTime ReleaseDate { get; set; } *@
+@*         public string? Description { get; set; } *@
+@*     } *@
+@* } *@
