@@ -194,6 +194,38 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
     }
 
     @Override
+    public void saveScreening(SaveScreeningRequest request, StreamObserver<SaveScreeningResponse> responseObserver) {
+        try {
+
+            DTOScreening dto = request.getScreening();
+            Screening screening = DTOFactory.createScreening(dto);
+            Screening existing = screeningDAO.getScreeningById(screening.getScreeningId());
+
+            if (existing == null) {
+                screeningDAO.addScreening(screening);
+            } else {
+              // lav update screening
+            }
+            DTOScreening savedDto = DTOFactory.createDTOScreening(screening);
+
+            SaveScreeningResponse response = SaveScreeningResponse.newBuilder()
+                    .setScreening(savedDto)
+                    .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(
+                    io.grpc.Status.INTERNAL
+                            .withDescription("Could not create screening: " + e.getMessage())
+                            .asRuntimeException()
+            );
+        }
+    }
+
+    @Override
     public void getMovieByID(GetMovieByIdRequest request, StreamObserver<GetMovieByIdResponse> responseObserver) {
 
         Movie movie = movieDAO.getMovieById(request.getId());

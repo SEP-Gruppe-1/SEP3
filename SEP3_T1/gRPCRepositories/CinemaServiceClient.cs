@@ -156,6 +156,50 @@ public class CinemaServiceClient
 
         return await Task.FromResult(screenings);
     }
+    
+    public async Task<Screening> SaveScreeningAsync(Screening screening)
+    {
+        var dtoScreening = new DTOScreening
+        {
+            Id = screening.screeningId,
+            Movie = new DTOMovie
+            {
+                Id = screening.movie.MovieId,
+                Title = screening.movie.MovieTitle,
+                Genre = screening.movie.Genre,
+                Playtime = screening.movie.DurationMinutes,
+                ReleaseDate = screening.movie.ReleaseDate
+            },
+            Hall = new DTOHall
+            {
+                Id = screening.hall.Id,
+                Number = screening.hall.Number,
+                Layout = screening.hall.LayoutId
+            },
+            HallId = screening.hallId,
+            StartTime = screening.startTime.ToString("HH:mm"),
+            Date = screening.date.ToString("yyyy-MM-dd"),
+            AvailableSeats = screening.availableSeats
+        };
+
+        var request = new SaveScreeningRequest { Screening = dtoScreening };
+
+        var response = await client.SaveScreeningAsync(request);
+
+        var savedDto = response.Screening;
+
+        return new Screening
+        {
+            screeningId = savedDto.Id,
+            movie = ConvertToMovie(savedDto.Movie),
+            hall = ConvertToHall(savedDto.Hall),
+            hallId = savedDto.HallId,
+            startTime = TimeOnly.Parse(savedDto.StartTime),
+            date = DateOnly.Parse(savedDto.Date),
+            availableSeats = savedDto.AvailableSeats
+        };
+       
+    }
 
     private Movie ConvertToMovie(DTOMovie dto)
     {
