@@ -115,5 +115,15 @@ public class CustomerController : ControllerBase
        
     }
     
+    [Authorize]
+    [HttpGet("bookings/{phone}")]
+    public async Task<IActionResult> GetBookingsForCustomer(string phone,
+        [FromServices] IScreeningRepository screeningRepo)
+    {
+        var bookings = await screeningRepo.GetBookingsByPhoneAsync(phone);
+        return Ok(bookings);
+    }
+
+    
 
 }

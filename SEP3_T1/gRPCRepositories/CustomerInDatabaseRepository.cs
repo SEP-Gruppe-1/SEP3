@@ -14,7 +14,11 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         this.client = client;
         customers = new List<Customer>();
     }
-
+ /// <summary>
+ /// Adds a new customer to the repository
+ /// </summary>
+ /// <param name="customer"></param>
+ /// <returns></returns>
     public Task<Customer> AddAsync(Customer customer)
     {
         customer.Phone = customers.Any()

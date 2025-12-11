@@ -365,6 +365,23 @@ public class CinemaServiceClient
 
         await client.BookSeatsAsync(request);
     }
+   
+    public async Task<List<CustomerBookingDto>> GetCustomerBookingsAsync(string phone)
+    {
+        var response = await client.GetBookingsByPhoneAsync(
+            new GetBookingsByPhoneRequest { Phone = phone });
+
+        return response.Bookings.Select(b => new CustomerBookingDto(
+            b.ScreeningId,
+            b.MovieTitle,
+            b.Date,
+            b.Time,
+            b.Seats.ToList(),
+            b.SeatIds.ToList()
+        )).ToList();
+    }
+
+   
 
    
 }

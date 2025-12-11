@@ -123,6 +123,24 @@ public class HttpCustomerService : ICustomerService
             throw new Exception(msg);
         }
     }
+    
+    public async Task<List<CustomerBookingDto>> GetMyBookingsAsync(string phone)
+    {
+        await jwtHandler.AttachJwtAsync(httpClient);
 
+        var response = await httpClient.GetAsync($"api/customer/bookings/{phone}");
 
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception(content);
+
+        return JsonSerializer.Deserialize<List<CustomerBookingDto>>(content,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+    }
+
+    public Task<CustomerDto?> GetSingleCustomerAsync(string phone)
+    {
+        throw new NotImplementedException();
+    }
 }

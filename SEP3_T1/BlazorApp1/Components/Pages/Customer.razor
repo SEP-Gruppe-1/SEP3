@@ -1,74 +1,98 @@
 ﻿@page "/customer"
 @using ApiContract
-@using BlazorApp1.Components.Layout
 @using BlazorApp1.Services
-@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
-@layout AuthorizedLayout
-
+@inject AuthenticationStateProvider Auth
 @inject ICustomerService CustomerService
-@inject AuthenticationStateProvider AuthProvider
+@inject IScreeningService ScreeningService
 
-<h3>Min konto</h3>
+@inject NavigationManager Nav
 
-@if (bookings == null)
+<h3>Min Side</h3>
+
+@if (loading)
 {
-    <p>Indlæser dine bestillinger...</p>
-}
-else if (!bookings.Any())
-{
-    <p>Du har ingen aktuelle bestillinger.</p>
+    <p>Henter data...</p>
 }
 else
 {
-    <h4>Dine aktuelle bestillinger</h4>
+    <div class="card mb-4">
+        <div class="card-header">Mine oplysninger</div>
+        <div class="card-body">
+            <p><strong>Navn:</strong> @customer?.Name</p>
+            <p><strong>Telefon:</strong> @customer?.Phone</p>
+            <p><strong>Email:</strong> @customer?.Email</p>
+        </div>
+    </div>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Film</th>
-            <th>Dato</th>
-            <th>Tid</th>
-            <th>Sæder</th>
-            <th>Handling</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var b in bookings)
-        {
-            <tr>
-                <td>@b.MovieTitle</td>
-                <td>@b.Date</td>
-                <td>@b.Time</td>
-                <td>@string.Join(", ", b.Seats)</td>
-                <td>
-                    <button class="btn btn-sm btn-warning me-2"
-                            @onclick="() => EditBooking(b.BookingId)">
-                        Ret
-                    </button>
+    <!-- Kommende bookinger -->
+    <div class="card mb-4">
+        <div class="card-header">Kommende bookinger</div>
+        <div class="card-body">
+            @if (!upcoming.Any())
+            {
+                <p>Ingen kommende bookinger.</p>
+            }
+            else
+            {
+                foreach (var b in upcoming)
+                {
+                    <div class="border rounded p-3 mb-3">
+                        <h5>@b.MovieTitle</h5>
+                        <p>
+                            📅 @b.Date<br />
+                            🕒 @b.Time<br />
+                            💺 @string.Join(", ", b.Seats)
+                        </p>
 
-                    <button class="btn btn-sm btn-danger"
-                            @onclick="() => AskDelete(b)">
-                        Slet
-                    </button>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+                        <button class="btn btn-primary me-2" @onclick="@(() => EditBooking(b))">
+                            Redigér
+                        </button>
+
+                        <button class="btn btn-danger" @onclick="@(() => AskDelete(b))">
+                            Slet
+                        </button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+   
+    <div class="card mb-4">
+        <div class="card-header">Tidligere bookinger</div>
+        <div class="card-body">
+            @if (!previous.Any())
+            {
+                <p>Ingen tidligere bookinger.</p>
+            }
+            else
+            {
+                foreach (var b in previous)
+                {
+                    <div class="border rounded p-3 mb-3">
+                        <h5>@b.MovieTitle</h5>
+                        <p>
+                            📅 @b.Date<br />
+                            💺 @string.Join(", ", b.Seats)
+                        </p>
+                    </div>
+                }
+            }
+        </div>
+    </div>
 }
 
-@if (showDeletePopup && selectedBooking != null)
+@if (showDeletePopup)
 {
-    <div class="modal fade show d-block">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title">Bekræft sletning</h5>
                 </div>
                 <div class="modal-body">
-                    Er du sikker på, at du vil slette din bestilling på
-                    <b>@selectedBooking.MovieTitle</b>?
+                    Vil du slette denne booking?
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" @onclick="CancelDelete">Annuller</button>
@@ -77,46 +101,74 @@ else
             </div>
         </div>
     </div>
-
     <div class="modal-backdrop fade show"></div>
 }
 
 @code {
-    private List<CustomerBookingDto>? bookings;
-    private bool showDeletePopup;
-    private CustomerBookingDto? selectedBooking;
+    private CustomerDto? customer;
+    private List<CustomerBookingDto> bookings = new();
+    private List<CustomerBookingDto> upcoming = new();
+    private List<CustomerBookingDto> previous = new();
+
+    private bool loading = true;
+
+    private bool showDeletePopup = false;
+    private CustomerBookingDto bookingToDelete;
 
     protected override async Task OnInitializedAsync()
     {
-        var auth = await AuthProvider.GetAuthenticationStateAsync();
-        var phone = auth.User.Claims.First(c => c.Type == "phone").Value;
+        loading = true;
 
-        //bookings = await CustomerService.GetMyBookingsAsync(phone);
+        var auth = await Auth.GetAuthenticationStateAsync();
+        var user = auth.User;
+
+        string? phone = user.Claims.FirstOrDefault(c => c.Type == "phone")?.Value;
+
+        if (phone == null)
+        {
+            loading = false;
+            return;
+        }
+
+        // Kundens info
+        customer = await CustomerService.GetSingleCustomerAsync(phone);
+
+        // Bookinger
+        bookings = await ScreeningService.GetBookingsByPhoneAsync(phone);
+
+        // Del op i kommende og tidligere
+        upcoming = bookings.Where(b => DateTime.Parse(b.Date) >= DateTime.Today).ToList();
+        previous = bookings.Where(b => DateTime.Parse(b.Date) < DateTime.Today).ToList();
+
+        loading = false;
+    }
+
+    private void EditBooking(CustomerBookingDto booking)
+    {
+        // fx: /edit-booking/{screeningId}
+        Nav.NavigateTo($"/edit-booking/{booking.ScreeningId}");
     }
 
     private void AskDelete(CustomerBookingDto booking)
     {
-        selectedBooking = booking;
+        bookingToDelete = booking;
         showDeletePopup = true;
     }
 
     private void CancelDelete()
     {
-        selectedBooking = null;
         showDeletePopup = false;
+        bookingToDelete = null;
     }
 
     private async Task ConfirmDelete()
     {
-        //await CustomerService.DeleteBookingAsync(selectedBooking!.BookingId);
-        bookings!.Remove(selectedBooking);
-        selectedBooking = null;
-        showDeletePopup = false;
-    }
+        await ScreeningService.DeleteBookingAsync(bookingToDelete);
 
-    private void EditBooking(int bookingId)
-    {
-       // NavigationManager.NavigateTo($"/{bookingId}");
+        upcoming.Remove(bookingToDelete);
+        bookings.Remove(bookingToDelete);
+
+        showDeletePopup = false;
+        bookingToDelete = null;
     }
 }
-

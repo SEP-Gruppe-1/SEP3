@@ -252,6 +252,8 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
 
     }
 
+
+
     @Override
     public void bookSeats(BookSeatsRequest request, StreamObserver<BookSeatsResponse> responseObserver) {
 
@@ -279,4 +281,6 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
         }
 
     }
+
+
 }

@@ -75,5 +75,24 @@ public class ScreeningController : ControllerBase
             });
         }
     }
+    [HttpGet("bookings/{phone}")]
+    public async Task<IActionResult> GetBookingsForCustomer(string phone)
+    {
+        var bookings = await screeningRepository.GetBookingsByPhoneAsync(phone);
+        return Ok(bookings);
+    }
     
+    [HttpDelete("{screeningId:int}/booking/{phone}")]
+    public async Task<IActionResult> DeleteBooking(int screeningId, string phone)
+    {
+        try
+        {
+            await screeningRepository.DeleteBookingAsync(screeningId, phone);
+            return Ok(new { message = "Booking deleted successfully" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
 }

@@ -1,48 +1,36 @@
 ﻿using Entities;
+using gRPCRepositories;
 using RepositoryContracts;
-
-namespace gRPCRepositories;
 
 public class MovieInRepository : IMovieRepository
 {
-    private readonly CinemaServiceClient _client;
-    private List<Movie> movies;
+    private readonly CinemaServiceClient client;
+    private List<Movie> movies = new();
 
-    public MovieInRepository(CinemaServiceClient _client)
+    public MovieInRepository(CinemaServiceClient client)
     {
-        this._client = _client;
-        movies = new List<Movie>();
-    }
-
-    public Task<Movie> AddAsync(Movie movie)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateAsync(Movie movie)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task DeleteAsync(int id)
-    {
-        throw new NotImplementedException();
+        this.client = client;
     }
 
     public async Task<Movie?> GetSingleAsync(int id)
     {
-        var all = await _client.GetMoviesAsync();
-        return all.SingleOrDefault(m => m.MovieId == id)
-               ?? throw new InvalidOperationException();
+        return (await client.GetMoviesAsync())
+               .SingleOrDefault(m => m.MovieId == id)
+               ?? throw new InvalidOperationException($"Movie {id} not found");
     }
 
-    public IQueryable<Movie> GetAll()
+    public async Task<List<Movie>> GetAllAsync()
     {
-        return movies.AsQueryable();
+        movies = await client.GetMoviesAsync();
+        return movies;
     }
 
-    public async Task InitializeAsync()
-    {
-        movies = await _client.GetMoviesAsync();
-    }
+    public Task<Movie> AddAsync(Movie movie)
+        => throw new NotImplementedException();
+
+    public Task UpdateAsync(Movie movie)
+        => throw new NotImplementedException();
+
+    public Task DeleteAsync(int id)
+        => throw new NotImplementedException();
 }

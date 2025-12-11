@@ -234,6 +234,7 @@ FROM b
 WHERE (s.row_letter, s.seat_number) IN ( ('A',1), ('A',2) );
 ;
 
+
 UPDATE customer
 SET role = 'Admin'
 WHERE phone = '28510391';

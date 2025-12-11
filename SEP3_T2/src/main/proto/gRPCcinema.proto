@@ -130,6 +130,8 @@ message GetScreeningByIdResponse{
 
 
 
+
+
 //---------- Layout ----------\\
 
 message DTOLayout{
@@ -175,7 +177,30 @@ message BookSeatsRequest {
   string customerPhone = 2;
   repeated int32 seatIds = 3;
 }
+
+message CustomerBooking
+{
+  int32 screenId = 1;
+  string movieTitle = 2;
+  string date = 3;
+  string time = 4;
+  repeated string seats = 5;
+  repeated int32 seatIds = 6;
+}
+
+message GetBookingsByPhoneRequest{
+  string phone =1;
+}
+
+message GetBookingByPhoneResponse {
+  repeated CustomerBooking bookings = 1;
+}
+
+
+
 message BookSeatsResponse{}
+
+
 
 service CinemaService
 {
@@ -194,4 +219,5 @@ service CinemaService
   rpc GetSeatsByScreening(GetSeatsByScreeningRequest) returns (GetSeatsByScreeningResponse);
   rpc BookSeats(BookSeatsRequest) returns (BookSeatsResponse);
   rpc VerifyCustomerPassword(VerifyCustomerPasswordRequest) returns (VerifyCustomerPasswordResponse);
+  rpc GetBookingsByPhone(GetBookingsByPhoneRequest) returns (GetBookingByPhoneResponse);
 }

@@ -14,8 +14,8 @@ public interface ICustomerService
     Task SaveCustomerAsync(SaveCustomerDto customer);
     Task UpdateCustomerRoleAsync(string phone, string newRole);
     Task DeleteCustomerAsync(string phone);
+    Task<List<CustomerBookingDto>> GetMyBookingsAsync(string phone);
 
-    
-    
-    
+
+    Task<CustomerDto?> GetSingleCustomerAsync(string phone);
 }

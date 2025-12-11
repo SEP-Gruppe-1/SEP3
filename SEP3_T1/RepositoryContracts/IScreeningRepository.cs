@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using ApiContract;
+using Entities;
 
 namespace RepositoryContracts;
 
@@ -11,4 +12,6 @@ public interface IScreeningRepository
     Task<List<Screening>> getAll();
     
     Task BookSeatsAsync(int screeningId, List<int> seatIds, string phoneNumber);
+    Task<List<CustomerBookingDto>> GetBookingsByPhoneAsync(string phone);
+    Task DeleteBookingAsync(int screeningId, string phone);
 }

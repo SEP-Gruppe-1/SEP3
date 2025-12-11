@@ -129,6 +129,26 @@ message GetScreeningByIdResponse{
   DTOScreening screening = 1;
 }
 
+// ---------- Customer Bookings ---------- \\
+
+message CustomerBooking {
+  int32 screeningId = 1;
+  string movieTitle = 2;
+  string date = 3;
+  string time = 4;
+  repeated string seats = 5;
+  repeated int32 seatIds = 6;
+}
+
+message GetBookingsByPhoneRequest {
+  string phone = 1;
+}
+
+message GetBookingsByPhoneResponse {
+  repeated CustomerBooking bookings = 1;
+}
+
+
 
 
 //---------- Layout ----------\\
@@ -196,4 +216,5 @@ service CinemaService
   rpc GetSeatsByScreening(GetSeatsByScreeningRequest) returns (GetSeatsByScreeningResponse);
   rpc BookSeats(BookSeatsRequest) returns (BookSeatsResponse);
   rpc VerifyCustomerPassword(VerifyCustomerPasswordRequest) returns (VerifyCustomerPasswordResponse);
+  rpc GetBookingsByPhone(GetBookingsByPhoneRequest) returns (GetBookingsByPhoneResponse);
 }
