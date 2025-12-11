@@ -161,10 +161,100 @@ public class SeatDAOImpl implements SeatDAO {
         }
     }
 
-    @Override
-    public void unBookSeat(int screeningId, String Phone) throws SQLException {
+    public void updateBooking(int screeningId, String phone,
+                              List<Integer> seatsToAdd,
+                              List<Integer> seatsToRemove) throws SQLException {
 
+        String findBookingSql =
+                "SELECT booking_id FROM Booking WHERE screening_id = ? AND customer_phone = ?";
+
+        String createBookingSql =
+                "INSERT INTO Booking (customer_phone, screening_id, seats_booked) " +
+                        "VALUES (?, ?, ?) RETURNING booking_id";
+
+        String insertSeatSql =
+                "INSERT INTO BookingSeat (booking_id, seat_id) VALUES (?, ?)";
+
+        String deleteSeatSql =
+                "DELETE FROM BookingSeat WHERE booking_id = ? AND seat_id = ?";
+
+        String updateCountSql =
+                "UPDATE Booking SET seats_booked = seats_booked + ? WHERE booking_id = ?";
+
+        String deleteBookingSql =
+                "DELETE FROM Booking WHERE booking_id = ? AND seats_booked = 0";
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+
+            Integer bookingId = null;
+
+            // 1. Find booking
+            try (PreparedStatement stmt = conn.prepareStatement(findBookingSql)) {
+                stmt.setInt(1, screeningId);
+                stmt.setString(2, phone);
+
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    bookingId = rs.getInt("booking_id");
+                }
+            }
+
+            // 2. If no booking exists AND seatsToAdd is not empty → create booking
+            if (bookingId == null && !seatsToAdd.isEmpty()) {
+                try (PreparedStatement stmt = conn.prepareStatement(createBookingSql)) {
+                    stmt.setString(1, phone);
+                    stmt.setInt(2, screeningId);
+                    stmt.setInt(3, seatsToAdd.size());
+
+                    ResultSet rs = stmt.executeQuery();
+                    rs.next();
+                    bookingId = rs.getInt("booking_id");
+                }
+            }
+
+            // If no booking exists and no seats added, nothing to do
+            if (bookingId == null) {
+                conn.commit();
+                return;
+            }
+
+            // 3. Remove seats
+            try (PreparedStatement stmt = conn.prepareStatement(deleteSeatSql)) {
+                for (int seatId : seatsToRemove) {
+                    stmt.setInt(1, bookingId);
+                    stmt.setInt(2, seatId);
+                    stmt.executeUpdate();
+                }
+            }
+
+            // 4. Add seats
+            try (PreparedStatement stmt = conn.prepareStatement(insertSeatSql)) {
+                for (int seatId : seatsToAdd) {
+                    stmt.setInt(1, bookingId);
+                    stmt.setInt(2, seatId);
+                    stmt.executeUpdate();
+                }
+            }
+
+            // 5. Update seat count
+            int seatDelta = seatsToAdd.size() - seatsToRemove.size();
+            try (PreparedStatement stmt = conn.prepareStatement(updateCountSql)) {
+                stmt.setInt(1, seatDelta);
+                stmt.setInt(2, bookingId);
+                stmt.executeUpdate();
+            }
+
+            // 6. Delete empty booking
+            try (PreparedStatement stmt = conn.prepareStatement(deleteBookingSql)) {
+                stmt.setInt(1, bookingId);
+                stmt.executeUpdate();
+            }
+
+            conn.commit();
+        }
     }
+
 
 
 }
