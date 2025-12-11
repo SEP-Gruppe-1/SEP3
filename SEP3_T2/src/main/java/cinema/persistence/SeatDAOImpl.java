@@ -166,7 +166,7 @@ public class SeatDAOImpl implements SeatDAO {
                               List<Integer> seatsToRemove) throws SQLException {
 
         String findBookingSql =
-                "SELECT booking_id FROM Booking WHERE screening_id = ? AND customer_phone = ?";
+                "SELECT booking_id, seats_booked FROM Booking WHERE screening_id = ? AND customer_phone = ?";
 
         String createBookingSql =
                 "INSERT INTO Booking (customer_phone, screening_id, seats_booked) " +
@@ -179,15 +179,16 @@ public class SeatDAOImpl implements SeatDAO {
                 "DELETE FROM BookingSeat WHERE booking_id = ? AND seat_id = ?";
 
         String updateCountSql =
-                "UPDATE Booking SET seats_booked = seats_booked + ? WHERE booking_id = ?";
+                "UPDATE Booking SET seats_booked = ? WHERE booking_id = ?";
 
         String deleteBookingSql =
-                "DELETE FROM Booking WHERE booking_id = ? AND seats_booked = 0";
+                "DELETE FROM Booking WHERE booking_id = ?";
 
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
             Integer bookingId = null;
+            int currentSeatCount = 0;
 
             // 1. Find booking
             try (PreparedStatement stmt = conn.prepareStatement(findBookingSql)) {
@@ -197,10 +198,11 @@ public class SeatDAOImpl implements SeatDAO {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     bookingId = rs.getInt("booking_id");
+                    currentSeatCount = rs.getInt("seats_booked");
                 }
             }
 
-            // 2. If no booking exists AND seatsToAdd is not empty → create booking
+            // 2. Create booking if missing
             if (bookingId == null && !seatsToAdd.isEmpty()) {
                 try (PreparedStatement stmt = conn.prepareStatement(createBookingSql)) {
                     stmt.setString(1, phone);
@@ -210,10 +212,12 @@ public class SeatDAOImpl implements SeatDAO {
                     ResultSet rs = stmt.executeQuery();
                     rs.next();
                     bookingId = rs.getInt("booking_id");
+
+                    currentSeatCount = seatsToAdd.size();
                 }
             }
 
-            // If no booking exists and no seats added, nothing to do
+            // If still no booking and no seats added → nothing to update
             if (bookingId == null) {
                 conn.commit();
                 return;
@@ -237,23 +241,39 @@ public class SeatDAOImpl implements SeatDAO {
                 }
             }
 
-            // 5. Update seat count
-            int seatDelta = seatsToAdd.size() - seatsToRemove.size();
-            try (PreparedStatement stmt = conn.prepareStatement(updateCountSql)) {
-                stmt.setInt(1, seatDelta);
-                stmt.setInt(2, bookingId);
-                stmt.executeUpdate();
+            // 5. Compute new total seats
+            int newSeatCount = currentSeatCount + seatsToAdd.size() - seatsToRemove.size();
+
+            // ⭐⭐⭐ THE CRITICAL FIX ⭐⭐⭐
+            if (newSeatCount <= 0) {
+                // Delete all seat rows
+                try (PreparedStatement stmt = conn.prepareStatement(
+                        "DELETE FROM BookingSeat WHERE booking_id = ?")) {
+                    stmt.setInt(1, bookingId);
+                    stmt.executeUpdate();
+                }
+
+                // Delete booking
+                try (PreparedStatement stmt = conn.prepareStatement(deleteBookingSql)) {
+                    stmt.setInt(1, bookingId);
+                    stmt.executeUpdate();
+                }
+
+                conn.commit();
+                return;  // STOP — NO UPDATE
             }
 
-            // 6. Delete empty booking
-            try (PreparedStatement stmt = conn.prepareStatement(deleteBookingSql)) {
-                stmt.setInt(1, bookingId);
+            // 6. Update booking seat count
+            try (PreparedStatement stmt = conn.prepareStatement(updateCountSql)) {
+                stmt.setInt(1, newSeatCount);
+                stmt.setInt(2, bookingId);
                 stmt.executeUpdate();
             }
 
             conn.commit();
         }
     }
+
 
 
 

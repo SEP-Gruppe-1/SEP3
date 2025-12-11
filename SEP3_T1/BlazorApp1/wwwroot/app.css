@@ -425,4 +425,5 @@ order-header-text {
     background-color: #ff9800; /* orange */
     color: #fff;
     border: 2px solid #e65100; /* mørkere orange kant */
+    cursor: pointer;
 }

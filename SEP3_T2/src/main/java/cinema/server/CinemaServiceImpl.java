@@ -279,4 +279,32 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
         }
 
     }
+
+    @Override
+    public void updateBooking(UpdateBookingRequest request, StreamObserver<UpdateBookingResponse> responseObserver) {
+        int  screeningId = request.getScreeningId();
+        String customerPhone = request.getCustomerPhone();
+        List<Integer> seatsToAdd= request.getSeatsToAddList();
+        List<Integer> seatsToRemove = request.getSeatsToRemoveList();
+
+        try{
+            seatDAO.updateBooking(screeningId, customerPhone, seatsToAdd, seatsToRemove);
+
+
+            UpdateBookingResponse response = UpdateBookingResponse.newBuilder().
+                    setSuccess(true).
+                    setMessage("Booking updated").
+                    build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }catch (Exception e){
+            e.printStackTrace();
+
+        UpdateBookingResponse eResponse = UpdateBookingResponse.newBuilder().
+                setSuccess(false).
+                setMessage("booking update Failed").build();
+        responseObserver.onNext(eResponse);
+        responseObserver.onCompleted();
+        }
+    }
 }

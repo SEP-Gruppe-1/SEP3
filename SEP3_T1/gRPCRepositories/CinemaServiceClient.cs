@@ -281,6 +281,20 @@ public class CinemaServiceClient
 
         await client.BookSeatsAsync(request);
     }
+    public async Task<UpdateBookingResponse> UpdateBookingAsync(int screeningId, string phoneNumber, List<int> seatsToAdd, List<int> seatsToRemove)
+    {
+        var request = new UpdateBookingRequest
+        {
+            ScreeningId = screeningId,
+            CustomerPhone = phoneNumber
+        };
+
+        request.SeatsToAdd.AddRange(seatsToAdd);
+        request.SeatsToRemove.AddRange(seatsToRemove);
+
+        var response = await client.UpdateBookingAsync(request);
+        return response;
+    }
 
    
 }

@@ -16,3 +16,8 @@ public record BookSeatsRequest(
     List<int> SeatIds,
     string PhoneNumber);
     
+public record UpdateBookingDTO(
+
+    List<int> SeatsToAdd,
+    List<int> SeatsToRemove,
+    string CustomerPhone);

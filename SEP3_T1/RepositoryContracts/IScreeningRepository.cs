@@ -1,5 +1,6 @@
 ﻿using Entities;
 
+
 namespace RepositoryContracts;
 
 public interface IScreeningRepository
@@ -11,4 +12,5 @@ public interface IScreeningRepository
     Task<List<Screening>> getAll();
     
     Task BookSeatsAsync(int screeningId, List<int> seatIds, string phoneNumber);
+    Task UpdateBookingAsync(int screeningId, string phoneNumber, List<int> seatsToAdd, List<int> seatsToRemove);
 }

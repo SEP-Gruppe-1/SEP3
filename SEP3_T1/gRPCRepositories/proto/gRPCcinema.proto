@@ -178,6 +178,17 @@ message BookSeatsRequest {
 
 message BookSeatsResponse{}
 
+message UpdateBookingRequest{
+  int32 screeningId = 1;
+  string customerPhone = 2;
+  repeated int32 seatsToAdd = 3;
+  repeated int32 seatsToRemove = 4;
+}
+
+message UpdateBookingResponse{
+  bool success = 1;
+  string message = 2;
+}
 
 service CinemaService
 {
@@ -195,5 +206,6 @@ service CinemaService
   rpc GetAllSeats (GetAllSeatsRequest) returns (GetAllSeatsResponse);
   rpc GetSeatsByScreening(GetSeatsByScreeningRequest) returns (GetSeatsByScreeningResponse);
   rpc BookSeats(BookSeatsRequest) returns (BookSeatsResponse);
+  rpc UpdateBooking(UpdateBookingRequest) returns (UpdateBookingResponse);
   rpc VerifyCustomerPassword(VerifyCustomerPasswordRequest) returns (VerifyCustomerPasswordResponse);
 }

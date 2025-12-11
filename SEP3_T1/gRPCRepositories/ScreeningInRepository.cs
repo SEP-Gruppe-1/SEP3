@@ -20,7 +20,7 @@ public class ScreeningInRepository : IScreeningRepository
         throw new NotImplementedException();
     }
 
-    public Task updateAsync(Screening screening)
+    public async Task updateAsync(Screening screening)
     {
         throw new NotImplementedException();
     }
@@ -58,5 +58,10 @@ public class ScreeningInRepository : IScreeningRepository
     public Task BookSeatsAsync(int screeningId, List<int> seatIds, string phoneNumber)
     {
         return _client.BookSeatsAsync(screeningId, seatIds, phoneNumber);
+    }
+
+    public async Task UpdateBookingAsync(int screeningId, string phoneNumber, List<int> seatsToAdd, List<int> seatsToRemove)
+    {
+        await _client.UpdateBookingAsync(screeningId, phoneNumber, seatsToAdd, seatsToRemove);
     }
 }
