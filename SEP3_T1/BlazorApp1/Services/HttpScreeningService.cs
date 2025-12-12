@@ -85,8 +85,25 @@ public class HttpScreeningService : IScreeningService
     
     }
 
-    public Task BookSeatsAsync(int screeningId, List<int> seatIds, string phone)
+    public async Task BookSeatsAsync(int screeningId, List<int> seatIds, string phone)
     {
-       throw new NotImplementedException();
+        await jwtHandler.AttachJwtAsync(http);
+
+        var request = new
+        {
+            SeatIds = seatIds,
+            PhoneNumber = phone
+        };
+
+        var response = await http.PostAsJsonAsync(
+            $"api/screening/{screeningId}/book",
+            request
+        );
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Kunne ikke booke sæder: {error}");
+        }
     }
 }
