@@ -8,4 +8,9 @@ public interface IScreeningService
     Task DeleteBookingAsync(int screeningId, string phone);
     Task DeleteBookingAsync(CustomerBookingDto bookingToDelete);
     Task<List<CustomerBookingDto>> GetBookingsByPhoneAsync(string phone);
+    Task<ScreenDto> GetScreeningAsync(int id);
+    Task BookSeatsAsync(int screeningId, List<int> seatIds, string phone);
+    
+
+
 }

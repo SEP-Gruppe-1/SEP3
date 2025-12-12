@@ -58,5 +58,33 @@ public class HttpScreeningService : IScreeningService
         return await response.Content.ReadFromJsonAsync<List<CustomerBookingDto>>() 
                ?? new List<CustomerBookingDto>();
     }
+    public async Task<ScreenDto> GetScreeningAsync(int id)
+    {
+        await jwtHandler.AttachJwtAsync(http);
+        return await http.GetFromJsonAsync<ScreenDto>($"api/screening/{id}")
+               ?? throw new Exception("Could not load screening.");
+    }
+
+    public async Task BookSeatsAsync(int screeningId, List<int> seatIds, string phone)
+    {
+        await jwtHandler.AttachJwtAsync(http);
+
+        var request = new
+        {
+            SeatIds = seatIds,
+            PhoneNumber = phone
+        };
+
+        var response = await http.PostAsJsonAsync(
+            $"api/screening/{screeningId}/book",
+            request
+        );
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Kunne ikke booke sæder: {error}");
+        }
+    }
 
 }

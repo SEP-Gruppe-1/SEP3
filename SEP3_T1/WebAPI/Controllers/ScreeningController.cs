@@ -30,16 +30,43 @@ public class ScreeningController : ControllerBase
     {
         try
         {
-            var screening = await screeningRepository.getSingleAsync(id);
-            return Ok(new ScreenDto(screening.screeningId, screening.movie, screening.hall, screening.hallId,
-                screening.hall.Seats, screening.startTime,
-                screening.date, screening.availableSeats));
+            var s = await screeningRepository.getSingleAsync(id);
+
+            var dto = new ScreenDto(
+                s.screeningId,
+                new MovieDto(
+                    s.movie.DurationMinutes,
+                    s.movie.MovieId,
+                    s.movie.ReleaseDate,
+                    s.movie.MovieTitle,
+                    s.movie.Genre
+                ),
+                new HallDto(
+                    s.hall.Id,
+                    s.hall.Number,
+                    s.hall.LayoutId
+                ),
+                s.hallId,
+                s.hall.Seats.Select(seat => new SeatDto(
+                    seat.id,
+                    seat.Row,
+                    seat.Number,
+                    seat.IsBooked,
+                    seat.Customer?.Phone
+                )).ToList(),
+                s.startTime,
+                s.date,
+                s.availableSeats
+            );
+
+            return Ok(dto);
         }
         catch (InvalidOperationException)
         {
             return NotFound();
         }
     }
+
 
     [HttpPost("{screeningId:int}/Book")]
     public async Task<IActionResult> BookSeats(int screeningId, [FromBody] BookSeatsRequest request)
@@ -115,4 +142,19 @@ public class ScreeningController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+    
+    [HttpPost("book")]
+    public async Task<IActionResult> BookSeats([FromBody] BookingRequest request)
+    {
+        await screeningRepository.BookSeatsAsync(request.ScreeningId, request.SeatIds, request.Phone);
+        return Ok();
+    }
+
+    public class BookingRequest
+    {
+        public int ScreeningId { get; set; }
+        public List<int> SeatIds { get; set; }
+        public string Phone { get; set; }
+    }
+
 }

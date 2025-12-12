@@ -1,0 +1,93 @@
+﻿@page "/order-confirmation/{orderNumber}/{screeningId:int}"
+@using ApiContract
+@using BlazorApp1.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IScreeningService ScreeningService
+@inject ICustomerService CustomerService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<h3>Tak for din bestilling!</h3>
+
+@if (loading)
+{
+    <p>Henter ordredata...</p>
+}
+else if (screening is null)
+{
+    <p class="text-danger">Kunne ikke hente information om visningen.</p>
+}
+else
+{
+    <div class="card p-4 shadow-sm">
+
+        <h4>Ordrenummer: @orderNumber</h4>
+
+        <hr />
+
+        <p><strong>Film:</strong> @screening.Movie.MovieTitle</p>
+        <p><strong>Sal:</strong> @screening.HallId</p>
+        <p><strong>Dato:</strong> @screening.Date.ToString("dd-MM-yyyy")</p>
+        <p><strong>Tid:</strong> @screening.StartTime.ToString("HH:mm")</p>
+
+
+
+
+
+
+        <p><strong>Dine sæder:</strong><br />
+            @string.Join(", ", mySeats)
+        </p>
+
+        <p><strong>Totalpris:</strong> @(mySeats.Count * 110) DKK</p>
+
+        <hr />
+
+        <button class="btn btn-primary" @onclick="GoToMyPage">Gå til min side</button>
+    </div>
+}
+
+@code {
+    [Parameter] public string orderNumber { get; set; } = "";
+    [Parameter] public int screeningId { get; set; }
+
+    private ScreenDto? screening;
+    private List<string> mySeats = new();
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+
+       
+        screening = await ScreeningService.GetScreeningAsync(screeningId);
+
+        // 2. Hent brugerens telefonnummer
+        var auth = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = auth.User;
+        string? phone = user.FindFirst("phone")?.Value;
+
+        if (phone is null)
+        {
+            loading = false;
+            return;
+        }
+
+        // 3. Hent kundens bookinger
+        var bookings = await ScreeningService.GetBookingsByPhoneAsync(phone);
+
+        var thisBooking = bookings.FirstOrDefault(b => b.ScreeningId == screeningId);
+
+        if (thisBooking != null)
+        {
+            mySeats = thisBooking.Seats;
+        }
+
+        loading = false;
+    }
+
+    private void GoToMyPage()
+    {
+        Navigation.NavigateTo("/customer");
+    }
+}

@@ -209,9 +209,11 @@ order-header-text {
     background-color: #27ae60;
 }
 
-.legend-color.booked {
+.legend-color.showBooked {
     background-color: orange;
 }
+
+
 
 .bookings-summary {
     background-color: #e8f4fd;
@@ -427,3 +429,4 @@ order-header-text {
     border: 2px solid #e65100; /* mørkere orange kant */
     cursor: pointer;
 }
+

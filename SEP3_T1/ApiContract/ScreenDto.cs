@@ -4,13 +4,16 @@ namespace ApiContract;
 
 public record ScreenDto(
     int ScreeningId,
-    Movie Movie,
-    Hall hall,
-    int hallId,
-    List<Seat> seats,
+    MovieDto Movie,
+    HallDto Hall,
+    int HallId,
+    List<SeatDto> Seats,
     TimeOnly StartTime,
     DateOnly Date,
-    int AvailableSeats);
+    int AvailableSeats
+);
+
+
     
 public record BookSeatsRequest(
     List<int> SeatIds,
