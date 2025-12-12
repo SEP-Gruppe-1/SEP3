@@ -57,7 +57,9 @@ CREATE TABLE IF NOT EXISTS Screening (
                                          available_seats smallint CHECK (available_seats >= 0)
 );
 
-
+ALTER TABLE Screening
+    ADD CONSTRAINT uq_screening_hall_time
+        UNIQUE (hall_id, screening_date, start_time);
 
 CREATE TABLE IF NOT EXISTS layout_seat (
                                            layout_seat_id serial PRIMARY KEY,
@@ -236,7 +238,7 @@ WHERE (s.row_letter, s.seat_number) IN ( ('A',1), ('A',2) );
 
 UPDATE customer
 SET role = 'Admin'
-WHERE phone = '28510391';
+WHERE phone = '87654321';
 
 
 COMMIT;

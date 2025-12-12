@@ -9,5 +9,5 @@ public interface ScreeningDAO {
 
     List<Screening> getAllScreenings();
     Screening getScreeningById(int id);
-    void addScreening(Screening screening) throws SQLException;
+    int addScreening(Screening screening) throws SQLException;
 }

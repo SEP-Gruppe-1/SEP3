@@ -199,6 +199,9 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
 
             DTOScreening dto = request.getScreening();
             Screening screening = DTOFactory.createScreening(dto);
+            int newid = screeningDAO.addScreening(screening);
+
+            screening.setScreeningId(newid);
             Screening existing = screeningDAO.getScreeningById(screening.getScreeningId());
 
             if (existing == null) {

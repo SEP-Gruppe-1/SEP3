@@ -12,6 +12,7 @@
 @inject NavigationManager Nav
 @layout AuthorizedLayout
 
+
 @if (isLoading)
 {
     <p><strong>Loading...</strong></p>
@@ -81,9 +82,17 @@ else
                 <div class="seat-row">
                     @foreach (var s in rowGroup.OrderBy(s => s.Row))
                     {
-                        <button class="@GetSeatCss(s)" 
-                                @onclick="() => ToggleSeat(s)">@s.Row @s.Number</button>
-                        //<button class="seat">@s.Row @s.Number</button>
+                        <AuthorizeView Roles="Customer">
+                            <button class="@GetSeatCss(s)" 
+                                    @onclick="() => ToggleSeat(s)">@s.Row @s.Number</button>
+                           
+                        </AuthorizeView>
+                        <AuthorizeView Roles="Admin, Employee">
+                            <button title="@(s.Customer != null ? s.Customer.Phone : "Ikke booket")" class="@GetSeatCss(s)" 
+                                    @onclick="() => ToggleSeat(s)">@s.Row @s.Number</button>
+                            
+                        </AuthorizeView>
+                        
                     }
                 </div>
             }
