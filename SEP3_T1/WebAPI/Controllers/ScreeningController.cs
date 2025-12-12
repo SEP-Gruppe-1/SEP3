@@ -1,7 +1,9 @@
 ﻿using ApiContract;
 using Grpc.Core;
+using Grpccinema;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
+using BookSeatsRequest = ApiContract.BookSeatsRequest;
 
 namespace WebAPI.Controllers;
 
@@ -75,6 +77,24 @@ public class ScreeningController : ControllerBase
             });
         }
     }
+
+     [HttpPut("{screeningId:int}/UpdateBooking")]
+     public async Task<IActionResult> UpdateBooking(int screeningId, [FromBody] UpdateBookingDTO dto)
+     {
+            await screeningRepository.UpdateBookingAsync(
+                screeningId,
+                dto.CustomerPhone,
+                dto.SeatsToAdd,
+                dto.SeatsToRemove
+            );
+            var result = new
+            { message = "Booking updated successfully"
+            };
+
+              return Ok(result);
+        
+     }
+
     [HttpGet("bookings/{phone}")]
     public async Task<IActionResult> GetBookingsForCustomer(string phone)
     {

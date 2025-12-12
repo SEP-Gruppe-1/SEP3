@@ -365,23 +365,20 @@ public class CinemaServiceClient
 
         await client.BookSeatsAsync(request);
     }
-   
-    public async Task<List<CustomerBookingDto>> GetCustomerBookingsAsync(string phone)
+    public async Task<UpdateBookingResponse> UpdateBookingAsync(int screeningId, string phoneNumber, List<int> seatsToAdd, List<int> seatsToRemove)
     {
-        var response = await client.GetBookingsByPhoneAsync(
-            new GetBookingsByPhoneRequest { Phone = phone });
+        var request = new UpdateBookingRequest
+        {
+            ScreeningId = screeningId,
+            CustomerPhone = phoneNumber
+        };
 
-        return response.Bookings.Select(b => new CustomerBookingDto(
-            b.ScreeningId,
-            b.MovieTitle,
-            b.Date,
-            b.Time,
-            b.Seats.ToList(),
-            b.SeatIds.ToList()
-        )).ToList();
+        request.SeatsToAdd.AddRange(seatsToAdd);
+        request.SeatsToRemove.AddRange(seatsToRemove);
+
+        var response = await client.UpdateBookingAsync(request);
+        return response;
     }
-
-   
 
    
 }

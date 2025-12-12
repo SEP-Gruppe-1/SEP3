@@ -81,7 +81,7 @@ else
                 <div class="seat-row">
                     @foreach (var s in rowGroup.OrderBy(s => s.Row))
                     {
-                        <button class="@GetSeatCss(s)" disabled="@s.IsBooked"
+                        <button class="@GetSeatCss(s)" 
                                 @onclick="() => ToggleSeat(s)">@s.Row @s.Number</button>
                         //<button class="seat">@s.Row @s.Number</button>
                     }
@@ -117,11 +117,20 @@ else
             <strong>Pris: </strong>
             @TotalPrice.ToString("0.00") DKK
         </p>
-        <button class="btn btn-success"
-                disabled="@(!selectedSeats.Any())"
-                @onclick="ConfirmSelection">
-            Bekræft valg
-        </button>
+        @if(myBookedSeats is null) {
+            <button class="btn btn-success"
+                    disabled="@(!selectedSeats.Any())"
+                    @onclick="ConfirmSelection">
+                Bekræft valg
+            </button>
+            }
+        else {
+            <button class="btn btn-success"
+                    disabled="@(!selectedSeats.Any())"
+                    @onclick="UpdateSeatBookingStatus">
+                Opdater booking
+            </button>
+        }
     </div>
 
     @code
@@ -134,10 +143,12 @@ else
         private List<Seat> seat;
         private readonly List<Seat> selectedSeats = new();
 
-        private readonly List<Seat> myBookedSeats = new();
+        private  List<Seat> myBookedSeats = new();
         
         private HashSet<int> selectedSeatIds = new();
         private const decimal TicketPrice = 110m;
+
+        private string userPhone;
         
         private string? errorMessage;
         private string? successMessage;
@@ -146,6 +157,11 @@ else
 
         protected override async Task OnInitializedAsync()
         {
+            
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            userPhone = user.FindFirst("Phone")?.Value;
+            
             isLoading = true;
             try
             {
@@ -161,7 +177,11 @@ else
 
         private void ToggleSeat(Seat s)
         {
-            if (s.IsBooked) return;
+            if (userPhone == null) return;
+
+            // Andre brugers sæder må ikke klikkes
+            if (s.IsBooked && s.Customer?.Phone != userPhone)
+                return;
 
             if (selectedSeats.Contains(s))
                 selectedSeats.Remove(s);
@@ -236,6 +256,26 @@ else
             {
                 errorMessage = $"Fejl ved booking af sæder: {ex.Message}";
             }
+        }
+        
+        private async Task UpdateSeatBookingStatus()
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var phone = user.FindFirst("Phone")?.Value;
+            
+            var orginalSeatIds = myBookedSeats.Select(s => s.id).ToHashSet();
+            var newseatIds = selectedSeats.Select(s => s.id).ToHashSet();
+            
+            
+            
+            var seatIdsToAdd = newseatIds.Except(orginalSeatIds).ToList();
+            
+            var seatIdsToRemove = orginalSeatIds.Except(newseatIds).ToList();
+            await ScreeningRepo.UpdateBookingAsync(screeningId, phone, seatIdsToAdd, seatIdsToRemove);
+            
+
+
         }
 
         private async void mySeats()
