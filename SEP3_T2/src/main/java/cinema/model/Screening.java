@@ -45,6 +45,8 @@ public class Screening {
 
     }
 
+
+
     public Hall createHall() {
        return  Hall.getInstance(hallId);
     }
@@ -95,6 +97,10 @@ public class Screening {
 
     public void setHall(Hall hall) {
         this.hall = hall;
+    }
+
+    public void setScreeningId(int screeningId) {
+        this.screeningId = screeningId;
     }
 
     public void setMovie(Movie movie) {

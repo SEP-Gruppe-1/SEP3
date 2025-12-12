@@ -100,17 +100,27 @@ public class ScreeningDAOImpl implements ScreeningDAO {
     }
 
     @Override
-    public void addScreening(Screening screening) throws SQLException {
-        String sql = "INSERT INTO screening (screening_id, movie_id, hall_id, screening_date, start_time, available_seats) VALUES (?, ?, ?, ?, ?, ?)";
+    public int addScreening(Screening screening) throws SQLException {
+        String sql = "INSERT INTO screening ( movie_id, hall_id, screening_date, start_time, available_seats)" +
+                " VALUES (?, ?, ?,  ?, ?) " +
+                "RETURNING screening_id;";
+
         try (Connection conn = getConnection()){
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, screening.getScreeningId());
-            stmt.setInt(2,screening.getMovie().getId());
-            stmt.setInt(3,screening.getHall().getId());
-            stmt.setDate(4, Date.valueOf(screening.getDate()));
-            stmt.setTime(5, Time.valueOf(screening.getStartTime()));
-            stmt.setInt(6, screening.getAvailableSeats());
-            stmt.executeUpdate();
+
+            stmt.setInt(1,screening.getMovie().getId());
+            stmt.setInt(2,screening.getHall().getId());
+            stmt.setDate(3, Date.valueOf(screening.getDate()));
+            stmt.setTime(4, Time.valueOf(screening.getStartTime()));
+            stmt.setInt(5, screening.getAvailableSeats());
+
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("screening_id");
+            }else {
+                throw new SQLException("could not add screening");
+            }
         }
     }
 

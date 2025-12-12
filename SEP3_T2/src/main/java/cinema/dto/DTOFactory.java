@@ -4,6 +4,8 @@ import cinema.model.*;
 import grpccinema.*;
 
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,6 +135,11 @@ public class DTOFactory {
         return GetAllMoviesResponse.newBuilder().addAllMovies(dtoMovies).build();
     }
 
+    public static Movie createMovie(DTOMovie dtoMovie) {
+        return new Movie(dtoMovie.getId(), dtoMovie.getTitle(), dtoMovie.getPlaytime(), dtoMovie.getGenre(), LocalDate.parse( dtoMovie.getReleaseDate()));
+
+    }
+
 
     //---------- Screening ----------\\
 
@@ -148,6 +155,12 @@ public class DTOFactory {
                 setMovie(dtoMovie).
                 setHall(dtoHall).
                 build();
+    }
+
+    public static Screening createScreening(DTOScreening dtoScreening) {
+        Movie dtoMovie =createMovie(dtoScreening.getMovie());
+        return new Screening(dtoMovie, dtoScreening.getHallId(), LocalTime.parse(dtoScreening.getStartTime()), LocalDate.parse(dtoScreening.getDate()) , dtoScreening.getAvailableSeats(), dtoScreening.getId());
+
     }
 
 

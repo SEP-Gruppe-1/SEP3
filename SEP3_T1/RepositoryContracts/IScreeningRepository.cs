@@ -1,11 +1,12 @@
 ﻿using ApiContract;
 using Entities;
 
+
 namespace RepositoryContracts;
 
 public interface IScreeningRepository
 {
-    Task<Screening> AddAsync(Screening screening);
+    Task<Screening> AddAsync(ScreeningCreateDto dto);
     Task updateAsync(Screening screening);
     Task deleteAsync(int id);
     Task<Screening?> getSingleAsync(int id);

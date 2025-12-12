@@ -17,14 +17,52 @@ public class ScreeningInRepository : IScreeningRepository
         screenings = new List<Screening>();
     }
 
-    public Task<Screening> AddAsync(Screening screening)
+    public async Task<Screening> AddAsync(ScreeningCreateDto dto)
     {
-        throw new NotImplementedException();
+        await _client.GetLayoutsAsync();
+        // Hent movie og hall via gRPC
+        var movieDto = await _client.getMovieById(dto.MovieId);
+        var hallDto = await _client.GetHallByIdAsync(dto.HallId);
+
+        var movie = new Movie
+        {
+            MovieId = movieDto.Id,
+            MovieTitle = movieDto.Title,
+            DurationMinutes = movieDto.Playtime,
+            Genre = movieDto.Genre,
+            ReleaseDate = movieDto.ReleaseDate
+        };
+
+        var hall = Hall.GetInstance(id: hallDto.Id);
+     
+
+        // Lav screening objekt
+        var screening = new Screening
+        {
+            movie = movie,
+            hall = hall,
+            hallId = hall.Id,
+            startTime = TimeOnly.Parse(dto.StartTime),
+            date = DateOnly.Parse(dto.Date),
+            availableSeats = hall.Seats.Count
+        };
+
+        // Gem via gRPC
+        var saved = await _client.SaveScreeningAsync(screening);
+    
+        return saved;
     }
+
 
     public async Task updateAsync(Screening screening)
     {
-        throw new NotImplementedException();
+        var savedScreening = await _client.SaveScreeningAsync(screening);
+
+
+        var existing = screenings.SingleOrDefault(s => s.screeningId == savedScreening.screeningId);
+        if (existing != null) screenings.Remove(existing);
+
+        screenings.Add(savedScreening);
     }
 
     public Task deleteAsync(int id)

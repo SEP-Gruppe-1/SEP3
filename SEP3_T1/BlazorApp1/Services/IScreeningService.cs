@@ -13,4 +13,6 @@ public interface IScreeningService
     
 
 
+    
+    Task CreateScreeningAsync(ScreeningCreateDto dto);
 }

@@ -128,6 +128,14 @@ message GetScreeningByIdResponse{
   DTOScreening screening = 1;
 }
 
+message SaveScreeningRequest{
+  DTOScreening screening = 1;
+}
+
+message SaveScreeningResponse{
+  DTOScreening screening = 1;
+  }
+
 
 
 //---------- Layout ----------\\
@@ -222,6 +230,7 @@ service CinemaService
   rpc GetMovieByID (GetMovieByIdRequest) returns (GetMovieByIdResponse);
   rpc GetAllMovies (GetAllMoviesRequest) returns (GetAllMoviesResponse);
   rpc GetScreeningByID (GetScreeningByIdRequest) returns (GetScreeningByIdResponse);
+  rpc SaveScreening(SaveScreeningRequest) returns (SaveScreeningResponse);
   rpc GetAllLayouts (GetAllLayoutsRequest) returns (GetAllLayoutsResponse);
   rpc GetAllSeats (GetAllSeatsRequest) returns (GetAllSeatsResponse);
   rpc GetSeatsByScreening(GetSeatsByScreeningRequest) returns (GetSeatsByScreeningResponse);

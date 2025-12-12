@@ -1,0 +1,107 @@
+﻿@page "/NewScreening"
+@using System.ComponentModel.DataAnnotations
+@using ApiContract
+@using BlazorApp1.Services
+@using RepositoryContracts
+@inject IScreeningService Service
+<h3>NyFilmvisning</h3>
+
+<div class="card mb-4">
+    <div class="card-header">Opret Filmvisning</div>
+    <div class="card-body">
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="alert alert-danger mt-3" role="alert">@errorMessage</div>
+        }
+        <EditForm Model="newScreening" OnValidSubmit="SaveScreeningAsync" FormName="Lav ny filmvisning">
+            <DataAnnotationsValidator/>
+
+            <div class="mb-3">
+                <label class="form-label">MovieId:</label>
+                <InputText @bind-Value="newScreening.MovieId" class="form-control"/>
+                <ValidationMessage For="() => newScreening.MovieId"/>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">HallId:</label>
+                <InputText @bind-Value="newScreening.HallId" class="form-control"/>
+                <ValidationMessage For="() => newScreening.HallId"/>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">StartTime:</label>
+                <InputText @bind-Value="newScreening.StartTime" class="form-control"/>
+                <ValidationMessage For="() => newScreening.StartTime"/>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Date:</label>
+                <InputText @bind-Value="newScreening.Date" class="form-control"/>
+                <ValidationMessage For="() => newScreening.Date"/>
+            </div>
+
+          
+
+         
+            
+
+
+            <button class="btn btn-success" type="submit" disabled="@isBusy" FormName="SignUpForm">Opret filmvisning</button>
+
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    
+    private createScreeningFromModel newScreening = new();
+    private bool isBusy;
+    private string? errorMessage;
+    
+    private class createScreeningFromModel
+    {
+       
+        public string MovieId { get; set; }
+
+      
+        public string? HallId { get; set; }
+
+      
+        public string? StartTime { get; set; }
+
+        public string? Date { get; set; }
+
+    }
+    
+    private async Task SaveScreeningAsync()
+    {
+  
+        isBusy = true;
+        try
+        {
+            var screeningDto = new ScreeningCreateDto
+            (
+                MovieId: int.Parse(newScreening.MovieId!),
+                HallId: int.Parse( newScreening.HallId!),
+                StartTime: newScreening.StartTime!,
+                Date: newScreening.Date
+            );
+
+            await Service.CreateScreeningAsync(screeningDto);
+
+          
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    
+    
+}

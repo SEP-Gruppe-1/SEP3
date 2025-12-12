@@ -3,6 +3,7 @@ using Grpc.Core;
 using Grpccinema;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
+using Entities;
 using BookSeatsRequest = ApiContract.BookSeatsRequest;
 
 namespace WebAPI.Controllers;
@@ -65,6 +66,13 @@ public class ScreeningController : ControllerBase
         {
             return NotFound();
         }
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ScreenDto>> AddScreening([FromBody] ScreeningCreateDto request)
+    {
+        var screening = await screeningRepository.AddAsync(request);
+        return Ok(screening);
     }
 
 
