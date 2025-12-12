@@ -2,10 +2,10 @@
 @using ApiContract
 @using BlazorApp1.Services
 @using Microsoft.AspNetCore.Components.Authorization
+
 @inject AuthenticationStateProvider Auth
 @inject ICustomerService CustomerService
 @inject IScreeningService ScreeningService
-
 @inject NavigationManager Nav
 
 <h3>Min Side</h3>
@@ -14,14 +14,21 @@
 {
     <p>Henter data...</p>
 }
+else if (customer is null)
+{
+    <div class="alert alert-danger">
+        Kunne ikke hente kundeoplysninger.
+    </div>
+}
 else
 {
+    <!-- Kundedata -->
     <div class="card mb-4">
         <div class="card-header">Mine oplysninger</div>
         <div class="card-body">
-            <p><strong>Navn:</strong> @customer?.Name</p>
-            <p><strong>Telefon:</strong> @customer?.Phone</p>
-            <p><strong>Email:</strong> @customer?.Email</p>
+            <p><strong>Navn:</strong> @customer.Name</p>
+            <p><strong>Telefon:</strong> @customer.Phone</p>
+            <p><strong>Email:</strong> @customer.Email</p>
         </div>
     </div>
 
@@ -58,7 +65,7 @@ else
         </div>
     </div>
 
-   
+    <!-- Tidligere bookinger -->
     <div class="card mb-4">
         <div class="card-header">Tidligere bookinger</div>
         <div class="card-body">
@@ -111,41 +118,79 @@ else
     private List<CustomerBookingDto> previous = new();
 
     private bool loading = true;
+    private bool dataLoaded = false;   // sikrer vi kun loader én gang
 
     private bool showDeletePopup = false;
-    private CustomerBookingDto bookingToDelete;
+    private CustomerBookingDto? bookingToDelete;
 
     protected override async Task OnInitializedAsync()
     {
+        Auth.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        await TryLoadDataAsync();
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        await TryLoadDataAsync();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Auth.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+
+    private async Task TryLoadDataAsync()
+    {
+        if (dataLoaded)
+            return; // vi har allerede hentet data
+
         loading = true;
 
-        var auth = await Auth.GetAuthenticationStateAsync();
-        var user = auth.User;
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
 
+        // prøv at finde phone-claim
         string? phone = user.Claims.FirstOrDefault(c => c.Type == "phone")?.Value;
 
-        if (phone == null)
+        if (string.IsNullOrEmpty(phone))
         {
+            // Token er ikke klar endnu – bare vent på AuthenticationStateChanged-eventet
             loading = false;
             return;
         }
 
-        // Kundens info
-        customer = await CustomerService.GetSingleCustomerAsync(phone);
+        try
+        {
+            // Kundens info
+            customer = await CustomerService.GetSingleCustomerAsync(phone);
 
-        // Bookinger
-        bookings = await ScreeningService.GetBookingsByPhoneAsync(phone);
+            // Bookinger
+            bookings = await ScreeningService.GetBookingsByPhoneAsync(phone);
 
-        // Del op i kommende og tidligere
-        upcoming = bookings.Where(b => DateTime.Parse(b.Date) >= DateTime.Today).ToList();
-        previous = bookings.Where(b => DateTime.Parse(b.Date) < DateTime.Today).ToList();
+            // Del op i kommende og tidligere
+            upcoming = bookings
+                .Where(b => DateTime.Parse(b.Date) >= DateTime.Today)
+                .ToList();
 
-        loading = false;
+            previous = bookings
+                .Where(b => DateTime.Parse(b.Date) < DateTime.Today)
+                .ToList();
+
+            dataLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Fejl i Customer-siden: " + ex);
+        }
+        finally
+        {
+            loading = false;
+        }
     }
 
     private void EditBooking(CustomerBookingDto booking)
     {
-        // fx: /edit-booking/{screeningId}
         Nav.NavigateTo($"/edit-booking/{booking.ScreeningId}");
     }
 
@@ -157,18 +202,22 @@ else
 
     private void CancelDelete()
     {
-        showDeletePopup = false;
         bookingToDelete = null;
+        showDeletePopup = false;
     }
 
     private async Task ConfirmDelete()
     {
+        if (bookingToDelete is null)
+            return;
+
         await ScreeningService.DeleteBookingAsync(bookingToDelete);
 
-        upcoming.Remove(bookingToDelete);
         bookings.Remove(bookingToDelete);
+        upcoming.Remove(bookingToDelete);
 
-        showDeletePopup = false;
         bookingToDelete = null;
+        showDeletePopup = false;
     }
 }
+

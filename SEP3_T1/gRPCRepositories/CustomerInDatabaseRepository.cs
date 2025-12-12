@@ -41,7 +41,7 @@ public class CustomerInDatabaseRepository : ICustomerRepository
         customers.Remove(existingCustomer);
         customers.Add(customer);
 
-        // ✅ Gem også i Java/DB
+        
         await client.SaveCustomerAsync(customer);
     }
     

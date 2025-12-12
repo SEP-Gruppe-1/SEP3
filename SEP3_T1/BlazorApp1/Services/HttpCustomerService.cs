@@ -139,8 +139,18 @@ public class HttpCustomerService : ICustomerService
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
     }
 
-    public Task<CustomerDto?> GetSingleCustomerAsync(string phone)
+    public async Task<CustomerDto?> GetSingleCustomerAsync(string phone)
     {
-        throw new NotImplementedException();
+        await jwtHandler.AttachJwtAsync(httpClient);
+
+        var response = await httpClient.GetAsync($"api/customer/{phone}");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception($"Kunne ikke hente bruger: {content}");
+
+        return JsonSerializer.Deserialize<CustomerDto>(content,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
+
 }

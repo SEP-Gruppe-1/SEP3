@@ -15,7 +15,7 @@ public class JwtHttpClientHandler
     }
     
     /// <summary>
-    /// Attach JWT token to HttpClient
+    /// Attach JWT token to HttpClientA
     /// </summary>
     /// <param name="client"></param>
 

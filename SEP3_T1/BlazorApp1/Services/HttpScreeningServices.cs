@@ -46,8 +46,17 @@ public class HttpScreeningService : IScreeningService
         throw new NotImplementedException();
     }
 
-    public Task<List<CustomerBookingDto>> GetBookingsByPhoneAsync(string phone)
+    public async Task<List<CustomerBookingDto>> GetBookingsByPhoneAsync(string phone)
     {
-        throw new NotImplementedException();
+        await jwtHandler.AttachJwtAsync(http);
+
+        var response = await http.GetAsync($"api/customer/bookings/{phone}");
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception("Kunne ikke hente bookinger");
+
+        return await response.Content.ReadFromJsonAsync<List<CustomerBookingDto>>() 
+               ?? new List<CustomerBookingDto>();
     }
+
 }
