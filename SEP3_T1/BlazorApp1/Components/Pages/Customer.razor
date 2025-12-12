@@ -45,9 +45,9 @@ else
                     <div class="border rounded p-3 mb-3">
                         <h5>@b.MovieTitle</h5>
                         <p>
-                            📅 @b.Date<br />
-                            🕒 @b.Time<br />
-                            💺 @string.Join(", ", b.Seats)
+                            Dag @b.Date<br />
+                            Tidspunkt @b.Time<br />
+                            Bestilte sæder @string.Join(", ", b.Seats)
                         </p>
 
                         <button class="btn btn-primary me-2" @onclick="@(() => EditBooking(b))">Redigér</button>
@@ -73,8 +73,8 @@ else
                     <div class="border rounded p-3 mb-3">
                         <h5>@b.MovieTitle</h5>
                         <p>
-                            📅 @b.Date<br />
-                            💺 @string.Join(", ", b.Seats)
+                            Dato @b.Date<br />
+                            Bestilte sæder @string.Join(", ", b.Seats)
                         </p>
                     </div>
                 }
