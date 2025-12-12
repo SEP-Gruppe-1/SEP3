@@ -33,6 +33,7 @@ builder.Services.AddSingleton(new CinemaServiceClient("http://localhost:9090"));
 builder.Services.AddScoped<IMovieRepository, MovieInRepository>();
 builder.Services.AddScoped<IScreeningRepository, ScreeningInRepository>();
 
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

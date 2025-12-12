@@ -148,7 +148,7 @@ order-header-text {
 
 .selection-info {
     background-color: #f8f9fa;
-    position: fixed;
+    position: sticky;
     right: 40px;
     bottom: 20px;
     padding: 15px;
