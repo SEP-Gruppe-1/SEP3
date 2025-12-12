@@ -30,13 +30,13 @@
             
             <div class="mb-3">
                 <label class="form-label">StartTime:</label>
-                <InputText @bind-Value="newScreening.StartTime" class="form-control"/>
+                <InputText  @bind-Value="newScreening.StartTime" class="form-control"/>
                 <ValidationMessage For="() => newScreening.StartTime"/>
             </div>
             
             <div class="mb-3">
                 <label class="form-label">Date:</label>
-                <InputText @bind-Value="newScreening.Date" class="form-control"/>
+                <InputText @bind-Value="newScreening.Date" class="form-control" Placeholder="dd-mm-yyyy"/>
                 <ValidationMessage For="() => newScreening.Date"/>
             </div>
 
