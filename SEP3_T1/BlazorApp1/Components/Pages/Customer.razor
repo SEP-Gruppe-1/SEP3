@@ -16,9 +16,7 @@
 }
 else if (customer is null)
 {
-    <div class="alert alert-danger">
-        Kunne ikke hente kundeoplysninger.
-    </div>
+    <div class="alert alert-danger">Henter kunde data, vent et øjeblik.</div>
 }
 else
 {
@@ -52,13 +50,8 @@ else
                             💺 @string.Join(", ", b.Seats)
                         </p>
 
-                        <button class="btn btn-primary me-2" @onclick="@(() => EditBooking(b))">
-                            Redigér
-                        </button>
-
-                        <button class="btn btn-danger" @onclick="@(() => AskDelete(b))">
-                            Slet
-                        </button>
+                        <button class="btn btn-primary me-2" @onclick="@(() => EditBooking(b))">Redigér</button>
+                        <button class="btn btn-danger" @onclick="@(() => AskDelete(b))">Slet</button>
                     </div>
                 }
             }
@@ -92,7 +85,8 @@ else
 
 @if (showDeletePopup)
 {
-    <div class="modal fade show d-block" tabindex="-1">
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show d-block">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
@@ -108,7 +102,6 @@ else
             </div>
         </div>
     </div>
-    <div class="modal-backdrop fade show"></div>
 }
 
 @code {
@@ -118,8 +111,6 @@ else
     private List<CustomerBookingDto> previous = new();
 
     private bool loading = true;
-    private bool dataLoaded = false;   // sikrer vi kun loader én gang
-
     private bool showDeletePopup = false;
     private CustomerBookingDto? bookingToDelete;
 
@@ -142,46 +133,36 @@ else
 
     private async Task TryLoadDataAsync()
     {
-        if (dataLoaded)
-            return; // vi har allerede hentet data
-
         loading = true;
 
         var authState = await Auth.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        // prøv at finde phone-claim
         string? phone = user.Claims.FirstOrDefault(c => c.Type == "phone")?.Value;
 
         if (string.IsNullOrEmpty(phone))
         {
-            // Token er ikke klar endnu – bare vent på AuthenticationStateChanged-eventet
             loading = false;
             return;
         }
 
         try
         {
-            // Kundens info
-            customer = await CustomerService.GetSingleCustomerAsync(phone);
+            // PARALLELT!
+            var customerTask = CustomerService.GetSingleCustomerAsync(phone);
+            var bookingsTask = ScreeningService.GetBookingsByPhoneAsync(phone);
 
-            // Bookinger
-            bookings = await ScreeningService.GetBookingsByPhoneAsync(phone);
+            await Task.WhenAll(customerTask, bookingsTask);
 
-            // Del op i kommende og tidligere
-            upcoming = bookings
-                .Where(b => DateTime.Parse(b.Date) >= DateTime.Today)
-                .ToList();
+            customer = customerTask.Result;
+            bookings = bookingsTask.Result;
 
-            previous = bookings
-                .Where(b => DateTime.Parse(b.Date) < DateTime.Today)
-                .ToList();
-
-            dataLoaded = true;
+            upcoming = bookings.Where(b => DateTime.Parse(b.Date) >= DateTime.Today).ToList();
+            previous = bookings.Where(b => DateTime.Parse(b.Date) < DateTime.Today).ToList();
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Fejl i Customer-siden: " + ex);
+            Console.WriteLine("Fejl i Customer: " + ex);
         }
         finally
         {
@@ -220,4 +201,3 @@ else
         showDeletePopup = false;
     }
 }
-
