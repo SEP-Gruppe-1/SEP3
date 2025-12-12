@@ -4,16 +4,32 @@ using ApiContract;
 
 namespace BlazorApp1.Services;
 
+/// <summary>
+/// Http implementation of ICustomerService
+/// </summary>
+
 public class HttpCustomerService : ICustomerService
 {
     public readonly HttpClient httpClient;
     private readonly JwtHttpClientHandler jwtHandler;
+    
+    /// <summary>
+    /// HttpCustomerService constructor
+    /// </summary>
+    /// <param name="httpClient"></param>
+    /// <param name="jwtHandler"></param>
 
     public HttpCustomerService(HttpClient httpClient, JwtHttpClientHandler jwtHandler )
     {
         this.httpClient = httpClient;
         this.jwtHandler = jwtHandler;
     }
+    
+    /// <summary>
+    /// get all customers
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
 
     public async Task<List<CustomerDto>> GetCustomers()
     {
@@ -32,6 +48,11 @@ public class HttpCustomerService : ICustomerService
     {
         throw new NotImplementedException();
     }
+    /// <summary>
+    /// Save a new customer
+    /// </summary>
+    /// <param name="customer"></param>
+    /// <exception cref="Exception"></exception>
 
     public async Task SaveCustomerAsync(SaveCustomerDto customer)
     {
@@ -49,11 +70,21 @@ public class HttpCustomerService : ICustomerService
         if (!response.IsSuccessStatusCode)
             throw new Exception($"Error adding Customer: {responseContent}");
     }
+    /// <summary>
+    /// Conflict response model
+    /// </summary>
 
     public class ConflictResponse
     {
         public string? Message { get; set; }
     }
+    
+    /// <summary>
+    /// Update customer role
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <param name="newRole"></param>
+    /// <exception cref="Exception"></exception>
     
     public async Task UpdateCustomerRoleAsync(string phone, string newRole)
     {
@@ -73,6 +104,12 @@ public class HttpCustomerService : ICustomerService
             throw new Exception(msg);
         }
     }
+    
+    /// <summary>
+    /// Delete customer by phone
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <exception cref="Exception"></exception>
 
     public async Task DeleteCustomerAsync(string phone)
     {
@@ -86,6 +123,34 @@ public class HttpCustomerService : ICustomerService
             throw new Exception(msg);
         }
     }
+    
+    public async Task<List<CustomerBookingDto>> GetMyBookingsAsync(string phone)
+    {
+        await jwtHandler.AttachJwtAsync(httpClient);
 
+        var response = await httpClient.GetAsync($"api/customer/bookings/{phone}");
+
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception(content);
+
+        return JsonSerializer.Deserialize<List<CustomerBookingDto>>(content,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+    }
+
+    public async Task<CustomerDto?> GetSingleCustomerAsync(string phone)
+    {
+        await jwtHandler.AttachJwtAsync(httpClient);
+
+        var response = await httpClient.GetAsync($"api/customer/{phone}");
+        var content = await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception($"Kunne ikke hente bruger: {content}");
+
+        return JsonSerializer.Deserialize<CustomerDto>(content,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
 
 }

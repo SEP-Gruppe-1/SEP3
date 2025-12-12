@@ -1,5 +1,9 @@
 ﻿namespace Entities;
 
+/// <summary>
+/// Hall entity representing a cinema hall.
+/// Implements the singleton pattern to ensure a single instance per hall ID.
+/// </summary>
 public class Hall
 {
     public static readonly Dictionary<int, Hall> instance = new();

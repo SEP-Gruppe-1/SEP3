@@ -1,5 +1,10 @@
 ﻿namespace Entities;
 
+/// <summary>
+/// Layout Entity
+/// e.g. maxLetter = 'D', maxSeatInt = 10 means seats are from A1 to D10
+/// </summary>
+
 public class Layout
 {
     public static readonly Dictionary<int, Layout> instance = new();

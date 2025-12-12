@@ -14,6 +14,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddAuthentication();
 
 
+
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 
@@ -23,6 +24,9 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<JwtHttpClientHandler>();
+builder.Services.AddScoped<IScreeningService, HttpScreeningService>();
+builder.Services.AddScoped<IMovieService, HttpMovieService>();
+
 
 builder.Services.AddScoped(sp => new HttpClient
 {

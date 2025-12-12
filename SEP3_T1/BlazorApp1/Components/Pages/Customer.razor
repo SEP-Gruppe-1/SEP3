@@ -1,45 +1,203 @@
-﻿@page "/Customer"
+﻿@page "/customer"
 @using ApiContract
-@using BlazorApp1.Components.Layout
 @using BlazorApp1.Services
-@using RepositoryContracts
-@layout AuthorizedLayout
-@inject ICustomerRepository CustomerRepository
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider Auth
 @inject ICustomerService CustomerService
+@inject IScreeningService ScreeningService
+@inject NavigationManager Nav
 
+<h3>Min Side</h3>
 
-<PageTitle>Customer List</PageTitle>
-
-<h3>Customer List</h3>
-
-@if (customers == null)
+@if (loading)
 {
-    <p>Loading...</p>
+    <p>Henter data...</p>
 }
-else if (!customers.Any())
+else if (customer is null)
 {
-    <p>No customers found.</p>
+    <div class="alert alert-danger">Henter kunde data, vent et øjeblik.</div>
 }
 else
 {
-    <ul>
-        @foreach (var customer in customers)
-        {
-            //<li>@Entities.Customer.getName - Phone: @Entities.Customer.Phone</li>
-            <li>Name: @customer.Name - Phone Number: @customer.Phone</li>
-        }
-    </ul>
+    <!-- Kundedata -->
+    <div class="card mb-4">
+        <div class="card-header">Mine oplysninger</div>
+        <div class="card-body">
+            <p><strong>Navn:</strong> @customer.Name</p>
+            <p><strong>Telefon:</strong> @customer.Phone</p>
+            <p><strong>Email:</strong> @customer.Email</p>
+        </div>
+    </div>
+
+    <!-- Kommende bookinger -->
+    <div class="card mb-4">
+        <div class="card-header">Kommende bookinger</div>
+        <div class="card-body">
+            @if (!upcoming.Any())
+            {
+                <p>Ingen kommende bookinger.</p>
+            }
+            else
+            {
+                foreach (var b in upcoming)
+                {
+                    <div class="border rounded p-3 mb-3">
+                        <h5>@b.MovieTitle</h5>
+                        <p>
+                            Dag @b.Date<br />
+                            Tidspunkt @b.Time<br />
+                            Bestilte sæder @string.Join(", ", b.Seats)
+                        </p>
+
+                        <button class="btn btn-primary me-2" @onclick="@(() => EditBooking(b))">Redigér</button>
+                        <button class="btn btn-danger" @onclick="@(() => AskDelete(b))">Slet</button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Tidligere bookinger -->
+    <div class="card mb-4">
+        <div class="card-header">Tidligere bookinger</div>
+        <div class="card-body">
+            @if (!previous.Any())
+            {
+                <p>Ingen tidligere bookinger.</p>
+            }
+            else
+            {
+                foreach (var b in previous)
+                {
+                    <div class="border rounded p-3 mb-3">
+                        <h5>@b.MovieTitle</h5>
+                        <p>
+                            Dato @b.Date<br />
+                            Bestilte sæder @string.Join(", ", b.Seats)
+                        </p>
+                    </div>
+                }
+            }
+        </div>
+    </div>
 }
-<div>
-    <button class="btn btn-success" type="Delete" FormName="DeleteCustomer">Delete Customer</button>
-</div>
+
+@if (showDeletePopup)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show d-block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Bekræft sletning</h5>
+                </div>
+                <div class="modal-body">
+                    Vil du slette denne booking?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">Annuller</button>
+                    <button class="btn btn-danger" @onclick="ConfirmDelete">Slet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
-    private List<CustomerDto>? customers;
+    private CustomerDto? customer;
+    private List<CustomerBookingDto> bookings = new();
+    private List<CustomerBookingDto> upcoming = new();
+    private List<CustomerBookingDto> previous = new();
+
+    private bool loading = true;
+    private bool showDeletePopup = false;
+    private CustomerBookingDto? bookingToDelete;
 
     protected override async Task OnInitializedAsync()
     {
-        customers = await CustomerService.GetCustomers();
+        Auth.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        await TryLoadDataAsync();
     }
 
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        await TryLoadDataAsync();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Auth.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+
+    private async Task TryLoadDataAsync()
+    {
+        loading = true;
+
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        string? phone = user.Claims.FirstOrDefault(c => c.Type == "phone")?.Value;
+
+        if (string.IsNullOrEmpty(phone))
+        {
+            loading = false;
+            return;
+        }
+
+        try
+        {
+            // PARALLELT!
+            var customerTask = CustomerService.GetSingleCustomerAsync(phone);
+            var bookingsTask = ScreeningService.GetBookingsByPhoneAsync(phone);
+
+            await Task.WhenAll(customerTask, bookingsTask);
+
+            customer = customerTask.Result;
+            bookings = bookingsTask.Result;
+
+            upcoming = bookings.Where(b => DateTime.Parse(b.Date) >= DateTime.Today).ToList();
+            previous = bookings.Where(b => DateTime.Parse(b.Date) < DateTime.Today).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Fejl i Customer: " + ex);
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void EditBooking(CustomerBookingDto booking)
+    {
+        Nav.NavigateTo($"/edit-booking/{booking.ScreeningId}");
+    }
+
+    private void AskDelete(CustomerBookingDto booking)
+    {
+        bookingToDelete = booking;
+        showDeletePopup = true;
+    }
+
+    private void CancelDelete()
+    {
+        bookingToDelete = null;
+        showDeletePopup = false;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (bookingToDelete is null)
+            return;
+
+        await ScreeningService.DeleteBookingAsync(bookingToDelete);
+
+        bookings.Remove(bookingToDelete);
+        upcoming.Remove(bookingToDelete);
+
+        bookingToDelete = null;
+        showDeletePopup = false;
+    }
 }

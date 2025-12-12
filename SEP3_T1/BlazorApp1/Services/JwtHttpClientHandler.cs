@@ -1,6 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.JSInterop;
 
+
+/// <summary>
+/// JWT HttpClient Handler
+/// </summary>
 public class JwtHttpClientHandler
 {
     private readonly IJSRuntime js;
@@ -9,6 +13,11 @@ public class JwtHttpClientHandler
     {
         this.js = js;
     }
+    
+    /// <summary>
+    /// Attach JWT token to HttpClientA
+    /// </summary>
+    /// <param name="client"></param>
 
     public async Task AttachJwtAsync(HttpClient client)
     {
