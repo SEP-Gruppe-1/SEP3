@@ -116,22 +116,19 @@ public class CustomerDAOImpl implements CustomerDAO
 
 
     @Override
-    public void updateCustomer(Customer customer) throws SQLException {
-        String sql = "UPDATE Customer SET name = ?, password = ?, phone = ?, role = ? WHERE phone = ?";
-        String hashedPassword = BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt());
+    public void updateCustomerRole(String phone, String role) throws SQLException {
+        String sql = "UPDATE Customer SET role = ? WHERE phone = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, customer.getName());
-            stmt.setString(2, hashedPassword);
-            stmt.setString(3, customer.getPhone());
-            stmt.setString(4, customer.getRole());   // ✅ ROLE
-            stmt.setString(5, customer.getEmail());  // ✅ WHERE email
+            stmt.setString(1, role);
+            stmt.setString(2, phone);
 
             stmt.executeUpdate();
         }
     }
+
 
 
     @Override

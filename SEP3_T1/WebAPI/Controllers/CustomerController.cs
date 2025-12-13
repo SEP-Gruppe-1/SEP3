@@ -34,11 +34,20 @@ public class CustomerController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllCustomers()
     {
-        if (customerRepository is CustomerInDatabaseRepository repo) await repo.InitializeAsync();
+        if (customerRepository is CustomerInDatabaseRepository repo)
+            await repo.InitializeAsync();
 
-        var customers = customerRepository.GetAll().ToList();
+        var customers = customerRepository.GetAll()
+            .Select(c => new CustomerDto(
+                c.Name,
+                c.Phone,
+                c.Email,
+                c.Role))
+            .ToList();
+
         return Ok(customers);
     }
+
 
     [HttpPost]
     public async Task<ActionResult<CustomerDto>> AddCustomer([FromBody] CustomerCreateDto request)

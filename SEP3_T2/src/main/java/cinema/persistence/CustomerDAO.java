@@ -13,7 +13,7 @@ public interface CustomerDAO {
 
     void createCustomer(Customer customer) throws SQLException;
 
-    void updateCustomer(Customer customer) throws SQLException;
+    void updateCustomerRole(String phone, String role) throws SQLException;
 
 
     void deleteCustomerByPhone(String phone) throws SQLException;

@@ -70,34 +70,37 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
     public void saveCustomer(SaveCustomerRequest request,
                              StreamObserver<SaveCustomerResponse> responseObserver) {
         try {
-
             DTOCustomer dto = request.getCustomer();
             Customer customer = DTOFactory.createCustomer(dto);
+
             Customer existing = customerDAO.getCustomerByPhone(customer.getPhone());
 
             if (existing == null) {
                 customerDAO.createCustomer(customer);
             } else {
-                customerDAO.updateCustomer(customer);
+                // ❌ IKKE updateCustomer(customer)
+                customerDAO.updateCustomerRole(
+                        customer.getPhone(),
+                        customer.getRole()
+                );
             }
+
             DTOCustomer savedDto = DTOFactory.createDTOCustomer(customer);
 
-            SaveCustomerResponse response = SaveCustomerResponse.newBuilder()
-                    .setCustomer(savedDto)
-                    .build();
-
-            responseObserver.onNext(response);
+            responseObserver.onNext(
+                    SaveCustomerResponse.newBuilder().setCustomer(savedDto).build()
+            );
             responseObserver.onCompleted();
 
         } catch (Exception e) {
-            e.printStackTrace();
             responseObserver.onError(
-                    io.grpc.Status.INTERNAL
+                    Status.INTERNAL
                             .withDescription("Could not save customer: " + e.getMessage())
                             .asRuntimeException()
             );
         }
     }
+
     @Override
     public void deleteCustomer(DeleteCustomerRequest request,
                                StreamObserver<DeleteCustomerResponse> responseObserver) {
