@@ -30,13 +30,17 @@
             
             <div class="mb-3">
                 <label class="form-label">StartTime:</label>
-                <InputText @bind-Value="newScreening.StartTime" class="form-control"/>
+                <InputText type="time"
+                           @bind-Value="newScreening.StartTime"
+                           class="form-control" />
                 <ValidationMessage For="() => newScreening.StartTime"/>
             </div>
             
             <div class="mb-3">
                 <label class="form-label">Date:</label>
-                <InputText @bind-Value="newScreening.Date" class="form-control"/>
+                <InputText type="date"
+                           @bind-Value="newScreening.Date"
+                           class="form-control" />
                 <ValidationMessage For="() => newScreening.Date"/>
             </div>
 
@@ -80,11 +84,13 @@
         isBusy = true;
         try
         {
+            
+            var normalizedTime = newScreening.StartTime!.Replace('.', ':');
             var screeningDto = new ScreeningCreateDto
             (
                 MovieId: int.Parse(newScreening.MovieId!),
                 HallId: int.Parse( newScreening.HallId!),
-                StartTime: newScreening.StartTime!,
+                StartTime: normalizedTime,
                 Date: newScreening.Date
             );
 

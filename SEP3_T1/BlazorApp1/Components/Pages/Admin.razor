@@ -3,6 +3,8 @@
 @using BlazorApp1.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@inject AuthService AuthService
+@inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
 @attribute [Authorize(Roles = "Admin")]
 
@@ -148,6 +150,7 @@ else
     private bool showDeletePopup = false;
 
     private string? loggedInAdminEmail;
+    private bool mustLogoutAfterPopup = false;
 
     private Dictionary<string, string> originalRoles = new();
 
@@ -181,10 +184,18 @@ else
 
             await CustomerService.UpdateCustomerRoleAsync(phone, newRole);
 
-            originalRoles[phone] = newRole;
+            popupMessage =
+                "Rollen er ændret.\n\n" +
+                "Du bliver nu logget ud.\n" +
+                "Log ind igen for at fortsætte.";
 
-            popupMessage = $"Rolle ændret \n\nFra: {oldRole}\nTil: {newRole}";
             showPopup = true;
+
+            
+            await AuthService.LogoutAsync();
+
+           
+            Navigation.NavigateTo("/login", forceLoad: true);
         }
         catch (Exception ex)
         {
@@ -192,6 +203,7 @@ else
             showPopup = true;
         }
     }
+
 
     private void OnRoleChanged(CustomerDto c, string newRole)
     {

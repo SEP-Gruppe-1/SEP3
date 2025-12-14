@@ -1,4 +1,5 @@
-﻿using ApiContract;
+﻿using System.Globalization;
+using ApiContract;
 using Entities;
 using Grpc.Net.Client;
 using Grpccinema;
@@ -177,7 +178,7 @@ public class CinemaServiceClient
                 Layout = screening.hall.LayoutId
             },
             HallId = screening.hallId,
-            StartTime = screening.startTime.ToString("HH:mm"),
+            StartTime = screening.startTime.ToString("HH:mm", CultureInfo.InvariantCulture),
             Date = screening.date.ToString("yyyy-MM-dd"),
             AvailableSeats = screening.availableSeats
         };
