@@ -42,7 +42,7 @@
                 <label class="form-label">Adganskode:</label>
                 <InputText @bind-Value="newCustomer.Password" type="password" class="form-control"/>
                 <small class="text-muted">
-                   Adgangskoden skal indeholde:
+                    Adgangskoden skal indeholde:
                     <div>
                         <li>Mindst et stort bogstav(A-Z)</li>
                         <li>Mindst et lille bogstav(a-z</li>
@@ -52,11 +52,11 @@
                 </small>
                 <ValidationMessage For="() => newCustomer.Password"/>
             </div>
-            
+
             <div class="mb-3">
                 <label class="form-label">Bekræft Adgangskode:</label>
-                <InputText @bind-Value="newCustomer.ConfirmPassword" 
-                           type="password" 
+                <InputText @bind-Value="newCustomer.ConfirmPassword"
+                           type="password"
                            class="form-control"/>
                 <ValidationMessage For="() => newCustomer.ConfirmPassword"/>
             </div>
@@ -130,12 +130,12 @@
             isBusy = false;
         }
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        
+
         if (user.Identity?.IsAuthenticated == true)
         {
             Nav.NavigateTo("/", true);

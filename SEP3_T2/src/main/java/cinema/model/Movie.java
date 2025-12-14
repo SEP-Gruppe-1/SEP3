@@ -10,14 +10,20 @@ public class Movie {
     public String genre;
     public LocalDate releaseDate;
     public int id;
+    public String description;
+    public String poster_url;
+    public String banner_url;
 
 
-    public Movie(int id, String Title, int PlayTime, String Genre, LocalDate ReleaseDate) {
+    public Movie(int id, String Title, int PlayTime, String Genre, LocalDate ReleaseDate, String description, String poster_url, String banner_url) {
         this.id = id;
         this.title = Title;
         this.playTime = PlayTime;
         this.genre = Genre;
         this.releaseDate = ReleaseDate;
+        this.description = description;
+        this.poster_url = poster_url;
+        this.banner_url = banner_url;
     }
 
     public Movie(){
@@ -44,6 +50,12 @@ public class Movie {
         return title;
     }
 
+    public String getDescription() {return description;}
+
+    public String getPoster_url() {return poster_url;}
+
+    public String getBanner_url() {return banner_url;}
+
     public void setId(int id) {this.id = id;}
 
     public void setGenre(String genre) {
@@ -59,8 +71,14 @@ public class Movie {
     }
 
     public void setTitle(String title) {
-        title = title;
+        this.title = title;
     }
+
+    public void setDescription(String description) {this.description = description;}
+
+    public void setPoster_url(String poster_url) {this.poster_url = poster_url;}
+
+    public void setBanner_url(String banner_url) {this.banner_url = banner_url;}
 
 
 }

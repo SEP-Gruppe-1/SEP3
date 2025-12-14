@@ -67,6 +67,36 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
     }
 
     @Override
+    public void saveMovie(SaveMovieRequest request, StreamObserver<SaveMovieResponse> responseObserver) {
+        try {
+            DTOMovie dto = request.getMovie();
+            Movie movie = DTOFactory.createMovie(dto);
+            Movie existing = movieDAO.getMovieById(movie.getId());
+
+            if (existing == null) {
+                movieDAO.AddMovie(movie);
+
+            }
+            DTOMovie savedDto = DTOFactory.createDTOMovie(movie);
+
+            SaveMovieResponse response = SaveMovieResponse.newBuilder()
+                    .setMovie(savedDto)
+                    .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(
+                    io.grpc.Status.INTERNAL
+                            .withDescription("Could not save movie: " + e.getMessage())
+                            .asRuntimeException()
+            );
+        }
+    }
+
+    @Override
     public void saveCustomer(SaveCustomerRequest request,
                              StreamObserver<SaveCustomerResponse> responseObserver) {
         try {

@@ -79,11 +79,8 @@ public class ScreeningController : ControllerBase
     [HttpPost("{screeningId:int}/Book")]
     public async Task<IActionResult> BookSeats(int screeningId, [FromBody] BookSeatsRequest request)
     {
-
         try
         {
-
-
             await screeningRepository.BookSeatsAsync(
                 screeningId,
                 request.SeatIds,
@@ -96,13 +93,11 @@ public class ScreeningController : ControllerBase
         {
             if (ex.StatusCode == Grpc.Core.StatusCode.Internal &&
                 ex.Status.Detail.Contains("Seats already booked"))
-            {
                 return BadRequest(new
                 {
                     error = "One or more seats are already booked.",
                     details = ex.Status.Detail
                 });
-            }
 
            
             return StatusCode(500, new

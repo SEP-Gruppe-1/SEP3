@@ -1,6 +1,7 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@using BlazorApp1.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager Nav
-@inject BlazorApp1.Services.TokenAuthenticationStateProvider TokenProvider
+@inject TokenAuthenticationStateProvider TokenProvider
 @inject IJSRuntime Js
 
 <div class="top-row ps-3 navbar navbar-dark">
@@ -26,7 +27,7 @@
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler')?.click()">
     <nav class="nav flex-column">
@@ -35,7 +36,7 @@
                 Home
             </NavLink>
         </div>
-        
+
 
         <AuthorizeView>
             <NotAuthorized>
@@ -48,20 +49,24 @@
                 </div>
             </NotAuthorized>
         </AuthorizeView>
-        
-        
+
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="movies">
                 Film
             </NavLink>
         </div>
 
-     
-        
+
         <AuthorizeView Roles="Admin">
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="admin">
                     Admin Panel
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="add-movie">
+                    Tilføj film
                 </NavLink>
             </div>
         </AuthorizeView>
@@ -74,16 +79,17 @@
         </div>
         </AuthorizeView>
 
-        
-        
+
     </nav>
 </div>
 
 @code {
+
     private async Task Logout()
     {
         await Js.InvokeVoidAsync("localStorage.removeItem", "jwt");
         await TokenProvider.SignOut();
         Nav.NavigateTo("/login", true);
     }
+
 }

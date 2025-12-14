@@ -123,7 +123,19 @@ public class DTOFactory {
                 setPlaytime(movie.getPlayTime()).
                 setReleaseDate(movie.getReleaseDate().toString()).
                 setTitle(movie.getTitle()).
+                setDescription(movie.getDescription()).
+                setPosterUrl(movie.getPoster_url()).
+                setBannerUrl(movie.getBanner_url()).
                 build();
+    }
+
+    public static Movie createMovie(DTOMovie dtoMovie)
+    {
+        return new Movie(dtoMovie.getId(), dtoMovie.getTitle(),
+                dtoMovie.getPlaytime(), dtoMovie.getGenre(),
+                java.time.LocalDate.parse(dtoMovie.getReleaseDate()),
+                dtoMovie.getDescription(), dtoMovie.getPosterUrl(),
+                dtoMovie.getBannerUrl());
     }
 
     public static GetAllMoviesResponse createGetAllMoviesResponse(List<Movie> movies) {

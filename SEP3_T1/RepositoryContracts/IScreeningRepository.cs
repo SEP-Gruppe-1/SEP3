@@ -11,7 +11,7 @@ public interface IScreeningRepository
     Task deleteAsync(int id);
     Task<Screening?> getSingleAsync(int id);
     Task<List<Screening>> getAll();
-    
+
     Task BookSeatsAsync(int screeningId, List<int> seatIds, string phoneNumber);
     Task<List<CustomerBookingDto>> GetBookingsByPhoneAsync(string phone);
     Task DeleteBookingAsync(int screeningId, string phone);

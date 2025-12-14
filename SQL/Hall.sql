@@ -44,7 +44,10 @@ CREATE TABLE IF NOT EXISTS movie (
                                      title varchar(100) NOT NULL,
                                      duration_minutes smallint CHECK (duration_minutes > 0),
                                      genre varchar(50),
-                                     release_date date
+                                     release_date date,
+                                     description text,
+                                     poster_url varchar,
+                                     banner_url varchar
 );
 
 -- Forestillinger
@@ -189,10 +192,10 @@ FROM layout_seat ls CROSS JOIN h2ref
 WHERE ls.layout_id = h2ref.layout_id;
 
 -- Indsæt film
-INSERT INTO movie(title, duration_minutes, genre, release_date)
+INSERT INTO movie(title, duration_minutes, genre, release_date, description, poster_url, banner_url)
 VALUES
-    ('The Matrix', 136, 'Sci-Fi', '1999-03-31'),
-    ('Spirited Away', 125, 'Animation', '2001-07-20');
+    ('The Matrix', 136, 'Sci-Fi', '1999-03-31', 'The Matrix is a simulated reality (a computer-generated dream world) created by sentient machines to pacify humanity, using human bodies as an energy source while their minds live out a false, 1999-era life, until rebels like Morpheus discover the truth and recruit programmer Neo to fight the machines and free mankind, offering choice between illusion and harsh reality', 'https://m.media-amazon.com/images/M/MV5BN2NmN2VhMTQtMDNiOS00NDlhLTliMjgtODE2ZTY0ODQyNDRhXkEyXkFqcGc@._V1_.jpg', 'https://www.europosters.dk/the-matrix/?srsltid=AfmBOor_0p73cTRbWp0FSbpQDT7D_OUlnIP0R28FY784gHQLOXhbfcmw'),
+    ('Spirited Away', 125, 'Animation', '2001-07-20', 'Spirited Away is a Hayao Miyazaki masterpiece about 10-year-old Chihiro, who gets trapped in a magical world of gods and spirits after her parents are turned into pigs; she must work at a bathhouse run by the witch Yubaba to survive, find her courage, reclaim her name, and save her family, encountering strange creatures like No-Face and learning lessons about greed, identity, and compassion.', 'https://m.media-amazon.com/images/M/MV5BNTEyNmEwOWUtYzkyOC00ZTQ4LTllZmUtMjk0Y2YwOGUzYjRiXkEyXkFqcGc@._V1_.jpg', 'https://attackongeek.com/spirited-away-15th-anniversary-review/');
 
 -- Opret forestillinger
 INSERT INTO Screening(movie_id, hall_id, screening_date, start_time, available_seats)

@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApiContract;
+using gRPCRepositories;
+using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
+
+namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -25,7 +29,8 @@ public class MovieController : ControllerBase
         try
         {
             var movie = await movieRepository.GetSingleAsync(id);
-            return Ok(movie);
+            return Ok(new MovieDto(movie.DurationMinutes, movie.MovieId, movie.ReleaseDate, movie.MovieTitle,
+                movie.Genre, movie.description, movie.poster_Url, movie.banner_Url));
         }
         catch (InvalidOperationException)
         {
