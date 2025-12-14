@@ -1,6 +1,10 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
 }
+
 
 a, .btn-link {
     color: #006bb7;
@@ -148,7 +152,7 @@ order-header-text {
 
 .selection-info {
     background-color: #f8f9fa;
-    position: sticky;
+    position: fixed;
     right: 40px;
     bottom: 20px;
     padding: 15px;
@@ -420,9 +424,9 @@ order-header-text {
     font-size: 2rem;
     font-weight: 600;
 }
-
 .seat.mybooked {
     background-color: #ff9800; /* orange */
     color: #fff;
     border: 2px solid #e65100; /* mørkere orange kant */
 }
+

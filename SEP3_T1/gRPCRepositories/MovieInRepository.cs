@@ -14,9 +14,16 @@ public class MovieInRepository : IMovieRepository
         movies = new List<Movie>();
     }
 
-    public Task<Movie> AddAsync(Movie movie)
+    public async Task<Movie> AddAsync(Movie movie)
     {
-        throw new NotImplementedException();
+        
+        movie.MovieId = 0;
+
+        var saved = await _client.SaveMovieAsync(movie);
+        
+        movies.Add(saved);
+
+        return saved;
     }
 
     public Task UpdateAsync(Movie movie)

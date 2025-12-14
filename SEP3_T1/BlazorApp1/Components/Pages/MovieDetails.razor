@@ -19,7 +19,7 @@ else
 {
     <!-- Poster -->
     <div class="movie-banner">
-        <img src="@GetPoster(movie)" alt="@movie.MovieTitle"/>
+        <img src="@GetBanner(movie)" alt="@movie.MovieTitle"/>
     </div>
 
     <!-- Screening og Tidspunkt -->
@@ -88,13 +88,9 @@ else
         }
     }
 
-    private string GetPoster(Movie movie)
+    private string GetBanner(Movie movie)
     {
-        var fileName = movie.MovieTitle
-            .ToLower()
-            .Replace(" ", "-") + ".png";
-
-        return $"images/banner/{fileName}";
+        return movie.banner_Url;
     }
 
     private string GetDayLabel(DateOnly date)

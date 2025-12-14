@@ -87,6 +87,16 @@ message DTOMovie{
   string genre = 3;
   string releaseDate = 4;
   int32 id = 5;
+  string description = 6;
+  string poster_url = 7;
+  string banner_url = 8;
+}
+
+message SaveMovieRequest {
+  DTOMovie movie = 1;
+}
+message SaveMovieResponse {
+  DTOMovie movie = 1;
 }
 
 message GetMovieByIdRequest{
@@ -182,6 +192,7 @@ service CinemaService
   rpc GetCustomers (GetCustomersRequest) returns (GetCustomersResponse);
   rpc GetCustomerByPhone (GetCustomerByPhoneRequest) returns (GetCustomerByPhoneResponse);
   rpc SaveCustomer(SaveCustomerRequest) returns (SaveCustomerResponse);
+  rpc SaveMovie(SaveMovieRequest) returns (SaveMovieResponse);
   rpc DeleteCustomer(DeleteCustomerRequest) returns (DeleteCustomerResponse);
   rpc GetHalls (GetHallsRequest) returns (GetHallsResponse);
   rpc GetHallByID (GetHallByIdRequest) returns (GetHallByIdResponse);

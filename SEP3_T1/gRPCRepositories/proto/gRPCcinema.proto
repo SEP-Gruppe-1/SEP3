@@ -88,6 +88,9 @@ message DTOMovie{
   string genre = 3;
   string releaseDate = 4;
   int32 id = 5;
+  string description = 6;
+  string poster_url = 7;
+  string banner_url = 8;
 }
 
 message GetMovieByIdRequest{
@@ -101,6 +104,13 @@ message GetAllMoviesRequest{}
 
 message GetAllMoviesResponse{
   repeated DTOMovie movies = 1;
+}
+
+message SaveMovieRequest{
+  DTOMovie movie = 1;
+}
+message SaveMovieResponse{
+  DTOMovie movie = 1;
 }
 
 
@@ -196,4 +206,6 @@ service CinemaService
   rpc GetSeatsByScreening(GetSeatsByScreeningRequest) returns (GetSeatsByScreeningResponse);
   rpc BookSeats(BookSeatsRequest) returns (BookSeatsResponse);
   rpc VerifyCustomerPassword(VerifyCustomerPasswordRequest) returns (VerifyCustomerPasswordResponse);
+  rpc SaveMovie(SaveMovieRequest) returns (SaveMovieResponse);
+
 }

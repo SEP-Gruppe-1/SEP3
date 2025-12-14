@@ -43,7 +43,7 @@ else
                                         <p><strong>Release Date: </strong> @movie.ReleaseDate</p>
                                         <p><strong>Genre: </strong> @movie.Genre</p>
                                         <p><strong>Spilletid: </strong> @movie.DurationMinutes min</p>
-                                        <p>@movie.Description</p>
+                                        <p>@movie.description</p>
                                     </div>
 
                                     <div class="text-end mt-3">
@@ -75,13 +75,9 @@ else
 
     private string GetPoster(Movie movie)
     {
-        var fileName = movie.MovieTitle
-            .ToLower()
-            .Replace(" ", "-") + ".png";
-
-        return $"images/posters/{fileName}";
+        return movie.poster_Url;
     }
-
+    
     private void GoToMovieDetails(int movieId)
     {
         Nav.NavigateTo($"/MovieDetails/{movieId}");

@@ -159,7 +159,10 @@ public class CinemaServiceClient
             MovieTitle = dto.Title,
             Genre = dto.Genre,
             DurationMinutes = dto.Playtime,
-            ReleaseDate = dto.ReleaseDate
+            ReleaseDate = dto.ReleaseDate,
+            description = dto.Description,
+            poster_Url = dto.PosterUrl,
+            banner_Url = dto.BannerUrl
         };
     }
 
@@ -197,10 +200,48 @@ public class CinemaServiceClient
                 MovieTitle = dtoMovie.Title,
                 DurationMinutes = dtoMovie.Playtime,
                 Genre = dtoMovie.Genre,
-                ReleaseDate = dtoMovie.ReleaseDate
+                ReleaseDate = dtoMovie.ReleaseDate,
+                description = dtoMovie.Description,
+                poster_Url = dtoMovie.PosterUrl,
+                banner_Url = dtoMovie.BannerUrl
             });
         return await Task.FromResult(movies);
     }
+
+    
+    public async Task<Movie> SaveMovieAsync(Movie movie)
+    {
+        var dto = new DTOMovie
+        {
+            Id = movie.MovieId,                       
+            Title = movie.MovieTitle,
+            Genre = movie.Genre,
+            Playtime = movie.DurationMinutes,
+            ReleaseDate = movie.ReleaseDate, 
+            Description = movie.description ?? "",
+            PosterUrl = movie.poster_Url ?? "",
+            BannerUrl = movie.banner_Url ?? ""
+        };
+
+        var request = new SaveMovieRequest { Movie = dto };
+        var response = await client.SaveMovieAsync(request).ResponseAsync;
+
+
+        var saved = response.Movie;
+
+        return new Movie
+        {
+            MovieId = saved.Id,
+            MovieTitle = saved.Title,
+            Genre = saved.Genre,
+            DurationMinutes = saved.Playtime,
+            ReleaseDate = saved.ReleaseDate,
+            description = saved.Description,
+            poster_Url = saved.PosterUrl,
+            banner_Url = saved.BannerUrl
+        };
+    }
+
 
     public async Task<DTOMovie> getMovieById(int id)
     {

@@ -23,7 +23,7 @@ public class MovieController : ControllerBase
         {
             var movie = await movieRepository.GetSingleAsync(id);
             return Ok(new MovieDto(movie.DurationMinutes, movie.MovieId, movie.ReleaseDate, movie.MovieTitle,
-                movie.Genre));
+                movie.Genre, movie.description, movie.poster_Url, movie.banner_Url));
         }
         catch (InvalidOperationException)
         {
