@@ -76,6 +76,17 @@ public class CinemaServiceClient
         await client.DeleteCustomerAsync(request);
     }
     
+    public async Task DeleteBookingAsync(int screeningId, string phone)
+    {
+        var request = new DeleteBookingRequest
+        {
+            ScreeningId = screeningId,
+            PhoneNumber = phone
+        };
+
+        await client.DeleteBookingAsync(request);
+    }
+    
     public async Task<bool> VerifyCustomerPasswordAsync(string phone, string password)
     {
         var request = new VerifyCustomerPasswordRequest

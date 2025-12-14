@@ -140,6 +140,22 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
     }
 
     @Override
+    public void deleteBooking(DeleteBookingRequest request, StreamObserver<DeleteBookingResponse> responseObserver) {
+        try {
+            String phoneNumber = request.getPhoneNumber();
+            int screeningId = request.getScreeningId();
+
+            DeleteBookingResponse response = DeleteBookingResponse.newBuilder().build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+            seatDAO.DeleteBooking(screeningId, phoneNumber);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void verifyCustomerPassword(VerifyCustomerPasswordRequest request,
                                        StreamObserver<VerifyCustomerPasswordResponse> responseObserver) {
         String phone = request.getPhone();

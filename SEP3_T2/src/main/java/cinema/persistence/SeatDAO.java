@@ -11,4 +11,5 @@ public interface SeatDAO {
     List<Seat> getAllSeats();
     void bookSeat(int screeningId, String Phone, List<Integer> seatIds) throws SQLException;
     void updateBooking(int screeningId, String phone, List<Integer> seatsToAdd, List<Integer> seatsToRemove) throws SQLException;
+    void DeleteBooking(int screeningId , String phone) throws SQLException;
 }

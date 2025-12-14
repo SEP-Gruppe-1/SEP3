@@ -205,6 +205,13 @@ message BookSeatsRequest {
 
 message BookSeatsResponse{}
 
+message DeleteBookingRequest{
+  int32 screeningId = 1;
+  string phoneNumber = 2;
+}
+
+message DeleteBookingResponse{}
+
 message UpdateBookingRequest{
   int32 screeningId = 1;
   string customerPhone = 2;
@@ -237,4 +244,5 @@ service CinemaService
   rpc UpdateBooking(UpdateBookingRequest) returns (UpdateBookingResponse);
   rpc VerifyCustomerPassword(VerifyCustomerPasswordRequest) returns (VerifyCustomerPasswordResponse);
   rpc GetBookingsByPhone(GetBookingsByPhoneRequest) returns (GetBookingsByPhoneResponse);
+  rpc DeleteBooking(DeleteBookingRequest) returns (DeleteBookingResponse);
 }

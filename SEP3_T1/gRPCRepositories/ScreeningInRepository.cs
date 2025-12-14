@@ -160,10 +160,8 @@ public class ScreeningInRepository : IScreeningRepository
             return;
 
         // Unbook seats by sending empty phone
-        await _client.BookSeatsAsync(
-            screeningId,
-            booked.Select(b => b.id).ToList(),
-            ""
+        await _client.DeleteBookingAsync(
+           screeningId,phone
         );
     }
 

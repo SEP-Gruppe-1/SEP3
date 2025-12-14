@@ -274,7 +274,21 @@ public class SeatDAOImpl implements SeatDAO {
         }
     }
 
+    @Override
+    public void DeleteBooking(int screeningId, String phone) throws SQLException {
+        String deleteBookingSql =
+                "DELETE FROM Booking WHERE screening_id = ? AND customer_phone = ?";
 
+        try (Connection conn = getConnection()) {
+
+            try (PreparedStatement stmt = conn.prepareStatement(deleteBookingSql)) {
+                stmt.setInt(1, screeningId);   // Parameter 1
+                stmt.setString(2, phone);      // Parameter 2
+                stmt.executeUpdate();
+            }
+        }
+
+    }
 
 
 }

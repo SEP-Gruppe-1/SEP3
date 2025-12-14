@@ -109,6 +109,7 @@ else
     private List<CustomerBookingDto> bookings = new();
     private List<CustomerBookingDto> upcoming = new();
     private List<CustomerBookingDto> previous = new();
+   
 
     private bool loading = true;
     private bool showDeletePopup = false;
@@ -118,6 +119,8 @@ else
     {
         Auth.AuthenticationStateChanged += OnAuthenticationStateChanged;
         await TryLoadDataAsync();
+        
+     
     }
 
     private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
@@ -134,11 +137,10 @@ else
     private async Task TryLoadDataAsync()
     {
         loading = true;
-
         var authState = await Auth.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        string? phone = user.Claims.FirstOrDefault(c => c.Type == "phone")?.Value;
+       var phone = user.Claims.FirstOrDefault(c => c.Type == "phone")?.Value;
 
         if (string.IsNullOrEmpty(phone))
         {
@@ -172,7 +174,7 @@ else
 
     private void EditBooking(CustomerBookingDto booking)
     {
-        Nav.NavigateTo($"/edit-booking/{booking.ScreeningId}");
+        Nav.NavigateTo($"/order/{booking.ScreeningId}");
     }
 
     private void AskDelete(CustomerBookingDto booking)
@@ -189,10 +191,15 @@ else
 
     private async Task ConfirmDelete()
     {
+        
+        var authState = await Auth.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var phone = user.Claims.FirstOrDefault(c => c.Type == "phone")?.Value;
         if (bookingToDelete is null)
             return;
 
-        await ScreeningService.DeleteBookingAsync(bookingToDelete);
+        await ScreeningService.DeleteBookingSeatAsync(bookingToDelete.ScreeningId , phone );
 
         bookings.Remove(bookingToDelete);
         upcoming.Remove(bookingToDelete);

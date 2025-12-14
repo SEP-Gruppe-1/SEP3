@@ -44,19 +44,21 @@ public class main {
             }
 
 
-            List<Hall> hall = hdao.getAllHalls();
-            for (Hall h : hall) {
-                System.out.println(h.getId() + " " + h.getNumber() + " " + h.getLayout() + " " + h.getSeats().toString());
-            }
+            seatDAO.DeleteBooking(1, "5550001");
 
-            List<Screening> screenings = screeningDAO.getAllScreenings();
-            for (Screening screening : screenings) {
-                System.out.println(screening.toString());
-            }
+//            List<Hall> hall = hdao.getAllHalls();
+//            for (Hall h : hall) {
+//                System.out.println(h.getId() + " " + h.getNumber() + " " + h.getLayout() + " " + h.getSeats().toString());
+//            }
+//
+//            List<Screening> screenings = screeningDAO.getAllScreenings();
+//            for (Screening screening : screenings) {
+//                System.out.println(screening.toString());
+//            }
 
 
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
         }
 
 
