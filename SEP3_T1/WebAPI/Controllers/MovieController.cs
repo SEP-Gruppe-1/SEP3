@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApiContract;
+using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
 
 [ApiController]
@@ -12,11 +13,26 @@ public class MovieController : ControllerBase
         this.movieRepository = movieRepository;
     }
 
+    // ✅ Ét samlet endpoint
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> Get([FromQuery] string? query)
     {
         var movies = await movieRepository.GetAllAsync();
-        return Ok(movies);
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            movies = movies
+                .Where(m => m.MovieTitle.Contains(query, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        return Ok(movies.Select(m => new MovieDto(
+            m.DurationMinutes,
+            m.MovieId,
+            m.ReleaseDate,
+            m.MovieTitle,
+            m.Genre
+        )));
     }
 
     [HttpGet("{id:int}")]

@@ -1,30 +1,31 @@
 ﻿using ApiContract;
-using System.Text.Json;
+using System.Net.Http.Json;
+
+namespace BlazorApp1.Services;
 
 public class HttpMovieService : IMovieService
 {
     private readonly HttpClient http;
+    private readonly JwtHttpClientHandler jwtHandler;
 
-    public HttpMovieService(HttpClient http)
+    public HttpMovieService(HttpClient http, JwtHttpClientHandler jwtHandler)
     {
         this.http = http;
+        this.jwtHandler = jwtHandler;
     }
 
     public async Task<List<MovieDto>> GetAllMoviesAsync()
     {
+        await jwtHandler.AttachJwtAsync(http);
+
         var response = await http.GetAsync("api/movie");
-        var json = await response.Content.ReadAsStringAsync();
 
         if (!response.IsSuccessStatusCode)
-            throw new Exception(json);
+            throw new Exception("Kunne ikke hente film");
 
-        return JsonSerializer.Deserialize<List<MovieDto>>(json,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            })!;
+        return await response.Content.ReadFromJsonAsync<List<MovieDto>>() ?? new();
     }
-
+    
     public async Task<MovieDto?> GetMovieByIdAsync(int id)
     {
         var response = await http.GetAsync($"api/movie/{id}");
@@ -33,5 +34,19 @@ public class HttpMovieService : IMovieService
             return null;
 
         return await response.Content.ReadFromJsonAsync<MovieDto>();
+    }
+
+    public async Task<List<MovieDto>> SearchMoviesAsync(string query)
+    {
+        await jwtHandler.AttachJwtAsync(http);
+
+        var response = await http.GetAsync(
+            $"api/movie?query={Uri.EscapeDataString(query)}"
+        );
+
+        if (!response.IsSuccessStatusCode)
+            throw new Exception("Kunne ikke hente film");
+
+        return await response.Content.ReadFromJsonAsync<List<MovieDto>>() ?? new();
     }
 }

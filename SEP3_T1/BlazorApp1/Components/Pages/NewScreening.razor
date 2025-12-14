@@ -4,6 +4,7 @@
 @using BlazorApp1.Services
 @using RepositoryContracts
 @inject IScreeningService Service
+@inject IMovieService MovieService
 <h3>NyFilmvisning</h3>
 
 <div class="card mb-4">
@@ -17,10 +18,35 @@
             <DataAnnotationsValidator/>
 
             <div class="mb-3">
-                <label class="form-label">MovieId:</label>
-                <InputText @bind-Value="newScreening.MovieId" class="form-control"/>
-                <ValidationMessage For="() => newScreening.MovieId"/>
+                <label class="form-label">Film</label>
+
+                <InputText class="form-control"
+                           placeholder="Søg efter film..."
+                           @bind-Value="movieSearch"
+                           @oninput="OnMovieSearch" />
+
+                @if (movieResults.Any())
+                {
+                    <ul class="list-group mt-2">
+                        @foreach (var movie in movieResults)
+                        {
+                            <li class="list-group-item list-group-item-action"
+                                @onclick="() => SelectMovie(movie)">
+                                <strong>@movie.MovieTitle</strong>
+                                (@movie.ReleaseDate) – @movie.Genre
+                            </li>
+                        }
+                    </ul>
+                }
+
+                @if (selectedMovie != null)
+                {
+                    <div class="alert alert-success mt-2">
+                        Valgt film: <strong>@selectedMovie.MovieTitle</strong>
+                    </div>
+                }
             </div>
+
             
             <div class="mb-3">
                 <label class="form-label">HallId:</label>
@@ -44,7 +70,31 @@
                 <ValidationMessage For="() => newScreening.Date"/>
             </div>
 
-          
+            @if (showSuccessPopup)
+            {
+                <div class="modal fade show d-block" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title">Filmvisning oprettet</h5>
+                            </div>
+
+                            <div class="modal-body">
+                                <p>@successMessage</p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button class="btn btn-success" @onclick="CloseSuccessPopup">
+                                    OK
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-backdrop fade show"></div>
+            }
+
 
          
             
@@ -59,6 +109,11 @@
 
 @code {
     
+    private string movieSearch = "";
+    private List<MovieDto> movieResults = new();
+    private MovieDto? selectedMovie;
+    private bool showSuccessPopup = false;
+    private string successMessage = "";
     private createScreeningFromModel newScreening = new();
     private bool isBusy;
     private string? errorMessage;
@@ -80,6 +135,12 @@
     
     private async Task SaveScreeningAsync()
     {
+        
+        if (selectedMovie == null)
+        {
+            errorMessage = "Du skal vælge en film";
+            return;
+        }
   
         isBusy = true;
         try
@@ -88,13 +149,23 @@
             var normalizedTime = newScreening.StartTime!.Replace('.', ':');
             var screeningDto = new ScreeningCreateDto
             (
-                MovieId: int.Parse(newScreening.MovieId!),
+                MovieId: selectedMovie.MovieId,
                 HallId: int.Parse( newScreening.HallId!),
                 StartTime: normalizedTime,
                 Date: newScreening.Date
             );
 
             await Service.CreateScreeningAsync(screeningDto);
+
+            errorMessage = null;
+            
+            successMessage =
+                $"Filmvisningen for '{selectedMovie.MovieTitle}'\n\n" +
+                $"Dato: {newScreening.Date}\n" +
+                $"Tid: {newScreening.StartTime}\n" +
+                $"Sal: {newScreening.HallId}";
+
+            showSuccessPopup = true;
 
           
         }
@@ -106,6 +177,37 @@
         {
             isBusy = false;
         }
+    }
+    
+    private async Task OnMovieSearch(ChangeEventArgs e)
+    {
+        movieSearch = e.Value?.ToString() ?? "";
+
+        if (movieSearch.Length < 2)
+        {
+            movieResults.Clear();
+            return;
+        }
+
+        movieResults = await MovieService.SearchMoviesAsync(movieSearch);
+    }
+
+    private void SelectMovie(MovieDto movie)
+    {
+        selectedMovie = movie;
+        movieResults.Clear();
+        errorMessage = null;
+    }
+    
+    private void CloseSuccessPopup()
+    {
+        showSuccessPopup = false;
+        errorMessage = null;
+
+       
+        newScreening = new();
+        selectedMovie = null;
+        movieSearch = "";
     }
 
     
