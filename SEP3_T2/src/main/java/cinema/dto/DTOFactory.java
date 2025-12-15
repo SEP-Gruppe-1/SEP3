@@ -147,10 +147,6 @@ public class DTOFactory {
         return GetAllMoviesResponse.newBuilder().addAllMovies(dtoMovies).build();
     }
 
-    public static Movie createMovie(DTOMovie dtoMovie) {
-        return new Movie(dtoMovie.getId(), dtoMovie.getTitle(), dtoMovie.getPlaytime(), dtoMovie.getGenre(), LocalDate.parse( dtoMovie.getReleaseDate()));
-
-    }
 
 
     //---------- Screening ----------\\

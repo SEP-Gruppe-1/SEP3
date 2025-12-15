@@ -40,7 +40,10 @@ public class ScreeningController : ControllerBase
                     s.movie.MovieId,
                     s.movie.ReleaseDate,
                     s.movie.MovieTitle,
-                    s.movie.Genre
+                    s.movie.Genre,
+                    s.movie.description,
+                    s.movie.poster_Url,
+                    s.movie.banner_Url
                 ),
                 new HallDto(
                     s.hall.Id,

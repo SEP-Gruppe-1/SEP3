@@ -32,7 +32,7 @@ public class MovieInRepository : IMovieRepository
         
         movie.MovieId = 0;
 
-        var saved = await _client.SaveMovieAsync(movie);
+        var saved = await client.SaveMovieAsync(movie);
         
         movies.Add(saved);
 

@@ -1,9 +1,12 @@
 ﻿@page "/Movies"
+@using ApiContract
 @using Entities
-@using gRPCRepositories
 @using RepositoryContracts
 @inject IMovieRepository MovieRepo
+@inject IMovieService MovieService
+
 @inject NavigationManager Nav
+
 
 
 <h3>MovieList</h3>
@@ -63,17 +66,14 @@ else
 }
 
 @code {
-    private IEnumerable<Movie>? movies;
+    private IEnumerable<MovieDto>? movies;
 
     protected override async Task OnInitializedAsync()
     {
-        if (MovieRepo is MovieInRepository repo)
-            await repo.InitializeAsync();
-
-        movies = MovieRepo.GetAll().ToList();
+        movies = await MovieService.GetAllMoviesAsync();
     }
 
-    private string GetPoster(Movie movie)
+    private string GetPoster(MovieDto movie)
     {
         return movie.poster_Url;
     }
