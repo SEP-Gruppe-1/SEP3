@@ -3,12 +3,15 @@
 @using BlazorApp1.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@inject AuthService AuthService
+@inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JS
 @attribute [Authorize(Roles = "Admin")]
 
 @inject ICustomerService CustomerService
 
-<h3>Admin – Brugerstyring</h3>
+<h3>Administrationspanel</h3>
 
 @if (customers == null)
 {
@@ -145,7 +148,8 @@ else
     private bool showDeletePopup;
 
     private string? loggedInAdminEmail;
-
+    private bool mustLogoutAfterPopup = false;
+    private string? loggedInAdminPhone;
     private Dictionary<string, string> originalRoles = new();
 
     private bool showPopup;
@@ -156,8 +160,8 @@ else
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        loggedInAdminEmail = user.Claims
-            .FirstOrDefault(c => c.Type.Contains("email"))?.Value;
+        loggedInAdminPhone = user.Claims
+            .FirstOrDefault(c => c.Type.Contains("phone"))?.Value;
 
         customers = await CustomerService.GetCustomers();
         originalRoles = customers.ToDictionary(c => c.Phone, c => c.Role);
@@ -180,15 +184,30 @@ else
 
             originalRoles[phone] = newRole;
 
-            popupMessage = $"Rolle ændret \n\nFra: {oldRole}\nTil: {newRole}";
+// Hvis admin ændrer sin EGEN rolle
+            if (phone == loggedInAdminPhone)
+            {
+                popupMessage =
+                    $"Din rolle er ændret fra '{oldRole}' til '{newRole}'.\n\n" +
+                    "Du vil blive logget ud.";
+
+                mustLogoutAfterPopup = true;
+            }
+            else
+            {
+                popupMessage = $"Rolle ændret fra '{oldRole}' til '{newRole}'.";
+            }
+
             showPopup = true;
         }
         catch (Exception ex)
         {
-            popupMessage = $"Fejl under opdatering:\n{ex.Message}";
+            popupMessage = $"Fejl ved opdatering af rolle:\n{ex.Message}";
             showPopup = true;
         }
-    }
+
+}
+
 
     private void OnRoleChanged(CustomerDto c, string newRole)
     {
@@ -196,9 +215,15 @@ else
         customers[index] = c with { Role = newRole };
     }
 
-    private void ClosePopup()
+    private async Task ClosePopup()
     {
         showPopup = false;
+
+        if (mustLogoutAfterPopup)
+        {
+            await JS.InvokeVoidAsync("localStorage.removeItem", "jwt");
+            Navigation.NavigateTo("/login", forceLoad: true);
+        }
     }
 
 
