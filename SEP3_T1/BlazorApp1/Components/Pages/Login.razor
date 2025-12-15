@@ -1,10 +1,10 @@
 ﻿@page "/login"
 @using BlazorApp1.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inject AuthService AuthService
 @inject TokenAuthenticationStateProvider TokenProvider
 @inject IJSRuntime JsRuntime
 @inject NavigationManager Nav
-@using Microsoft.AspNetCore.Components.Authorization
 
 @inject AuthenticationStateProvider AuthStateProvider
 
@@ -48,7 +48,7 @@
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        
+
         if (user.Identity?.IsAuthenticated == true)
         {
             Nav.NavigateTo("/movies", true);
@@ -70,4 +70,5 @@
             message = ex.Message;
         }
     }
+
 }

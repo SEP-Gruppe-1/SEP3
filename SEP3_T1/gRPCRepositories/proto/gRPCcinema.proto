@@ -88,6 +88,9 @@ message DTOMovie{
   string genre = 3;
   string releaseDate = 4;
   int32 id = 5;
+  string description = 6;
+  string poster_url = 7;
+  string banner_url = 8;
 }
 
 message GetMovieByIdRequest{
@@ -101,6 +104,13 @@ message GetAllMoviesRequest{}
 
 message GetAllMoviesResponse{
   repeated DTOMovie movies = 1;
+}
+
+message SaveMovieRequest{
+  DTOMovie movie = 1;
+}
+message SaveMovieResponse{
+  DTOMovie movie = 1;
 }
 
 
@@ -205,6 +215,13 @@ message BookSeatsRequest {
 
 message BookSeatsResponse{}
 
+message DeleteBookingRequest{
+  int32 screeningId = 1;
+  string phoneNumber = 2;
+}
+
+message DeleteBookingResponse{}
+
 message UpdateBookingRequest{
   int32 screeningId = 1;
   string customerPhone = 2;
@@ -236,5 +253,8 @@ service CinemaService
   rpc BookSeats(BookSeatsRequest) returns (BookSeatsResponse);
   rpc UpdateBooking(UpdateBookingRequest) returns (UpdateBookingResponse);
   rpc VerifyCustomerPassword(VerifyCustomerPasswordRequest) returns (VerifyCustomerPasswordResponse);
+  rpc SaveMovie(SaveMovieRequest) returns (SaveMovieResponse);
+
   rpc GetBookingsByPhone(GetBookingsByPhoneRequest) returns (GetBookingsByPhoneResponse);
+  rpc DeleteBooking(DeleteBookingRequest) returns (DeleteBookingResponse);
 }

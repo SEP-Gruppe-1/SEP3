@@ -40,7 +40,10 @@ public class ScreeningController : ControllerBase
                     s.movie.MovieId,
                     s.movie.ReleaseDate,
                     s.movie.MovieTitle,
-                    s.movie.Genre
+                    s.movie.Genre,
+                    s.movie.description,
+                    s.movie.poster_Url,
+                    s.movie.banner_Url
                 ),
                 new HallDto(
                     s.hall.Id,
@@ -79,11 +82,8 @@ public class ScreeningController : ControllerBase
     [HttpPost("{screeningId:int}/Book")]
     public async Task<IActionResult> BookSeats(int screeningId, [FromBody] BookSeatsRequest request)
     {
-
         try
         {
-
-
             await screeningRepository.BookSeatsAsync(
                 screeningId,
                 request.SeatIds,
@@ -96,13 +96,11 @@ public class ScreeningController : ControllerBase
         {
             if (ex.StatusCode == Grpc.Core.StatusCode.Internal &&
                 ex.Status.Detail.Contains("Seats already booked"))
-            {
                 return BadRequest(new
                 {
                     error = "One or more seats are already booked.",
                     details = ex.Status.Detail
                 });
-            }
 
            
             return StatusCode(500, new

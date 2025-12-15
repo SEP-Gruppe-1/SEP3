@@ -3,19 +3,16 @@ using System.Security.Claims;
 using System.Text;
 using ApiContract;
 using gRPCRepositories;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using RepositoryContracts;
 
 namespace WebAPI.Controllers;
 
-
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-
     private readonly ICustomerRepository ICustomerRepository;
 
     public AuthController(ICustomerRepository customerRepository)
@@ -26,21 +23,18 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto login)
     {
-        if (ICustomerRepository is CustomerInDatabaseRepository repo)
-        {
-            await repo.InitializeAsync();
-        }
+        if (ICustomerRepository is CustomerInDatabaseRepository repo) await repo.InitializeAsync();
 
         var customer = await ICustomerRepository
             .GetByPhoneAndPasswordAsync(login.Phone, login.Password);
 
         if (customer == null)
             return Unauthorized("Invalid phone or password");
-        
+
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, customer.Name),
-            new Claim("phone" , customer.Phone),
+            new Claim("phone", customer.Phone),
             new Claim(ClaimTypes.Role, customer.Role ?? "")
         };
 
@@ -49,9 +43,9 @@ public class AuthController : ControllerBase
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: "YourIssuer",
-            audience: "YourAudience",
-            claims: claims,
+            "YourIssuer",
+            "YourAudience",
+            claims,
             expires: DateTime.Now.AddMinutes(30),
             signingCredentials: creds);
 
@@ -62,4 +56,3 @@ public class AuthController : ControllerBase
         return Ok(new { token = jwt });
     }
 }
-

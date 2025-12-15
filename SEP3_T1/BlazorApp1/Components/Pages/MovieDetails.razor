@@ -4,6 +4,7 @@
 @using RepositoryContracts
 @inject IMovieService MovieService
 @inject IScreeningRepository ScreeningRepo
+@inject IMovieRepository MovieRepo
 @inject NavigationManager Nav
 
 <h3>Filmdetaljer</h3>
@@ -20,7 +21,7 @@ else
 {
     
     <div class="movie-banner">
-        <img src="@GetPoster(movie)" alt="@movie.MovieTitle" />
+        <img src="@GetBanner(movie)" alt="@movie.MovieTitle"/>
     </div>
 
     
@@ -90,13 +91,9 @@ else
         }
     }
 
-    private string GetPoster(MovieDto movie)
+    private string GetBanner(MovieDto movie)
     {
-        var fileName = movie.MovieTitle
-            .ToLower()
-            .Replace(" ", "-") + ".png";
-
-        return $"images/banner/{fileName}";
+        return movie.banner_Url;
     }
 
     private string GetDayLabel(DateOnly date)

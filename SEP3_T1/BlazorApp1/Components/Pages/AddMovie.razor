@@ -1,0 +1,145 @@
+﻿@page "/add-movie"
+@using System.ComponentModel.DataAnnotations
+@using Entities
+@using RepositoryContracts
+@inject IMovieRepository MovieRepo
+@inject NavigationManager Nav
+
+@if (isSaving)
+{
+    <p><strong>Gemmer film...</strong></p>
+}
+else
+{
+    <EditForm Model="movieModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <!-- Movie Title -->
+        <div class="mb-3">
+            <label class="form-label"><strong>Titel:</strong></label>
+            <InputText class="form-control" @bind-Value="movieModel.MovieTitle"/>
+            <ValidationMessage For="@(() => movieModel.MovieTitle)"/>
+        </div>
+
+        <!-- Movie Genre -->
+        <div class="mb-3">
+            <label class="form-label"><strong>Genre:</strong></label>
+            <InputText class="form-control" @bind-Value="movieModel.Genre"/>
+            <ValidationMessage For="@(() => movieModel.Genre)"/>
+        </div>
+
+        <!-- Movie Duration -->
+        <div class="mb-3">
+            <label class="form-label"><strong>Spilletid (min):</strong></label>
+            <InputNumber class="form-control" @bind-Value="movieModel.DurationInMinutes"/>
+            <ValidationMessage For="@(() => movieModel.DurationInMinutes)"/>
+        </div>
+
+        <!-- Movie Release Date -->
+        <div class="mb-3">
+            <label class="form-label"><strong>Udgivelsesdato:</strong></label>
+            <InputDate class="form-control" @bind-Value="movieModel.ReleaseDate"/>
+            <ValidationMessage For="@(() => movieModel.ReleaseDate)"/>
+
+        </div>
+
+        <!-- Movie Description -->
+        <div class="mb-3">
+            <label class="form-label"><strong>Beskrivelse:</strong></label>
+            <InputTextArea class="form-control" rows="4" @bind-Value="movieModel.Description"/>
+        </div>
+
+        <!-- Movie Poster Upload -->
+        <div class="mb-3">
+            <label class="form-label"><strong>Poster:</strong></label>
+            <InputText class="form-control" @bind-Value="movieModel.poster_Url"/>
+            <ValidationMessage For="@(() => movieModel.poster_Url)"/>
+            @if (!string.IsNullOrWhiteSpace(movieModel.poster_Url))
+            {
+                <div class="mt-2">
+                    <img src="@movieModel.poster_Url" alt="Poster preview" style="max-height: 200px"/>
+                </div>
+            }
+        </div>
+        
+        <!-- Movie Banner Upload -->
+        <div class="mb-3">
+            <label class="form-label"><strong>Poster:</strong></label>
+            <InputText class="form-control" @bind-Value="movieModel.banner_Url"/>
+            <ValidationMessage For="@(() => movieModel.banner_Url)"/>
+            @if (!string.IsNullOrWhiteSpace(movieModel.banner_Url))
+            {
+                <div class="mt-2">
+                    <img src="@movieModel.banner_Url" alt="Poster preview" style="max-height: 200px"/>
+                </div>
+            }
+        </div>
+        
+
+        <button type="submit" class="btn btn-primary">Gem film</button>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+    }
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success mt-3">@successMessage</div>
+    }
+}
+
+@code {
+    private readonly MovieCreateModel movieModel = new();
+    private string? errorMessage;
+    private string? successMessage;
+    private bool isSaving;
+   
+
+    private async Task HandleValidSubmit()
+    {
+        errorMessage = successMessage = null;
+        isSaving = true;
+
+        try
+        {
+
+            var movie = new Movie
+            {
+                MovieTitle = movieModel.MovieTitle!,
+                Genre = movieModel.Genre!,
+                DurationMinutes = movieModel.DurationInMinutes,
+                ReleaseDate = movieModel.ReleaseDate!.Value.ToString("yyyy-MM-dd"),
+                description = movieModel.Description,
+                poster_Url = movieModel.poster_Url,
+                banner_Url = movieModel.banner_Url
+            };
+
+            await MovieRepo.AddAsync(movie);
+
+            successMessage = "Filmen er gemt.";
+            Nav.NavigateTo("/Movies");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Kunne ikke gemme filmen: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    public class MovieCreateModel
+    {
+        [Required] public string? MovieTitle { get; set; }
+        [Required] public string? Genre { get; set; }
+        [Required][Range(1, 500)] public int DurationInMinutes { get; set; }
+        [Required] public DateTime? ReleaseDate { get; set; }
+        public string? Description { get; set; }
+        [Url] public string? poster_Url { get; set; }
+        public string? banner_Url { get; set; }
+    }
+
+}

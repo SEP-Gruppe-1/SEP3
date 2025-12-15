@@ -1,4 +1,3 @@
-﻿using System.Globalization;
 using ApiContract;
 using Entities;
 using Grpccinema;
@@ -38,7 +37,7 @@ public class ScreeningInRepository : IScreeningRepository
     public async Task<Screening> AddAsync(ScreeningCreateDto dto)
     {
         await _client.GetLayoutsAsync();
-
+        // Hent movie og hall via gRPC
         var movieDto = await _client.getMovieById(dto.MovieId);
         var hallDto = await _client.GetHallByIdAsync(dto.HallId);
 
@@ -182,10 +181,8 @@ public class ScreeningInRepository : IScreeningRepository
             return;
 
         // Unbook seats by sending empty phone
-        await _client.BookSeatsAsync(
-            screeningId,
-            booked.Select(b => b.id).ToList(),
-            ""
+        await _client.DeleteBookingAsync(
+           screeningId,phone
         );
     }
 

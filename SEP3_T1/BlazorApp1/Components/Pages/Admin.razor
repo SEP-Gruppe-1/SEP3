@@ -54,7 +54,7 @@ else
                     </button>
                 </td>
 
-            
+
                 <td>
                     @if (c.Email == loggedInAdminEmail)
                     {
@@ -74,10 +74,9 @@ else
             </tr>
         }
 
-        
+
         </tbody>
     </table>
-    
 }
 
 @if (showPopup)
@@ -97,13 +96,11 @@ else
             </div>
         </div>
     </div>
-    
-    
+
+
     <div class="modal-backdrop fade show"></div>
-        
-        
-    }
-    
+}
+
 @if (showDeletePopup && userToDelete != null)
 {
     <div class="modal fade show d-block" tabindex="-1">
@@ -136,10 +133,10 @@ else
 
     <div class="modal-backdrop fade show"></div>
 }
- 
 
-  
-    
+
+
+
 
 
 
@@ -148,14 +145,14 @@ else
     private List<CustomerDto>? customers;
 
     private CustomerDto? userToDelete;
-    private bool showDeletePopup = false;
+    private bool showDeletePopup;
 
     private string? loggedInAdminEmail;
     private bool mustLogoutAfterPopup = false;
     private string? loggedInAdminPhone;
     private Dictionary<string, string> originalRoles = new();
 
-    private bool showPopup = false;
+    private bool showPopup;
     private string popupMessage = "";
 
     protected override async Task OnInitializedAsync()
@@ -229,7 +226,6 @@ else
         }
     }
 
-   
 
     private void AskDelete(CustomerDto customer)
     {
@@ -272,4 +268,5 @@ else
             userToDelete = null;
         }
     }
+
 }

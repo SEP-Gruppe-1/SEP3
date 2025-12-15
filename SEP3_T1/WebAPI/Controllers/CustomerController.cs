@@ -124,7 +124,7 @@ public class CustomerController : ControllerBase
        
     }
     
-    [Authorize]
+
     [HttpGet("bookings/{phone}")]
     public async Task<IActionResult> GetBookingsForCustomer(
         string phone,

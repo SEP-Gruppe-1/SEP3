@@ -1,18 +1,25 @@
 ﻿@page "/Movies"
 @using ApiContract
+@using Entities
+@using RepositoryContracts
+@inject IMovieRepository MovieRepo
 @inject IMovieService MovieService
+
 @inject NavigationManager Nav
 
-<h3>Film i biografen</h3>
+
+
+<h3>MovieList</h3>
 
 @if (movies == null)
 {
-    <p>Henter film...</p>
+    <p>Henter Film...</p>
 }
 else if (!movies.Any())
 {
     <p>Ingen film fundet.</p>
 }
+
 else
 {
     <div class="container my-4">
@@ -20,15 +27,14 @@ else
             @foreach (var movie in movies)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm movie-card">
+                    <div class="card h-100 movie-card shadow-sm">
                         <div class="row g-0 h-100">
-                            
-                            
+                            <!-- Plakat -->
                             <div class="col-md-4 col-lg-5">
                                 <a @onclick="@(() => GoToMovieDetails(movie.MovieId))">
                                     <img src="@GetPoster(movie)"
                                          class="img-fluid movie-poster"
-                                         alt="@movie.MovieTitle" />
+                                         alt="@movie.MovieTitle"/>
                                 </a>
                             </div>
 
@@ -37,20 +43,20 @@ else
                                 <div class="card-body d-flex flex-column justify-content-between">
                                     <div>
                                         <h2 class="card-title">@movie.MovieTitle</h2>
-                                        <p><strong>Udgivelses dato:</strong> @movie.ReleaseDate</p>
-                                        <p><strong>Genre:</strong> @movie.Genre</p>
-                                        <p><strong>Spilletid:</strong> @movie.DurationMinutes min</p>
+                                        <p><strong>Release Date: </strong> @movie.ReleaseDate</p>
+                                        <p><strong>Genre: </strong> @movie.Genre</p>
+                                        <p><strong>Spilletid: </strong> @movie.DurationMinutes min</p>
+                                        <p>@movie.description</p>
                                     </div>
 
                                     <div class="text-end mt-3">
-                                        <button class="btn btn-primary"
+                                        <button class="btn btn-primary movie-details-btn"
                                                 @onclick="@(() => GoToMovieDetails(movie.MovieId))">
                                             Se detaljer
                                         </button>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -60,7 +66,7 @@ else
 }
 
 @code {
-    private List<MovieDto>? movies;
+    private IEnumerable<MovieDto>? movies;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,15 +75,12 @@ else
 
     private string GetPoster(MovieDto movie)
     {
-        var fileName = movie.MovieTitle
-            .ToLower()
-            .Replace(" ", "-") + ".png";
-
-        return $"images/posters/{fileName}";
+        return movie.poster_Url;
     }
-
+    
     private void GoToMovieDetails(int movieId)
     {
         Nav.NavigateTo($"/MovieDetails/{movieId}");
     }
+
 }

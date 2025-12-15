@@ -30,7 +30,7 @@ public class HttpScreeningService : IScreeningService
                ?? new List<CustomerBookingDto>();
     }
 
-    public async Task DeleteBookingAsync(int screeningId, string phone)
+    public async Task DeleteBookingSeatAsync(int screeningId, string phone)
     {
         await jwtHandler.AttachJwtAsync(http);
 

@@ -8,7 +8,6 @@ using RepositoryContracts;
 var builder = WebApplication.CreateBuilder(args);
 
 
-
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
@@ -21,16 +20,15 @@ builder.Services.AddScoped<IHallRepository, HallInDatabaseRepository>();
 
 builder.Services.AddAuthorization(options =>
 {
-
     options.AddPolicy("EmployeeOrAdmin", policy =>
         policy.RequireRole("Employee", "Admin"));
-    
+
     options.AddPolicy("AdminOnly", policy =>
         policy.RequireRole("Admin"));
-    
+
     options.AddPolicy("CustomerOnly", policy =>
         policy.RequireRole("Customer"));
-    
+
     options.AddPolicy("EmployeeOnly", policy =>
         policy.RequireRole("Employee"));
 });
@@ -45,14 +43,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
 
-        ValidIssuer = "YourIssuer", 
-        ValidAudience = "YourAudience", 
+        ValidIssuer = "YourIssuer",
+        ValidAudience = "YourAudience",
         IssuerSigningKey =
             new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes("SuperSecretThatIsMinimum32CharactersLong"))
     };
-
-    });
+});
 
 
 builder.Services.AddScoped<IScreeningRepository, ScreeningInRepository>();
@@ -74,7 +71,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 
 app.Run();

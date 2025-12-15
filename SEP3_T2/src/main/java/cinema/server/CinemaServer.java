@@ -32,6 +32,8 @@ private void run() throws Exception
       System.out.println("DB movies: " + movieDAO.getAllMovies().size());
       System.out.println("DB Halls "  + hallDAO.getAllHalls().size());
       System.out.println("i denne hall er det højste sæde "+ screeningDAO.getAllScreenings().get(0).getHall().getLayouts().getMaxLetter() + " " +screeningDAO.getAllScreenings().get(0).getHall().getLayouts().getMaxSeatInt()) ;
+      System.out.println("DB poster_Url" + movieDAO.getMovieById(1).getPoster_url());
+      System.out.println("DB banner_Url" + movieDAO.getMovieById(1).getBanner_url());
 
     Server server = ServerBuilder.forPort(9090)
         .addService(new CinemaServiceImpl(customerDAO, hallDAO, screeningDAO, movieDAO, layoutDAO, seatDAO)).build();

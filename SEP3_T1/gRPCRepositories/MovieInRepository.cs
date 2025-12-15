@@ -2,6 +2,8 @@
 using gRPCRepositories;
 using RepositoryContracts;
 
+namespace gRPCRepositories;
+
 public class MovieInRepository : IMovieRepository
 {
     private readonly CinemaServiceClient client;
@@ -24,9 +26,18 @@ public class MovieInRepository : IMovieRepository
         movies = await client.GetMoviesAsync();
         return movies;
     }
+    
+    public async Task<Movie> AddAsync(Movie movie)
+    {
+        
+        movie.MovieId = 0;
 
-    public Task<Movie> AddAsync(Movie movie)
-        => throw new NotImplementedException();
+        var saved = await client.SaveMovieAsync(movie);
+        
+        movies.Add(saved);
+
+        return saved;
+    }
 
     public Task UpdateAsync(Movie movie)
         => throw new NotImplementedException();
