@@ -244,8 +244,8 @@ UPDATE customer
 SET role = 'Admin'
 WHERE phone = '28510391';
 
-delete from Booking
-    WHERE customer_phone = '28510391';
+delete from customer
+    WHERE phone = '28510391';
 
 
 COMMIT;

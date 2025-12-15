@@ -6,4 +6,5 @@ public interface IMovieService
     Task<MovieDto?> GetMovieByIdAsync(int id);
 
     Task<List<MovieDto>> SearchMoviesAsync(string query);
+    Task CreateMovieAsync(MovieCreateDto dto);
 }

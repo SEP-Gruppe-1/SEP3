@@ -1,4 +1,5 @@
 ﻿using ApiContract;
+using Entities;
 using gRPCRepositories;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryContracts;
@@ -34,7 +35,10 @@ public class MovieController : ControllerBase
             m.MovieId,
             m.ReleaseDate,
             m.MovieTitle,
-            m.Genre
+            m.Genre,
+            m.description,
+            m.poster_Url,
+            m.banner_Url
         )));
     }
 
@@ -51,5 +55,24 @@ public class MovieController : ControllerBase
         {
             return NotFound();
         }
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateMovie([FromBody] MovieCreateDto dto)
+    {
+        var movie = new Movie
+        {
+            MovieTitle = dto.MovieTitle,
+            Genre = dto.Genre,
+            DurationMinutes = dto.DurationMinutes,
+            ReleaseDate = dto.ReleaseDate,
+            description = dto.Description,
+            poster_Url = dto.PosterUrl,
+            banner_Url = dto.BannerUrl
+        };
+
+        var saved = await movieRepository.AddAsync(movie);
+
+        return Ok(saved);
     }
 }

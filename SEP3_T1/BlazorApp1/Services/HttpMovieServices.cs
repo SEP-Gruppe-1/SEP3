@@ -49,4 +49,17 @@ public class HttpMovieService : IMovieService
 
         return await response.Content.ReadFromJsonAsync<List<MovieDto>>() ?? new();
     }
+    
+    public async Task CreateMovieAsync(MovieCreateDto dto)
+    {
+        await jwtHandler.AttachJwtAsync(http);
+
+        var response = await http.PostAsJsonAsync("api/movie", dto);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(error);
+        }
+    }
 }
