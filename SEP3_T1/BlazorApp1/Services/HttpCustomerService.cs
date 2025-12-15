@@ -43,7 +43,11 @@ public class HttpCustomerService : ICustomerService
             PropertyNameCaseInsensitive = true
         })!;
     }
-
+/// <summary>
+/// not implemented get customer by phone
+/// </summary>
+/// <returns></returns>
+/// <exception cref="NotImplementedException"></exception>
     public Task<CustomerDto?> GetByPhoneAsync()
     {
         throw new NotImplementedException();
@@ -124,6 +128,13 @@ public class HttpCustomerService : ICustomerService
         }
     }
     
+    /// <summary>
+    /// Get my bookings by phone
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    
     public async Task<List<CustomerBookingDto>> GetMyBookingsAsync(string phone)
     {
         await jwtHandler.AttachJwtAsync(httpClient);
@@ -138,7 +149,12 @@ public class HttpCustomerService : ICustomerService
         return JsonSerializer.Deserialize<List<CustomerBookingDto>>(content,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
     }
-
+/// <summary>
+/// Get single customer by phone
+/// </summary>
+/// <param name="phone"></param>
+/// <returns></returns>
+/// <exception cref="Exception"></exception>
     public async Task<CustomerDto?> GetSingleCustomerAsync(string phone)
     {
         await jwtHandler.AttachJwtAsync(httpClient);

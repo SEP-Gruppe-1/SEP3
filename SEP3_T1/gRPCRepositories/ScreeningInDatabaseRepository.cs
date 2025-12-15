@@ -7,12 +7,12 @@ using ApiContract;
 
 namespace gRPCRepositories;
 
-public class ScreeningInRepository : IScreeningRepository
+public class ScreeningInDatabaseRepository : IScreeningRepository
 {
     private readonly CinemaServiceClient _client;
     private List<Screening> screenings;
 
-    public ScreeningInRepository(CinemaServiceClient _client)
+    public ScreeningInDatabaseRepository(CinemaServiceClient _client)
     {
         this._client = _client;
         screenings = new List<Screening>();

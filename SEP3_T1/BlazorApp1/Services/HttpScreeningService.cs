@@ -14,6 +14,13 @@ public class HttpScreeningService : IScreeningService
         this.http = http;
         this.jwtHandler = jwtHandler;
     }
+    
+    /// <summary>
+    /// Get bookings for customer by phone
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
 
     public async Task<List<CustomerBookingDto>> GetBookingsForCustomerAsync(string phone)
     {
@@ -29,6 +36,13 @@ public class HttpScreeningService : IScreeningService
         return await response.Content.ReadFromJsonAsync<List<CustomerBookingDto>>() 
                ?? new List<CustomerBookingDto>();
     }
+    
+    /// <summary>
+    /// Delete booking seat
+    /// </summary>
+    /// <param name="screeningId"></param>
+    /// <param name="phone"></param>
+    /// <exception cref="Exception"></exception>
 
     public async Task DeleteBookingSeatAsync(int screeningId, string phone)
     {
@@ -41,11 +55,25 @@ public class HttpScreeningService : IScreeningService
             throw new Exception("Kunne ikke slette booking.");
         }
     }
+    
+    /// <summary>
+    /// Not implemented delete booking
+    /// </summary>
+    /// <param name="bookingToDelete"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
 
     public Task DeleteBookingAsync(CustomerBookingDto bookingToDelete)
     {
         throw new NotImplementedException();
     }
+    
+    /// <summary>
+    /// get bookings by phone
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
 
     public async Task<List<CustomerBookingDto>> GetBookingsByPhoneAsync(string phone)
     {
@@ -59,12 +87,25 @@ public class HttpScreeningService : IScreeningService
         return await response.Content.ReadFromJsonAsync<List<CustomerBookingDto>>() 
                ?? new List<CustomerBookingDto>();
     }
+    
+    /// <summary>
+    /// get screening by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task<ScreenDto> GetScreeningAsync(int id)
     {
         await jwtHandler.AttachJwtAsync(http);
         return await http.GetFromJsonAsync<ScreenDto>($"api/screening/{id}")
                ?? throw new Exception("Could not load screening.");
     }
+    
+    /// <summary>
+    /// Create screening
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <exception cref="Exception"></exception>
 
     public async Task CreateScreeningAsync(ScreeningCreateDto dto)
     {
@@ -84,6 +125,14 @@ public class HttpScreeningService : IScreeningService
             throw new Exception($"Error adding Customer: {responseContent}");
     
     }
+    
+    /// <summary>
+    /// Book seats for screening
+    /// </summary>
+    /// <param name="screeningId"></param>
+    /// <param name="seatIds"></param>
+    /// <param name="phone"></param>
+    /// <exception cref="Exception"></exception>
 
     public async Task BookSeatsAsync(int screeningId, List<int> seatIds, string phone)
     {

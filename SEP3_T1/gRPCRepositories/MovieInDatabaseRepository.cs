@@ -4,12 +4,12 @@ using RepositoryContracts;
 
 namespace gRPCRepositories;
 
-public class MovieInRepository : IMovieRepository
+public class MovieInDatabaseRepository : IMovieRepository
 {
     private readonly CinemaServiceClient client;
     private List<Movie> movies = new();
 
-    public MovieInRepository(CinemaServiceClient client)
+    public MovieInDatabaseRepository(CinemaServiceClient client)
     {
         this.client = client;
     }

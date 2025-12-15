@@ -34,8 +34,8 @@ builder.Services.AddScoped(sp => new HttpClient
 builder.Services.AddScoped<ICustomerService, HttpCustomerService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerInDatabaseRepository>();
 builder.Services.AddSingleton(new CinemaServiceClient("http://localhost:9090"));
-builder.Services.AddScoped<IMovieRepository, MovieInRepository>();
-builder.Services.AddScoped<IScreeningRepository, ScreeningInRepository>();
+builder.Services.AddScoped<IMovieRepository, MovieInDatabaseRepository>();
+builder.Services.AddScoped<IScreeningRepository, ScreeningInDatabaseRepository>();
 builder.Services.AddScoped<IScreeningService, HttpScreeningService>();
 
 

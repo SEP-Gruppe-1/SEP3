@@ -52,8 +52,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 
 
-builder.Services.AddScoped<IScreeningRepository, ScreeningInRepository>();
-builder.Services.AddScoped<IMovieRepository, MovieInRepository>();
+builder.Services.AddScoped<IScreeningRepository, ScreeningInDatabaseRepository>();
+builder.Services.AddScoped<IMovieRepository, MovieInDatabaseRepository>();
 
 var app = builder.Build();
 

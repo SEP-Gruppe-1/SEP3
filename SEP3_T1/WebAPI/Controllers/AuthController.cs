@@ -20,6 +20,11 @@ public class AuthController : ControllerBase
         ICustomerRepository = customerRepository;
     }
 
+    /// <summary>
+    /// login method to authenticate user and generate JWT
+    /// </summary>
+    /// <param name="login"></param>
+    /// <returns></returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto login)
     {
