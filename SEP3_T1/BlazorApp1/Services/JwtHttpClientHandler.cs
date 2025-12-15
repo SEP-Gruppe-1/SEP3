@@ -1,30 +1,35 @@
-﻿using System.Net.Http.Headers;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
+using System.Net.Http.Headers;
 
-
-/// <summary>
-/// JWT HttpClient Handler
-/// </summary>
 public class JwtHttpClientHandler
 {
     private readonly IJSRuntime js;
+    private bool jsReady;
 
     public JwtHttpClientHandler(IJSRuntime js)
     {
         this.js = js;
     }
-    
-    /// <summary>
-    /// Attach JWT token to HttpClientA
-    /// </summary>
-    /// <param name="client"></param>
+
+    // KALDES EFTER FØRSTE RENDER
+    public void MarkJsReady()
+    {
+        jsReady = true;
+    }
 
     public async Task AttachJwtAsync(HttpClient client)
     {
-        var token = await js.InvokeAsync<string>("localStorage.getItem", "jwt");
+        if (!jsReady)
+            return; // 👈 IGNORER under prerender
+
+        var token = await js.InvokeAsync<string>(
+            "localStorage.getItem", "jwt"
+        );
 
         if (!string.IsNullOrWhiteSpace(token))
+        {
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
+        }
     }
 }

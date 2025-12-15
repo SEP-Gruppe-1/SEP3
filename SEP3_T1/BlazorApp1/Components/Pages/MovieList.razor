@@ -4,6 +4,7 @@
 @using RepositoryContracts
 @inject IMovieRepository MovieRepo
 @inject IMovieService MovieService
+@inject JwtHttpClientHandler JwtHandler
 
 @inject NavigationManager Nav
 
@@ -81,6 +82,14 @@ else
     private void GoToMovieDetails(int movieId)
     {
         Nav.NavigateTo($"/MovieDetails/{movieId}");
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JwtHandler.MarkJsReady();
+        }
     }
 
 }

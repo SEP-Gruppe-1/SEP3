@@ -6,6 +6,8 @@
 @inject IScreeningRepository ScreeningRepo
 @inject IMovieRepository MovieRepo
 @inject NavigationManager Nav
+@inject JwtHttpClientHandler JwtHandler
+
 
 <h3>Filmdetaljer</h3>
 
@@ -110,4 +112,13 @@ else
     {
         Nav.NavigateTo($"/order/{screeningId}");
     }
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JwtHandler.MarkJsReady();
+        }
+    }
+
 }

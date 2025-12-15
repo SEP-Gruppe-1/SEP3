@@ -1,6 +1,8 @@
 ﻿@page "/add-movie"
 @using System.ComponentModel.DataAnnotations
 @using ApiContract
+@inject JwtHttpClientHandler JwtHandler
+
 @using Entities
 @using RepositoryContracts
 @inject IMovieService MovieService
@@ -139,5 +141,14 @@ else
         [Url] public string? poster_Url { get; set; }
         public string? banner_Url { get; set; }
     }
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JwtHandler.MarkJsReady();
+        }
+    }
+
 
 }

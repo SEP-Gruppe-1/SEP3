@@ -7,6 +7,8 @@
 @inject ICustomerService CustomerService
 @inject IScreeningService ScreeningService
 @inject NavigationManager Nav
+@inject JwtHttpClientHandler JwtHandler
+
 
 <h3>Min Side</h3>
 
@@ -207,4 +209,13 @@ else
         bookingToDelete = null;
         showDeletePopup = false;
     }
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JwtHandler.MarkJsReady();
+        }
+    }
+
 }
