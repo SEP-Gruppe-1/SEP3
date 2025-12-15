@@ -150,9 +150,6 @@ EXECUTE FUNCTION update_seat_layout_stats();
 
 BEGIN;
 
-insert into customer(name, password, email, phone, role)
-values('Admin', 'Admin123!', 'Admin@admin.com','12345678', 'Admin');
-
 WITH small AS (
     INSERT INTO seat_layout(name) VALUES ('SmallHall') RETURNING layout_id
 )
@@ -214,38 +211,5 @@ VALUES
         time '17:00:00',
         (SELECT COUNT(*) FROM seat WHERE hall_id = (SELECT hall_id FROM hall WHERE hall_number = 2))
     );
-
--- Opret kunder
-INSERT INTO Customer(name, password, email, phone)
-VALUES
-    ('Alice Example', 'Str0ng!Pass', 'alice@example.com', '5550001'),
-    ('Bob Example',   'An0ther$1',   'bob@example.com',   '5550002');
-
--- Alice booker A1 og A2 i hall 1
-WITH chosen_screening AS (
-    SELECT screening_id FROM Screening
-    WHERE movie_id = (SELECT movie_id FROM movie WHERE title = 'The Matrix')
-      AND hall_id = (SELECT hall_id FROM hall WHERE hall_number = 1)
-),
-     b AS (
-         INSERT INTO Booking(customer_phone, screening_id, seats_booked)
-             VALUES ('5550001', (SELECT screening_id FROM chosen_screening), 2)
-             RETURNING booking_id
-     )
-INSERT INTO BookingSeat(booking_id, seat_id)
-SELECT b.booking_id, s.seat_id
-FROM b
-         JOIN seat s ON s.hall_id = (SELECT hall_id FROM hall WHERE hall_number = 1)
-WHERE (s.row_letter, s.seat_number) IN ( ('A',1), ('A',2) );
-;
-
-
-UPDATE customer
-SET role = 'Admin'
-WHERE phone = '28510391';
-
-delete from Booking
-    WHERE customer_phone = '28510391';
-
 
 COMMIT;

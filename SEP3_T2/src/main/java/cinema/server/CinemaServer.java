@@ -19,8 +19,10 @@ public class CinemaServer
     new CinemaServer().run();
   }
 
-private void run() throws Exception
+  private void run() throws Exception
   {
+    System.out.println("Starting Cinema persistence server...");
+
     customerDAO = CustomerDAOImpl.getInstance();
     hallDAO = HallDAOImpl.getInstance();
     screeningDAO = ScreeningDAOImpl.getInstance();
@@ -28,15 +30,17 @@ private void run() throws Exception
     layoutDAO = LayoutDAOImpl.getInstance();
     seatDAO = SeatDAOImpl.getInstance();
 
-      System.out.println("DB screenings: " + screeningDAO.getAllScreenings().size());
-      System.out.println("DB movies: " + movieDAO.getAllMovies().size());
-      System.out.println("DB Halls "  + hallDAO.getAllHalls().size());
-      System.out.println("i denne hall er det højste sæde "+ screeningDAO.getAllScreenings().get(0).getHall().getLayouts().getMaxLetter() + " " +screeningDAO.getAllScreenings().get(0).getHall().getLayouts().getMaxSeatInt()) ;
-      System.out.println("DB poster_Url" + movieDAO.getMovieById(1).getPoster_url());
-      System.out.println("DB banner_Url" + movieDAO.getMovieById(1).getBanner_url());
+    if (customerDAO.getCustomerByPhone("12345678") == null)
+    {
+      customerDAO.createCustomer(
+          new cinema.model.Customer("admin", "admin", "admin@cinema.com",
+              "12345678", "Admin"));
+      System.out.println("Admin user created with phone: 12345678 and password: admin");
+    }
 
-    Server server = ServerBuilder.forPort(9090)
-        .addService(new CinemaServiceImpl(customerDAO, hallDAO, screeningDAO, movieDAO, layoutDAO, seatDAO)).build();
+    Server server = ServerBuilder.forPort(9090).addService(
+        new CinemaServiceImpl(customerDAO, hallDAO, screeningDAO, movieDAO,
+            layoutDAO, seatDAO)).build();
 
     server.start();
     server.awaitTermination();
