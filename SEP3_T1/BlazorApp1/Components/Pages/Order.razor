@@ -32,7 +32,7 @@ else
         <div class="container py-4">
             <div class="order-header-inner">
                 <!-- Poster -->
-                <img src="@GetPoster(screening.movie)" alt="@screening.movie.MovieTitle"
+                <img src="@screening.movie.poster_Url" alt="@screening.movie.MovieTitle"
                      class="img-fluid rounded shadow-sm order-poster"/>
                 <!-- Info -->
                 <div>
@@ -252,15 +252,6 @@ else
             }
 
             return string.Join(" ", classes);
-        }
-
-        private string GetPoster(Movie movie)
-        {
-            var fileName = movie.MovieTitle
-                .ToLower()
-                .Replace(" ", "-") + ".png";
-
-            return $"images/posters/{fileName}";
         }
 
         private async Task ConfirmSelection()
