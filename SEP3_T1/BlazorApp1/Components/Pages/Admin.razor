@@ -186,21 +186,7 @@ else
 
             originalRoles[phone] = newRole;
 
-// Hvis admin ændrer sin EGEN rolle
-            if (phone == loggedInAdminPhone)
-            {
-                popupMessage =
-                    $"Din rolle er ændret fra '{oldRole}' til '{newRole}'.\n\n" +
-                    "Du vil blive logget ud.";
 
-                mustLogoutAfterPopup = true;
-            }
-            else
-            {
-                popupMessage = $"Rolle ændret fra '{oldRole}' til '{newRole}'.";
-            }
-
-            showPopup = true;
         }
         catch (Exception ex)
         {

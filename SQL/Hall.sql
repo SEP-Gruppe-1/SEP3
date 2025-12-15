@@ -1,6 +1,7 @@
 -- Opret schema og sæt search path
 CREATE SCHEMA IF NOT EXISTS cinema;
-SET search_path TO cinema;
+SET search_path TO
+    cinema;
 
 
 DROP TABLE IF EXISTS bookingseat CASCADE;

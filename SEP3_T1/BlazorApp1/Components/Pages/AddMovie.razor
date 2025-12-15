@@ -54,7 +54,7 @@ else
 
         <!-- Movie Poster Upload -->
         <div class="mb-3">
-            <label class="form-label"><strong>Poster:</strong></label>
+            <label class="form-label"><strong>Poster:</strong> Indsæt poster url</label>
             <InputText class="form-control" @bind-Value="movieModel.poster_Url"/>
             <ValidationMessage For="@(() => movieModel.poster_Url)"/>
             @if (!string.IsNullOrWhiteSpace(movieModel.poster_Url))
@@ -67,7 +67,7 @@ else
         
         <!-- Movie Banner Upload -->
         <div class="mb-3">
-            <label class="form-label"><strong>Banner:</strong></label>
+            <label class="form-label"><strong>Banner:</strong> Indsæt banner url</label>
             <InputText class="form-control" @bind-Value="movieModel.banner_Url"/>
             <ValidationMessage For="@(() => movieModel.banner_Url)"/>
             @if (!string.IsNullOrWhiteSpace(movieModel.banner_Url))
