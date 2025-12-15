@@ -1,8 +1,9 @@
+using System.Globalization;
 using ApiContract;
 using Entities;
 using Grpccinema;
 using RepositoryContracts;
-
+using ApiContract;
 
 namespace gRPCRepositories;
 
@@ -15,6 +16,23 @@ public class ScreeningInRepository : IScreeningRepository
     {
         this._client = _client;
         screenings = new List<Screening>();
+    }
+
+    private static TimeOnly ParseFlexibleTime(string input)
+    {
+        var normalized = input.Trim().Replace('.', ':');
+
+        if (TimeOnly.TryParseExact(
+                normalized,
+                new[] { "HH:mm", "HH:mm:ss" },
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var time))
+        {
+            return time;
+        }
+
+        throw new FormatException($"Invalid time format: '{input}'");
     }
 
     public async Task<Screening> AddAsync(ScreeningCreateDto dto)
@@ -33,24 +51,28 @@ public class ScreeningInRepository : IScreeningRepository
             ReleaseDate = movieDto.ReleaseDate
         };
 
-        var hall = Hall.GetInstance(id: hallDto.Id);
-     
+        var hall = Hall.GetInstance(hallDto.Id);
 
-        // Lav screening objekt
+        var startTime = ParseFlexibleTime(dto.StartTime);
+
+
+        var date = DateOnly.ParseExact(
+            dto.Date,
+            "yyyy-MM-dd",
+            CultureInfo.InvariantCulture
+        );
+
         var screening = new Screening
         {
             movie = movie,
             hall = hall,
             hallId = hall.Id,
-            startTime = TimeOnly.Parse(dto.StartTime),
-            date = DateOnly.Parse(dto.Date),
+            startTime = startTime,
+            date = date,
             availableSeats = hall.Seats.Count
         };
 
-        // Gem via gRPC
-        var saved = await _client.SaveScreeningAsync(screening);
-    
-        return saved;
+        return await _client.SaveScreeningAsync(screening);
     }
 
 

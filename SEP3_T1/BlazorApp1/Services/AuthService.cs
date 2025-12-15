@@ -1,28 +1,18 @@
-﻿namespace BlazorApp1.Services;
-
-/// <summary>
-/// Authservice to handle login and token retrieval
-/// </summary>
+﻿using Microsoft.JSInterop;
 
 public class AuthService
 {
     private readonly HttpClient http;
+    private readonly IJSRuntime js;
 
-    public AuthService()
+    public AuthService(IJSRuntime js)
     {
+        this.js = js;
         http = new HttpClient
         {
             BaseAddress = new Uri("http://localhost:5099/")
         };
     }
-    
-    /// <summary>
-    /// login and return JWT token
-    /// </summary>
-    /// <param name="phone"></param>
-    /// <param name="password"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
 
     public async Task<string> LoginAndReturnToken(string? phone, string password)
     {
@@ -31,6 +21,7 @@ public class AuthService
             Phone = phone,
             Password = password
         });
+
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync();
@@ -38,15 +29,20 @@ public class AuthService
         }
 
         var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
-        return tokenResponse?.Token ?? "No Token Recieved";
+        
+        await js.InvokeVoidAsync("localStorage.setItem", "jwt", tokenResponse!.Token);
+
+        return tokenResponse.Token;
     }
-    
-    /// <summary>
-    /// Token response model
-    /// </summary>
+
+  
+    public async Task LogoutAsync()
+    {
+        await js.InvokeVoidAsync("localStorage.removeItem", "jwt");
+    }
 
     private class TokenResponse
     {
-        public string Token { get; set; }
+        public string Token { get; set; } = "";
     }
 }
