@@ -5,6 +5,7 @@
 @inject TokenAuthenticationStateProvider TokenProvider
 @inject IJSRuntime JsRuntime
 @inject NavigationManager Nav
+@inject JwtHttpClientHandler JwtHandler
 
 @inject AuthenticationStateProvider AuthStateProvider
 
@@ -70,5 +71,14 @@
             message = ex.Message;
         }
     }
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JwtHandler.MarkJsReady();
+        }
+    }
+
 
 }

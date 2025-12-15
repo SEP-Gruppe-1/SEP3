@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 
 @inject AuthenticationStateProvider AuthStateProvider
+@inject JwtHttpClientHandler JwtHandler
 
 @inject NavigationManager Nav
 @inject ICustomerService CustomerService
@@ -139,6 +140,13 @@
         if (user.Identity?.IsAuthenticated == true)
         {
             Nav.NavigateTo("/", true);
+        }
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JwtHandler.MarkJsReady();
         }
     }
 

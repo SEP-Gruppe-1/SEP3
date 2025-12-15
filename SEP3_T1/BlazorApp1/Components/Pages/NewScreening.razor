@@ -5,6 +5,8 @@
 @using RepositoryContracts
 @inject IScreeningService Service
 @inject IMovieService MovieService
+@inject JwtHttpClientHandler JwtHandler
+
 <h3>Opret ny filmvisning</h3>
 
 <div class="card mb-4">
@@ -207,6 +209,13 @@
         newScreening = new();
         selectedMovie = null;
         movieSearch = "";
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JwtHandler.MarkJsReady();
+        }
     }
 
     

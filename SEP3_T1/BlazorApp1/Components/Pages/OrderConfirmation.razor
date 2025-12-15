@@ -6,6 +6,8 @@
 @inject ICustomerService CustomerService
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
+@inject JwtHttpClientHandler JwtHandler
+
 
 <h3>Tak for din bestilling!</h3>
 
@@ -90,4 +92,6 @@ else
     {
         Navigation.NavigateTo("/customer");
     }
+    
+    
 }

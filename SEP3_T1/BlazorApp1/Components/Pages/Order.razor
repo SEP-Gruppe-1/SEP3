@@ -9,6 +9,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject BlazorApp1.Services.TokenAuthenticationStateProvider TokenProvider
 @inject IScreeningService ScreeningService
+@inject JwtHttpClientHandler JwtHandler
 
 @inject IJSRuntime Js
 @using RepositoryContracts
@@ -383,6 +384,13 @@ else
 
             // Redirect til bekræftelsesside
             Nav.NavigateTo($"/order-confirmation/{orderNumber}/{screeningId}");
+        }
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                JwtHandler.MarkJsReady();
+            }
         }
 
 
