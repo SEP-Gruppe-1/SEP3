@@ -74,6 +74,10 @@
     private CreateCustomerFromModel newCustomer = new();
     private bool isBusy;
     private string? errorMessage;
+    
+    /// <summary>
+    /// Class representing the model for creating a new customer.
+    /// </summary>
 
     private class CreateCustomerFromModel
     {
@@ -102,6 +106,10 @@
         [Compare(nameof(Password), ErrorMessage = "Adgangskode matcher ikke")]
         public string? ConfirmPassword { get; set; }
     }
+    
+    /// <summary>
+    /// saves a new customer using the CustomerService and navigates to the home page upon success.
+    /// </summary>
 
     private async Task SaveCustomerAsync()
     {
@@ -131,7 +139,9 @@
             isBusy = false;
         }
     }
-
+/// <summary>
+/// on component initialization, checks if the user is already authenticated and redirects to the home page if so.
+/// </summary>
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();

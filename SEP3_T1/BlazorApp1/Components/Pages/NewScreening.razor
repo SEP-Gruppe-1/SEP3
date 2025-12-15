@@ -119,6 +119,10 @@
     private bool isBusy;
     private string? errorMessage;
     
+    /// <summary>
+    /// Class used to bind the new screening form
+    /// </summary>
+    
     private class createScreeningFromModel
     {
        
@@ -133,6 +137,10 @@
         public string? Date { get; set; }
 
     }
+    
+    /// <summary>
+    /// Saves the new screening
+    /// </summary>
     
     private async Task SaveScreeningAsync()
     {
@@ -180,6 +188,11 @@
         }
     }
     
+    /// <summary>
+    /// Searches for movies based on user input
+    /// </summary>
+    /// <param name="e"></param>
+    
     private async Task OnMovieSearch(ChangeEventArgs e)
     {
         movieSearch = e.Value?.ToString() ?? "";
@@ -192,6 +205,11 @@
 
         movieResults = await MovieService.SearchMoviesAsync(movieSearch);
     }
+    
+    /// <summary>
+    /// Chooses a movie from the search results
+    /// </summary>
+    /// <param name="movie"></param>
 
     private void SelectMovie(MovieDto movie)
     {
@@ -199,6 +217,10 @@
         movieResults.Clear();
         errorMessage = null;
     }
+    
+    /// <summary>
+    /// Closes the success popup
+    /// </summary>
     
     private void CloseSuccessPopup()
     {
@@ -210,6 +232,13 @@
         selectedMovie = null;
         movieSearch = "";
     }
+    
+    
+    /// <summary>
+    /// On after render lifecycle method to mark JS as ready
+    /// </summary>
+    /// <param name="firstRender"></param>
+    /// 
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)

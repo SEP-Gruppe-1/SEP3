@@ -116,6 +116,10 @@ else
     private bool loading = true;
     private bool showDeletePopup = false;
     private CustomerBookingDto? bookingToDelete;
+    
+    /// <summary>
+    /// initializes the component and subscribes to authentication state changes.
+    /// </summary>
 
     protected override async Task OnInitializedAsync()
     {
@@ -124,6 +128,11 @@ else
         
      
     }
+    
+    /// <summary>
+    /// Async handler that reloads customer data when the authentication state changes.
+    /// </summary>
+    /// <param name="task"></param>
 
     private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
     {
@@ -131,10 +140,9 @@ else
         StateHasChanged();
     }
 
-    public void Dispose()
-    {
-        Auth.AuthenticationStateChanged -= OnAuthenticationStateChanged;
-    }
+   /// <summary>
+   /// Tries to load customer data and bookings based on the authenticated user's phone number.
+   /// </summary>
 
     private async Task TryLoadDataAsync()
     {
@@ -152,7 +160,7 @@ else
 
         try
         {
-            // PARALLELT!
+            
             var customerTask = CustomerService.GetSingleCustomerAsync(phone);
             var bookingsTask = ScreeningService.GetBookingsByPhoneAsync(phone);
 
@@ -173,23 +181,41 @@ else
             loading = false;
         }
     }
+    
+    /// <summary>
+    /// Edits a booking by navigating to the order page for the specified screening ID.
+    /// </summary>
+    /// <param name="booking"></param>
 
     private void EditBooking(CustomerBookingDto booking)
     {
         Nav.NavigateTo($"/order/{booking.ScreeningId}");
     }
+    
+    /// <summary>
+    /// Asks for confirmation to delete a booking.
+    /// </summary>
+    /// <param name="booking"></param>
 
     private void AskDelete(CustomerBookingDto booking)
     {
         bookingToDelete = booking;
         showDeletePopup = true;
     }
+    
+    /// <summary>
+    /// cancels the delete operation and hides the confirmation popup.
+    /// </summary>
 
     private void CancelDelete()
     {
         bookingToDelete = null;
         showDeletePopup = false;
     }
+    
+    /// <summary>
+    /// Confirms the deletion of a booking and updates the UI accordingly.
+    /// </summary>
 
     private async Task ConfirmDelete()
     {
@@ -209,6 +235,11 @@ else
         bookingToDelete = null;
         showDeletePopup = false;
     }
+    
+    /// <summary>
+    /// on after render lifecycle method to mark JS as ready
+    /// </summary>
+    /// <param name="firstRender"></param>
     
     protected override void OnAfterRender(bool firstRender)
     {

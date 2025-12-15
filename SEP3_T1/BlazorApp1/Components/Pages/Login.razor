@@ -44,7 +44,12 @@
     private string password = "";
     private string jwt = "";
     private string message = "";
-
+    
+    
+    
+/// <summary>
+/// On component initialization, check if the user is already authenticated and redirect to /movies if so.
+/// </summary>
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -55,7 +60,9 @@
             Nav.NavigateTo("/movies", true);
         }
     }
-
+    /// <summary>
+    /// Login method that authenticates the user and stores the JWT token in local storage.
+    /// </summary>
     private async Task LoginMethodAsync()
     {
         try
@@ -71,6 +78,11 @@
             message = ex.Message;
         }
     }
+    
+    /// <summary>
+    /// Override of OnAfterRender to mark the JWT handler as ready after the first render.
+    /// </summary>
+    /// <param name="firstRender"></param>
     
     protected override void OnAfterRender(bool firstRender)
     {

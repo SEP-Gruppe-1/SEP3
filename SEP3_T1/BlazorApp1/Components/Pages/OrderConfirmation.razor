@@ -56,15 +56,16 @@ else
     private ScreenDto? screening;
     private List<string> mySeats = new();
     private bool loading = true;
-
+/// <summary>
+/// on component initialization, fetch screening and booking details.
+/// </summary>
     protected override async Task OnInitializedAsync()
     {
         loading = true;
 
        
         screening = await ScreeningService.GetScreeningAsync(screeningId);
-
-        // 2. Hent brugerens telefonnummer
+        
         var auth = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = auth.User;
         string? phone = user.FindFirst("phone")?.Value;
@@ -75,7 +76,7 @@ else
             return;
         }
 
-        // 3. Hent kundens bookinger
+        
         var bookings = await ScreeningService.GetBookingsByPhoneAsync(phone);
 
         var thisBooking = bookings.FirstOrDefault(b => b.ScreeningId == screeningId);
@@ -87,7 +88,9 @@ else
 
         loading = false;
     }
-
+/// <summary>
+/// go to the customer's page
+/// </summary>
     private void GoToMyPage()
     {
         Navigation.NavigateTo("/customer");

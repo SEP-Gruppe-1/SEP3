@@ -2,9 +2,6 @@
 @using System.ComponentModel.DataAnnotations
 @using ApiContract
 @inject JwtHttpClientHandler JwtHandler
-
-@using Entities
-@using RepositoryContracts
 @inject IMovieService MovieService
 @inject NavigationManager Nav
 
@@ -17,45 +14,44 @@ else
     <EditForm Model="movieModel" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
-        <!-- Movie Title -->
+       
         <div class="mb-3">
             <label class="form-label"><strong>Titel:</strong></label>
             <InputText class="form-control" @bind-Value="movieModel.MovieTitle"/>
             <ValidationMessage For="@(() => movieModel.MovieTitle)"/>
         </div>
 
-        <!-- Movie Genre -->
+        
         <div class="mb-3">
             <label class="form-label"><strong>Genre:</strong></label>
             <InputText class="form-control" @bind-Value="movieModel.Genre"/>
             <ValidationMessage For="@(() => movieModel.Genre)"/>
         </div>
 
-        <!-- Movie Duration -->
         <div class="mb-3">
             <label class="form-label"><strong>Spilletid (min):</strong></label>
             <InputNumber class="form-control" @bind-Value="movieModel.DurationInMinutes"/>
             <ValidationMessage For="@(() => movieModel.DurationInMinutes)"/>
         </div>
 
-        <!-- Movie Release Date -->
+        
         <div class="mb-3">
             <label class="form-label"><strong>Udgivelsesdato:</strong></label>
-            <InputDate class="form-control" @bind-Value="movieModel.ReleaseDate"/>
+            <InputDate class="form-control" @bind-Value="movieModel.ReleaseDate" />
             <ValidationMessage For="@(() => movieModel.ReleaseDate)"/>
 
         </div>
 
-        <!-- Movie Description -->
+       
         <div class="mb-3">
             <label class="form-label"><strong>Beskrivelse:</strong></label>
-            <InputTextArea class="form-control" rows="4" @bind-Value="movieModel.Description"/>
+            <InputTextArea class="form-control" rows="4" @bind-Value="movieModel.Description" />
         </div>
 
-        <!-- Movie Poster Upload -->
+       
         <div class="mb-3">
-            <label class="form-label"><strong>Poster:</strong> Indsæt poster url</label>
-            <InputText class="form-control" @bind-Value="movieModel.poster_Url"/>
+            <label class="form-label"><strong>Poster:</strong> </label>
+            <InputText class="form-control" @bind-Value="movieModel.poster_Url" placeholder="Indsæt poster-URL (fx https://...)" />
             <ValidationMessage For="@(() => movieModel.poster_Url)"/>
             @if (!string.IsNullOrWhiteSpace(movieModel.poster_Url))
             {
@@ -65,11 +61,10 @@ else
             }
         </div>
         
-        <!-- Movie Banner Upload -->
         <div class="mb-3">
-            <label class="form-label"><strong>Banner:</strong> Indsæt banner url</label>
-            <InputText class="form-control" @bind-Value="movieModel.banner_Url"/>
-            <ValidationMessage For="@(() => movieModel.banner_Url)"/>
+            <label class="form-label"><strong>Banner:</strong></label>
+            <InputText class="form-control" @bind-Value="movieModel.banner_Url" placeholder="Indsæt banner-URL (fx https://...)"/>
+            <ValidationMessage For="@(() => movieModel.banner_Url)"/> 
             @if (!string.IsNullOrWhiteSpace(movieModel.banner_Url))
             {
                 <div class="mt-2">
@@ -99,6 +94,9 @@ else
     private string? successMessage;
     private bool isSaving;
    
+    /// <summary>
+    /// handle valid form submission to create a new movie
+    /// </summary>
 
     private async Task HandleValidSubmit()
     {
@@ -131,6 +129,9 @@ else
         }
     }
 
+    /// <summary>
+    /// Class representing the movie creation form model
+    /// </summary>
     public class MovieCreateModel
     {
         [Required] public string? MovieTitle { get; set; }
@@ -141,7 +142,10 @@ else
         [Url] public string? poster_Url { get; set; }
         public string? banner_Url { get; set; }
     }
-    
+    /// <summary>
+    /// on after render lifecycle method to mark JS as ready
+    /// </summary>
+    /// <param name="firstRender"></param>
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)

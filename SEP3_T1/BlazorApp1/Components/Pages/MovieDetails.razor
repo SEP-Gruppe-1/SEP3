@@ -65,6 +65,11 @@ else
     private bool isLoading = true;
 
     private Dictionary<DateOnly, List<Screening>>? groupedScreenings;
+    
+    
+    /// <summary>
+    /// On component initialization, fetch movie details and screenings
+    /// </summary>
 
     protected override async Task OnInitializedAsync()
     {
@@ -92,11 +97,20 @@ else
             isLoading = false;
         }
     }
-
+/// <summary>
+/// gets the banner URL for the given movie.
+/// </summary>
+/// <param name="movie"></param>
+/// <returns></returns>
     private string GetBanner(MovieDto movie)
     {
         return movie.banner_Url;
     }
+    /// <summary>
+    /// gets a label for the given date.
+    /// </summary>
+    /// <param name="date"></param>
+    /// <returns></returns>
 
     private string GetDayLabel(DateOnly date)
     {
@@ -107,11 +121,19 @@ else
 
         return date.ToString("ddd d/M");
     }
-
+/// <summary>
+/// goes to the order page for the given screening ID.
+/// </summary>
+/// <param name="screeningId"></param>
     private void GoToOrder(int screeningId)
     {
         Nav.NavigateTo($"/order/{screeningId}");
     }
+    
+    /// <summary>
+    /// on after render lifecycle method to mark JS as ready
+    /// </summary>
+    /// <param name="firstRender"></param>
     
     protected override void OnAfterRender(bool firstRender)
     {

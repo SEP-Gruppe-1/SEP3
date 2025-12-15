@@ -68,22 +68,38 @@ else
 
 @code {
     private IEnumerable<MovieDto>? movies;
+    
+    /// <summary>
+    /// on component initialization, fetch all movies
+    /// </summary>
 
     protected override async Task OnInitializedAsync()
     {
         movies = await MovieService.GetAllMoviesAsync();
     }
+    /// <summary>
+    /// gets the poster URL for a movie
+    /// </summary>
+    /// <param name="movie"></param>
+    /// <returns></returns>
 
     private string GetPoster(MovieDto movie)
     {
         return movie.poster_Url;
     }
     
+    /// <summary>
+    /// go to movie details page for the given movie ID
+    /// </summary>
+    /// <param name="movieId"></param>
+    
     private void GoToMovieDetails(int movieId)
     {
         Nav.NavigateTo($"/MovieDetails/{movieId}");
     }
-
+    /// <summary>
+    /// On after render, mark the JWT handler as ready on first render
+    /// </summary>
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)

@@ -157,6 +157,10 @@ else
     private bool showPopup;
     private string popupMessage = "";
 
+    
+    /// <summary>
+    /// initializes the component by fetching the logged-in admin's phone number and loading the list of customers.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -168,6 +172,12 @@ else
         customers = await CustomerService.GetCustomers();
         originalRoles = customers.ToDictionary(c => c.Phone, c => c.Role);
     }
+    
+    /// <summary>
+    /// opdates the role of a customer identified by their phone number.
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <param name="newRole"></param>
 
     private async Task UpdateRole(string phone, string newRole)
     {
@@ -195,6 +205,12 @@ else
         }
 
 }
+    
+    /// <summary>
+    /// OnRoleChanged updates the role of a customer in the local list when the role selection changes.
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="newRole"></param>
 
 
     private void OnRoleChanged(CustomerDto c, string newRole)
@@ -213,6 +229,11 @@ else
             Navigation.NavigateTo("/login", forceLoad: true);
         }
     }
+    
+    /// <summary>
+    /// Declares the intention to delete a customer and shows the delete confirmation popup.
+    /// </summary>
+    /// <param name="customer"></param>
 
 
     private void AskDelete(CustomerDto customer)
@@ -226,6 +247,10 @@ else
         userToDelete = null;
         showDeletePopup = false;
     }
+    
+    /// <summary>
+    /// Confirms the deletion of a customer, ensuring that the logged-in admin cannot delete their own account.
+    /// </summary>
 
     private async Task ConfirmDelete()
     {
@@ -256,6 +281,11 @@ else
             userToDelete = null;
         }
     }
+    
+    /// <summary>
+    /// on after render lifecycle method to mark JS as ready
+    /// </summary>
+    /// <param name="firstRender"></param>
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
