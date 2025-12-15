@@ -32,7 +32,7 @@ else
         <div class="container py-4">
             <div class="order-header-inner">
                 <!-- Poster -->
-                <img src="@GetPoster(screening.movie)" alt="@screening.movie.MovieTitle"
+                <img src="@screening.movie.poster_Url" alt="@screening.movie.MovieTitle"
                      class="img-fluid rounded shadow-sm order-poster"/>
                 <!-- Info -->
                 <div>
@@ -197,10 +197,6 @@ else
         private string? successMessage;
         
         private decimal TotalPrice => selectedSeats.Count * TicketPrice;
-        
-        /// <summary>
-        /// On component initialization, fetch screening and seat data
-        /// </summary>
 
         protected override async Task OnInitializedAsync()
         {
@@ -222,14 +218,11 @@ else
             }
         }
 
-        /// <summary>
-        /// Toggles the selection state of a seat
-        /// </summary>
-        /// <param name="s"></param>
         private void ToggleSeat(Seat s)
         {
             if (userPhone == null) return;
 
+            // Andre brugers sæder må ikke klikkes
             if (s.IsBooked && s.Customer?.Phone != userPhone)
                 return;
 
@@ -238,12 +231,6 @@ else
             else
                 selectedSeats.Add(s);
         }
-        
-        /// <summary>
-        /// Computes the CSS classes for a seat based on its booking status
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
 
         private string GetSeatCss(Seat s)
         {
@@ -266,25 +253,6 @@ else
 
             return string.Join(" ", classes);
         }
-        
-        /// <summary>
-        /// poster URL for the given movie
-        /// </summary>
-        /// <param name="movie"></param>
-        /// <returns></returns>
-
-        private string GetPoster(Movie movie)
-        {
-            var fileName = movie.MovieTitle
-                .ToLower()
-                .Replace(" ", "-") + ".png";
-
-            return $"images/posters/{fileName}";
-        }
-        
-        /// <summary>
-        /// Confirms the selected seats and attempts to book them
-        /// </summary>
 
         private async Task ConfirmSelection()
         {
@@ -324,10 +292,6 @@ else
             }
         }
         
-        /// <summary>
-        /// Updates the booking status of seats for the current user
-        /// </summary>
-        
         private async Task UpdateSeatBookingStatus()
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -347,10 +311,6 @@ else
 
 
         }
-        
-        /// <summary>
-        /// Shows the seats booked by the current user
-        /// </summary>
 
         private async void mySeats()
         {
@@ -370,30 +330,27 @@ else
                     
                 }
             }
+            
+            {
+            }
         }
-        
-        /// <summary>
-        /// Asks for confirmation before finalizing the order
-        /// </summary>
+
+        private async Task Logout()
+        {
+            await Js.InvokeVoidAsync("localStorage.removeItem", "jwt");
+            await TokenProvider.SignOut();
+            Nav.NavigateTo("/login", true);
+        }
         
         private void AskForConfirmation()
         {
             showConfirmPopup = true;
         }
-        
-        /// <summary>
-        /// Cacels the order confirmation popup
-        /// </summary>
 
         private void CancelOrder()
         {
             showConfirmPopup = false;
         }
-        
-        
-        /// <summary>
-        /// confirms the order and navigates to the order confirmation page
-        /// </summary>
 
         private async Task ConfirmOrder()
         {
@@ -419,11 +376,6 @@ else
             // Redirect til bekræftelsesside
             Nav.NavigateTo($"/order-confirmation/{orderNumber}/{screeningId}");
         }
-        
-        /// <summary>
-        /// OnAfterRender marks the JS as ready after the first render
-        /// </summary>
-        /// <param name="firstRender"></param>
         protected override void OnAfterRender(bool firstRender)
         {
             if (firstRender)
