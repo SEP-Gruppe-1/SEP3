@@ -108,7 +108,6 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
             if (existing == null) {
                 customerDAO.createCustomer(customer);
             } else {
-                // ❌ IKKE updateCustomer(customer)
                 customerDAO.updateCustomerRole(
                         customer.getPhone(),
                         customer.getRole()
@@ -256,7 +255,7 @@ public class CinemaServiceImpl extends CinemaServiceGrpc.CinemaServiceImplBase {
             if (existing == null) {
                 screeningDAO.addScreening(screening);
             } else {
-              // lav update screening
+
             }
             DTOScreening savedDto = DTOFactory.createDTOScreening(screening);
 

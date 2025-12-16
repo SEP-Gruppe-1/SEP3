@@ -117,7 +117,7 @@ public class SeatDAOImpl implements SeatDAO {
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
-            // 1️⃣ Check if seats are already booked
+
             try (PreparedStatement checkStmt = conn.prepareStatement(checkSeatsSQL)) {
                 checkStmt.setInt(1, screeningId);
                 checkStmt.setArray(2, conn.createArrayOf("INTEGER", seatIds.toArray()));

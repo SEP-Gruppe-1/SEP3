@@ -28,7 +28,6 @@ public class Hall {
 
 
     public static Hall getInstance(int id) {
-        // Opretter kun en Hall hvis den ikke allerede findes
         instances.putIfAbsent(id, new Hall(id));
         return instances.get(id);
     }

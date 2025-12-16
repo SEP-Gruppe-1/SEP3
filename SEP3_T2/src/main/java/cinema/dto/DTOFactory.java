@@ -16,7 +16,7 @@ public class DTOFactory {
 
     public static DTOCustomer createDTOCustomer(Customer customer) {
         if (customer == null) {
-            return null; // returnér null hvis ingen har booket sædet
+            return null;
         }
 
         return DTOCustomer.newBuilder().setName(customer.getName())
@@ -57,7 +57,7 @@ public class DTOFactory {
                             .setPassword(c.getPassword())
                             .setEmail(c.getEmail())
                             .setPhone(c.getPhone())
-                            .setRole(c.getRole())   // ✅ DEN AFGØRENDE LINJE
+                            .setRole(c.getRole())
                             .build()
             );
         }
@@ -218,11 +218,11 @@ public class DTOFactory {
                 .setNumber(seat.getSeatNumber())
                 .setBooked(seat.isBooked());
 
-        // Kunde KUN hvis seat er booket
+
         if (seat.isBooked() && seat.getCustomer() != null) {
             builder.setCustomer(createDTOCustomer(seat.getCustomer()));
         } else {
-            // Sæt IKKE customer → protobuf håndterer det automatisk som null
+
         }
 
         return builder.build();
