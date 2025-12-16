@@ -135,7 +135,7 @@ public class SeatDAOImpl implements SeatDAO {
                 }
             }
 
-            // 2️⃣ Insert booking row
+            // Insert booking row
             int bookingId;
             try (PreparedStatement stmt = conn.prepareStatement(insertBookingSQL)) {
                 stmt.setString(1, phone);
@@ -147,7 +147,7 @@ public class SeatDAOImpl implements SeatDAO {
                 bookingId = rs.getInt("booking_id");
             }
 
-            // 3️⃣ Insert seats
+            // Insert seats
             try (PreparedStatement seatStmt = conn.prepareStatement(insertSeatSQL)) {
                 for (int seatId : seatIds) {
                     seatStmt.setInt(1, bookingId);
@@ -244,7 +244,6 @@ public class SeatDAOImpl implements SeatDAO {
             // 5. Compute new total seats
             int newSeatCount = currentSeatCount + seatsToAdd.size() - seatsToRemove.size();
 
-            // ⭐⭐⭐ THE CRITICAL FIX ⭐⭐⭐
             if (newSeatCount <= 0) {
                 // Delete all seat rows
                 try (PreparedStatement stmt = conn.prepareStatement(
@@ -260,7 +259,7 @@ public class SeatDAOImpl implements SeatDAO {
                 }
 
                 conn.commit();
-                return;  // STOP — NO UPDATE
+                return;  // STOP. NO UPDATE
             }
 
             // 6. Update booking seat count
