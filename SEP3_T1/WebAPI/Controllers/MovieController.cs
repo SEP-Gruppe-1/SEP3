@@ -17,7 +17,14 @@ public class MovieController : ControllerBase
         this.movieRepository = movieRepository;
     }
 
-    // ✅ Ét samlet endpoint
+    /// <summary>
+    /// get all movies, with optional search query
+    /// </summary>
+    /// <remarks>
+    /// If a query is provided, it filters movies whose titles contain the query string (case-insensitive).
+    /// </remarks>
+    /// <param name="query"></param>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] string? query)
     {

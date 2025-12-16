@@ -17,7 +17,6 @@ builder.Services.AddSingleton(new CinemaServiceClient("http://localhost:9090"));
 builder.Services.AddScoped<ICustomerRepository, CustomerInDatabaseRepository>();
 builder.Services.AddScoped<IHallRepository, HallInDatabaseRepository>();
 
-
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("EmployeeOrAdmin", policy =>

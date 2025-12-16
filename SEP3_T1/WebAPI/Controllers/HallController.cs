@@ -16,6 +16,10 @@ public class HallController : ControllerBase
         this.hallRepository = hallRepository;
     }
 
+    /// <summary>
+    /// Get all halls
+    /// </summary>
+    /// <returns></returns>
 
     [HttpGet]
     public async Task<IActionResult> GetAllHalls()
@@ -25,7 +29,12 @@ public class HallController : ControllerBase
         var halls = hallRepository.GetAll().ToList();
         return Ok(halls);
     }
-
+    
+    /// <summary>
+    /// Get hall by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<HallDto>> GetHallById(int id)

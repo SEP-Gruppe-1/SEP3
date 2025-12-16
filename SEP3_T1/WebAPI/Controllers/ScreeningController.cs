@@ -18,13 +18,23 @@ public class ScreeningController : ControllerBase
     {
         this.screeningRepository = screeningRepository;
     }
-
+    
+    /// <summary>
+    /// get all screenings
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetAllScreenings()
     {
         var screenings = await screeningRepository.getAll();
         return Ok(screenings);
     }
+    
+    /// <summary>
+    /// get single screening by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ScreenDto>> GetSingle(int id)
@@ -70,6 +80,12 @@ public class ScreeningController : ControllerBase
             return NotFound();
         }
     }
+    
+    /// <summary>
+    /// add a new screening
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
 
     [HttpPost]
     public async Task<ActionResult<ScreenDto>> AddScreening([FromBody] ScreeningCreateDto request)
@@ -110,6 +126,12 @@ public class ScreeningController : ControllerBase
             });
         }
     }
+    /// <summary>
+    /// update an existing booking
+    /// </summary>
+    /// <param name="screeningId"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
 
      [HttpPut("{screeningId:int}/UpdateBooking")]
      public async Task<IActionResult> UpdateBooking(int screeningId, [FromBody] UpdateBookingDTO dto)
@@ -127,6 +149,12 @@ public class ScreeningController : ControllerBase
               return Ok(result);
         
      }
+    
+    /// <summary>
+    /// Get bookings for a customer by phone number
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <returns></returns>
 
     [HttpGet("bookings/{phone}")]
     public async Task<IActionResult> GetBookingsForCustomer(string phone)
@@ -148,6 +176,12 @@ public class ScreeningController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+    
+    /// <summary>
+    /// book seats for a screening
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     
     [HttpPost("book")]
     public async Task<IActionResult> BookSeats([FromBody] BookingRequest request)

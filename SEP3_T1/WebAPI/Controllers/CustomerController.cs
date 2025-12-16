@@ -8,6 +8,8 @@ using RepositoryContracts;
 
 [ApiController]
 [Route("api/[controller]")]
+
+
 public class CustomerController : ControllerBase
 {
     private readonly ICustomerRepository customerRepository;
@@ -16,6 +18,12 @@ public class CustomerController : ControllerBase
     {
         this.customerRepository = customerRepository;
     }
+    
+    /// <summary>
+    /// get single customer by phone number
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <returns></returns>
 
     [HttpGet("{phone}")]
     public async Task<ActionResult<CustomerDto>> GetSingle(string phone)
@@ -31,6 +39,10 @@ public class CustomerController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// get all customers
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetAllCustomers()
     {
@@ -48,7 +60,11 @@ public class CustomerController : ControllerBase
         return Ok(customers);
     }
 
-
+    /// <summary>
+    /// add a new customer
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ActionResult<CustomerDto>> AddCustomer([FromBody] CustomerCreateDto request)
     {
@@ -93,6 +109,15 @@ public class CustomerController : ControllerBase
         );
         return Created($"/api/customer/{dto.Phone}", dto);
     }
+    
+    /// <summary>
+    /// Update customer role
+    /// </summary>
+    /// <remarks>
+    /// Only accessible by Admin users
+    /// </remarks>
+    /// <param name="dto"></param>
+    /// <returns></returns>
 
     [Authorize(Policy = "AdminOnly")]
     [HttpPut("role")]
@@ -107,7 +132,13 @@ public class CustomerController : ControllerBase
 
         return Ok();
     }
-
+    
+    /// <summary>
+    /// Delete customer by phone number
+    /// Only accessible by Admin users
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <returns></returns>
     [HttpDelete("{phone}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCustomer(string phone)
@@ -124,7 +155,12 @@ public class CustomerController : ControllerBase
        
     }
     
-
+    /// <summary>
+    /// Get bookings for customer by phone number
+    /// </summary>
+    /// <param name="phone"></param>
+    /// <param name="screeningRepo"></param>
+    /// <returns></returns>
     [HttpGet("bookings/{phone}")]
     public async Task<IActionResult> GetBookingsForCustomer(
         string phone,
