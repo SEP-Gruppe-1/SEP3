@@ -4,6 +4,8 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
+        // TESTKLASSE
+        
         var client = new CinemaServiceClient("http://localhost:9090");
 
         var customers = await client.GetCustomersAsync();

@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using ApiContract;
 using Entities;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Grpccinema;
 using BookSeatsRequest = Grpccinema.BookSeatsRequest;
@@ -34,10 +35,18 @@ public class CinemaServiceClient
         return await Task.FromResult(customers);
     }
 
+    // Eksempel på RPC error handling 
     public async Task<DTOCustomer> GetCustomerByPhoneAsync(string phone)
     {
-        var response = await client.GetCustomerByPhoneAsync(new GetCustomerByPhoneRequest { Phone = phone });
-        return response.Customer;
+        try
+        {
+            var response = await client.GetCustomerByPhoneAsync(new GetCustomerByPhoneRequest { Phone = phone });
+            return response.Customer;
+        }
+        catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
+        {
+            return null;
+        }
     }
 
 
