@@ -107,8 +107,8 @@ public class CustomerDAOImpl implements CustomerDAO
             stmt.setString(1, customer.getName());
             stmt.setString(2, hashedPassword);
             stmt.setString(3, customer.getEmail());
-            stmt.setString(4, customer.getPhone());  // ✅ PHONE
-            stmt.setString(5, customer.getRole());   // ✅ ROLE
+            stmt.setString(4, customer.getPhone());
+            stmt.setString(5, customer.getRole());
 
             stmt.executeUpdate();
         }
